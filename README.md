@@ -1,39 +1,28 @@
-# filharmonic-front
+# Fil'Harmonic UI
 
-## Project setup
-```
-yarn install
-```
+> Prévenir efficacement les risques industriels
 
-### Compiles and hot-reloads for development
-```
-yarn run serve
-```
+Application en cours de développement, pas encore accessible.
 
-### Compiles and minifies for production
-```
-yarn run build
-```
+## Développement
 
-### Run your tests
-```
-yarn run test
-```
+Voir le [guide de développement](./DEVELOPMENT.md).
 
-### Lints and fixes files
-```
-yarn run lint
-```
+## Crédits
 
-### Run your end-to-end tests
-```
-yarn run test:e2e
-```
+### Production
 
-### Run your unit tests
-```
-yarn run test:unit
-```
+- [La Fabrique Numérique, Ministère de la transition écologique et solidaire](https://www.ecologique-solidaire.gouv.fr/inauguration-fabrique-numerique-lincubateur-des-ministeres-charges-lecologie-et-des-territoires)
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Équipe
+
+- Christophe Riboulet, intrapreneur
+- Romain Campillo, intrapreneur
+- Sébastien Vienot, intrapreneur
+- Sébastien Jallot, coach
+- [Maxime Dréau](https://github.com/totakoko), développeur
+- [Tristan Robert](https://github.com/tristanrobert), développeur
+
+## Licence
+
+[AGPL v3 ou plus récent](https://spdx.org/licenses/AGPL-3.0-or-later.html)
