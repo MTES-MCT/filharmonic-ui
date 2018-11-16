@@ -1,8 +1,8 @@
 <template lang="pug">
 v-container
-  h1.display-1.font-weight-bold.mb-3 Inspection n°{{ inspection.id }} du {{ inspection.date.toLocaleString() }}
-  p Établissement : {{ inspection.installation.nom }} ({{ inspection.installation.id }})
-  p Adresse : {{ inspection.installation.adresse }}
+  h1.display-1.font-weight-bold.mb-3 Contrôle n°{{ controle.id }} du {{ controle.date.toLocaleString() }}
+  p Établissement : {{ controle.installation.nom }} ({{ controle.installation.id }})
+  p Adresse : {{ controle.installation.adresse }}
   p TODO workflow, état, questions
 </template>
 
@@ -10,7 +10,7 @@ v-container
 export default {
   data () {
     return {
-      inspection: {
+      controle: {
         id: '1',
         date: new Date('2018-11-15'),
         installation: {

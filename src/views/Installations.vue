@@ -1,7 +1,6 @@
 <template lang="pug">
 v-container
   h1.display-1.font-weight-bold.mb-4 Liste des installations
-  p TODO formulaire de recherche
   v-list.transparent(two-line)
     v-list-tile(v-for="installation in installations" :key="installation.id")
       v-list-tile-content

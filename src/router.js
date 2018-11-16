@@ -4,10 +4,11 @@ import AuthLayout from '@/views/AuthLayout.vue'
 import Dashboard from '@/views/Dashboard.vue'
 import Home from '@/views/Home.vue'
 import Installations from '@/views/Installations.vue'
+import SearchInstallations from '@/views/SearchInstallations.vue'
 import Login from '@/views/Login.vue'
 import Page404 from '@/views/Page404.vue'
-import Inspections from '@/views/Inspections.vue'
-import Inspection from '@/views/Inspection.vue'
+import Controles from '@/views/Controles.vue'
+import Controle from '@/views/Controle.vue'
 
 Vue.use(Router)
 
@@ -38,19 +39,24 @@ export default new Router({
           component: Dashboard
         },
         {
+          path: '/search_installations',
+          name: 'search_installations',
+          component: SearchInstallations
+        },
+        {
           path: '/installations',
           name: 'installations',
           component: Installations
         },
         {
-          path: '/inspections',
-          name: 'inspections',
-          component: Inspections
+          path: '/controles',
+          name: 'controles',
+          component: Controles
         },
         {
-          path: '/inspections/:id',
-          name: 'inspection',
-          component: Inspection
+          path: '/controles/:id',
+          name: 'controle',
+          component: Controle
         }
       ]
     },
