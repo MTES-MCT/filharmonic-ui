@@ -15,5 +15,5 @@ v-app
           h1.display-1.font-weight-bold.mb-4 Bienvenue sur Fil'Harmonic
           p.subheading.font-weight-regular
             | TODO description du service
-          v-btn(to="/login") Connexion
+          v-btn(to="/login" color="primary") Connexion
 </template>

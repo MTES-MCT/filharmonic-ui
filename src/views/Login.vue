@@ -23,7 +23,7 @@ v-app
                     label="Mot de passe"
                     required)
                   v-card-actions
-                    v-btn(block type="submit") Se connecter
+                    v-btn(block type="submit" color="primary") Se connecter
 
             v-btn.mt-4(to="/" flat small) Retourner à la page d'accueil
 </template>

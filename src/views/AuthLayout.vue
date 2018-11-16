@@ -1,7 +1,7 @@
 <template lang="pug">
 v-app
   v-navigation-drawer(app permanent)
-    v-toolbar(flat)
+    v-toolbar.grey.lighten-1(flat)
       v-list
         v-list-tile
           v-list-tile-title.title Fil'Harmonic
@@ -14,7 +14,7 @@ v-app
             v-list-tile-title Alain Champion
         v-divider
 
-    v-list
+    v-list.py-0
       v-list-tile(to="/dashboard" title="Tableau de bord")
         v-list-tile-action
           v-icon dashboard
@@ -27,7 +27,7 @@ v-app
             v-icon star
           v-list-tile-content
             v-list-tile-title Inspections récentes
-        v-list(dense)
+        v-list.py-0.grey.lighten-2(dense)
           v-list-tile(to="/inspections/1" title="Inspection A")
             v-list-tile-action
             v-list-tile-content
