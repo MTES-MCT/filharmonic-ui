@@ -54,12 +54,12 @@ v-app
 
     v-list(subheader)
       v-subheader Autres outils
-      v-list-tile(to="https://monicpe.developpement-durable.gouv.fr/" title="MonICPE")
+      v-list-tile(href="https://monicpe.developpement-durable.gouv.fr/" target="_blank" title="MonICPE")
         v-list-tile-content
           v-list-tile-title
             span.mr-2 MonICPE
             v-icon open_in_new
-      v-list-tile(to="http://www.installationsclassees.developpement-durable.gouv.fr/rechercheICForm.php" title="Base des installations classées")
+      v-list-tile(href="http://www.installationsclassees.developpement-durable.gouv.fr/rechercheICForm.php" target="_blank" title="Base des installations classées")
         v-list-tile-content
           v-list-tile-title
             span.mr-2 Base des installations classées
