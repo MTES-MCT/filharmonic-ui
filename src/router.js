@@ -6,8 +6,8 @@ import Home from '@/views/Home.vue'
 import Installations from '@/views/Installations.vue'
 import Login from '@/views/Login.vue'
 import Page404 from '@/views/Page404.vue'
-import Visites from '@/views/Visites.vue'
-import Visite from '@/views/Visite.vue'
+import Inspections from '@/views/Inspections.vue'
+import Inspection from '@/views/Inspection.vue'
 
 Vue.use(Router)
 
@@ -43,14 +43,14 @@ export default new Router({
           component: Installations
         },
         {
-          path: '/visites',
-          name: 'visites',
-          component: Visites
+          path: '/inspections',
+          name: 'inspections',
+          component: Inspections
         },
         {
-          path: '/visites/:id',
-          name: 'visite',
-          component: Visite
+          path: '/inspections/:id',
+          name: 'inspection',
+          component: Inspection
         }
       ]
     },

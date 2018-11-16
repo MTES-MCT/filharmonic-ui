@@ -22,30 +22,30 @@ v-app
           v-list-tile-title Tableau de bord
 
       v-list-group(value="true")
-        v-list-tile(slot="activator" title="Visites récentes")
+        v-list-tile(slot="activator" title="Inspections récentes")
           v-list-tile-action
             v-icon star
           v-list-tile-content
-            v-list-tile-title Visites récentes
+            v-list-tile-title Inspections récentes
         v-list(dense)
-          v-list-tile(to="/visites/1" title="Visite A")
+          v-list-tile(to="/inspections/1" title="Inspection A")
             v-list-tile-action
             v-list-tile-content
-              v-list-tile-title Visite A
-          v-list-tile(to="/visites/2" title="Visite B")
+              v-list-tile-title Inspection A
+          v-list-tile(to="/inspections/2" title="Inspection B")
             v-list-tile-action
             v-list-tile-content
-              v-list-tile-title Visite B
-          v-list-tile(to="/visites/3" title="Visite C")
+              v-list-tile-title Inspection B
+          v-list-tile(to="/inspections/3" title="Inspection C")
             v-list-tile-action
             v-list-tile-content
-              v-list-tile-title Visite C
+              v-list-tile-title Inspection C
 
-      v-list-tile(to="/visites" title="Visites")
+      v-list-tile(to="/inspections" title="Inspections")
         v-list-tile-action
           v-icon search
         v-list-tile-content
-          v-list-tile-title Visites
+          v-list-tile-title Inspections
       v-list-tile(to="/installations" title="Installations")
         v-list-tile-action
           v-icon location_city
