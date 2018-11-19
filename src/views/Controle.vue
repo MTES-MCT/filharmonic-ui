@@ -116,11 +116,37 @@ v-container
                   span.ml-2 {{ attachment.filename }}
           v-divider
           v-layout.pl-2.mt-2.align-end
-            v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1")
+            v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1" clearable)
             v-btn.mb-0
               v-icon attach_file
             v-btn.mb-0(@click="addMessage(echange, newMessage); newMessage = ''" :disabled="!newMessage" color="primary" title="Envoyer")
               v-icon send
+
+  h4.display-1.my-4
+    | Commentaires
+  p Les commentaires sont internes et ne sont seulement visibles que par les inspecteurs.
+  v-card
+    v-card-text
+      div(v-for="(comment, index) in controle.comments" :key="index")
+        v-layout.pl-2.my-2
+          div.mr-2 {{ comment.date.toLocaleString() }}
+          strong.mr-2 {{ comment.author }} :
+          div {{ comment.text }}
+          div.ml-4(v-if="comment.attachments")
+            v-btn(flat
+                  v-for="(attachment, index) in comment.attachments" :key="attachment.id"
+                  @click="openAttachment(attachment)"
+                  )
+              v-icon(v-if="attachment.type == 'pdf'") picture_as_pdf
+              v-icon(v-if="attachment.type == 'image'") photo
+              span.ml-2 {{ attachment.filename }}
+        v-divider
+      v-layout.pl-2.mt-2.align-end
+        v-textarea(box label="Commentaire" v-model="newComment" auto-grow hideDetails rows="1" clearable)
+        v-btn.mb-0
+          v-icon attach_file
+        v-btn.mb-0(@click="addComment();" :disabled="!newComment" color="primary" title="Envoyer")
+          v-icon send
 
   v-dialog(v-model="showAttachmentDialog" scrollable width="800px")
     v-card(v-if="dialogAttachment")
@@ -147,6 +173,7 @@ export default {
       newMessage: '', // TODO partagé, il faudra faire un composant
       showAttachmentDialog: false,
       dialogAttachment: null,
+      newComment: '',
       controle: {
         id: '1',
         date: new Date('2018-11-15'),
@@ -161,6 +188,18 @@ export default {
           regimeSeveso: '',
           adresse: '123 rue de Paris'
         },
+        comments: [
+          {
+            author: 'Corine Dupont',
+            text: "Attention à l'article 243.",
+            date: new Date('2018-11-14T08:50:00')
+          },
+          {
+            author: 'Alain Champion',
+            text: "L'article 843 s'applique également.",
+            date: new Date('2018-11-16T16:50:00')
+          }
+        ],
         echanges: [
           {
             question: {
@@ -248,6 +287,15 @@ export default {
       setTimeout(() => {
         this.dialogAttachment = null
       }, 500)
+    },
+    addComment () {
+      this.controle.comments.push({
+        author: 'Alain Champion',
+        text: this.newComment,
+        date: new Date(),
+        attachments: []
+      })
+      this.newComment = ''
     }
   }
 }
