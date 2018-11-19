@@ -87,7 +87,10 @@ v-container
               v-flex Régime Seveso
               v-flex.text-xs-right Haut
 
-  h4.display-1.my-4 Échanges
+  h4.display-1.my-4
+    | Échanges
+    v-btn(icon title="Démarrer un nouvel échange" @click="addDiscussion()")
+      v-icon add
   v-expansion-panel
     v-expansion-panel-content(expand v-for="(echange, index) in controle.echanges" :key="index")
       v-layout(slot="header")
@@ -213,6 +216,17 @@ export default {
     }
   },
   methods: {
+    addDiscussion () {
+      this.controle.echanges.unshift({
+        question: {
+          author: 'Alain Champion',
+          text: 'Nouvel échange...',
+          date: new Date(),
+          attachments: []
+        },
+        reponses: []
+      })
+    },
     addMessage (echange, message) {
       echange.reponses.push({
         author: 'Alain Champion',
