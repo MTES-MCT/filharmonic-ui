@@ -91,31 +91,59 @@ v-container
   v-expansion-panel
     v-expansion-panel-content(expand v-for="(echange, index) in controle.echanges" :key="index")
       v-layout(slot="header")
-        div.mr-2 {{ echange.question.date.toLocaleDateString() }}
-        div {{ echange.question.author }} : {{ echange.question.text }}
+        div.mr-2 {{ echange.question.date.toLocaleString() }}
+        strong.mr-2 {{ echange.question.author }} :
+        div {{ echange.question.text }}
+        div.ml-2.grey--text ({{ echange.reponses.length }} réponse{{ echange.reponses.length > 1 ? 's': '' }})
       v-card
-        v-card-text(v-for="(message, index) in echange.reponses" :key="index")
-          v-layout
-            div.mr-2 {{ message.date.toLocaleDateString() }}
-            div {{ message.author }} : {{ message.text }}
-            div.ml-4(v-if="message.attachments")
-              v-btn(flat v-for="attachment in message.attachments" :key="index")
-                v-icon(v-if="attachment.type == 'pdf'") picture_as_pdf
-                v-icon(v-if="attachment.type == 'image'") photo
-                span.ml-2 {{ attachment.filename }}
-        v-layout.align-end
-          v-textarea(box label="Message" v-model="newMessage" auto-grow rows="1")
-          v-btn.mb-4
-            v-icon attach_file
-          v-btn.mb-4(@click="addMessage(echange, newMessage); newMessage = ''" color="primary") Envoyer
+        v-card-text
+          div(v-for="(message, index) in echange.reponses" :key="index")
+            v-divider
+            v-layout.pl-2.my-2
+              div.mr-2 {{ message.date.toLocaleString() }}
+              strong.mr-2 {{ message.author }} :
+              div {{ message.text }}
+              div.ml-4(v-if="message.attachments")
+                v-btn(flat
+                      v-for="(attachment, index) in message.attachments" :key="attachment.id"
+                      @click="openAttachment(attachment)"
+                      )
+                  v-icon(v-if="attachment.type == 'pdf'") picture_as_pdf
+                  v-icon(v-if="attachment.type == 'image'") photo
+                  span.ml-2 {{ attachment.filename }}
+          v-divider
+          v-layout.pl-2.mt-2.align-end
+            v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1")
+            v-btn.mb-0
+              v-icon attach_file
+            v-btn.mb-0(@click="addMessage(echange, newMessage); newMessage = ''" :disabled="!newMessage" color="primary" title="Envoyer")
+              v-icon send
 
+  v-dialog(v-model="showAttachmentDialog" scrollable width="800px")
+    v-card(v-if="dialogAttachment")
+      v-toolbar(color="primary" dark)
+        v-toolbar-title.headline Visualisation : {{ dialogAttachment.filename }}
+        v-spacer
+        v-toolbar-items
+          v-btn(flat dark @click="closeAttachment()")
+            v-icon close
+      v-card-text
+        pdf(v-if="dialogAttachment.type == 'pdf'" src="/test/lorem-ipsum.pdf")
+        v-img(v-if="dialogAttachment.type == 'image'" :src="`https://picsum.photos/800/600?image=${dialogAttachment.id}`")
 </template>
 
 <script>
+import pdf from 'vue-pdf'
+
 export default {
+  components: {
+    pdf
+  },
   data () {
     return {
       newMessage: '', // TODO partagé, il faudra faire un composant
+      showAttachmentDialog: false,
+      dialogAttachment: null,
       controle: {
         id: '1',
         date: new Date('2018-11-15'),
@@ -145,6 +173,7 @@ export default {
                 date: new Date('2018-11-16T16:50:00'),
                 attachments: [
                   {
+                    id: 1,
                     filename: 'analyses_2018.pdf',
                     type: 'pdf'
                   }
@@ -171,6 +200,7 @@ export default {
                 date: new Date('2018-11-17T08:50:00'),
                 attachments: [
                   {
+                    id: 2,
                     filename: 'photo_cuve.jpg',
                     type: 'image'
                   }
@@ -190,6 +220,20 @@ export default {
         text: message,
         attachments: []
       })
+    },
+    openAttachment (attachment) {
+      this.dialogAttachment = attachment
+      // wait for content fetch to show the dialog
+      setTimeout(() => {
+        this.showAttachmentDialog = true
+      }, 200)
+    },
+    closeAttachment () {
+      this.showAttachmentDialog = false
+      // wait the end of the transition to clear the data
+      setTimeout(() => {
+        this.dialogAttachment = null
+      }, 500)
     }
   }
 }
