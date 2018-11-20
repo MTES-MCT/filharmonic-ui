@@ -63,6 +63,17 @@ v-container
                   v-avatar
                     img(src="https://randomuser.me/api/portraits/women/85.jpg")
                   | Corine Dupont
+            v-layout.align-center
+              v-flex Thèmes
+              v-flex.text-xs-right
+                v-combobox(v-model="controle.themes" :items="themes"
+                           chips small-chips deletable-chips dense multiple hide-details
+                           :search-input.sync="themeSearch"
+                          )
+                  template(slot="no-data")
+                    v-list-tile
+                      .subheading Créer le thème
+                      v-chip(label small) {{ themeSearch }}
 
     v-flex.xs12.md6.pa-2
       v-card
@@ -167,6 +178,7 @@ v-container
 
 <script>
 import pdf from 'vue-pdf'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -178,6 +190,7 @@ export default {
       showAttachmentDialog: false,
       dialogAttachment: null,
       newComment: '',
+      themeSearch: null,
       controle: {
         id: '1',
         date: new Date('2018-11-15'),
@@ -185,6 +198,12 @@ export default {
         annonce: true,
         origine: 'plan_de_controle',
         state: 2, // en cours
+        themes: [
+          "Rejets dans l'air",
+          "Rejets dans l'eau",
+          'Incendie',
+          'COV'
+        ],
         etablissement: {
           id: '0999.00001',
           nom: 'Etablissement A',
@@ -259,7 +278,18 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState([
+      'themes'
+    ])
+  },
   methods: {
+    removeTheme (theme) {
+      const index = this.themes.indexOf(theme)
+      if (index !== -1) {
+        this.themes.splice(index, 1)
+      }
+    },
     addDiscussion () {
       this.controle.echanges.unshift({
         question: {
