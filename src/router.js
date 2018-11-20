@@ -3,9 +3,9 @@ import Router from 'vue-router'
 import AuthLayout from '@/views/AuthLayout.vue'
 import Dashboard from '@/views/Dashboard.vue'
 import Home from '@/views/Home.vue'
-import Installations from '@/views/Installations.vue'
-import SearchInstallations from '@/views/SearchInstallations.vue'
-import Installation from '@/views/Installation.vue'
+import Etablissements from '@/views/Etablissements.vue'
+import SearchEtablissements from '@/views/SearchEtablissements.vue'
+import Etablissement from '@/views/Etablissement.vue'
 import Login from '@/views/Login.vue'
 import Page404 from '@/views/Page404.vue'
 import Controles from '@/views/Controles.vue'
@@ -40,19 +40,19 @@ export default new Router({
           component: Dashboard
         },
         {
-          path: '/search_installations',
-          name: 'search_installations',
-          component: SearchInstallations
+          path: '/search_etablissements',
+          name: 'search_etablissements',
+          component: SearchEtablissements
         },
         {
-          path: '/installations',
-          name: 'installations',
-          component: Installations
+          path: '/etablissements',
+          name: 'etablissements',
+          component: Etablissements
         },
         {
-          path: '/installations/:id',
-          name: 'installation',
-          component: Installation
+          path: '/etablissements/:id',
+          name: 'etablissement',
+          component: Etablissement
         },
         {
           path: '/controles',

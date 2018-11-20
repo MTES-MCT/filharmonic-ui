@@ -46,11 +46,11 @@ v-app
           v-icon search
         v-list-tile-content
           v-list-tile-title Contrôles
-      v-list-tile(to="/search_installations" title="Installations")
+      v-list-tile(to="/search_etablissements" title="Etablissements")
         v-list-tile-action
           v-icon location_city
         v-list-tile-content
-          v-list-tile-title Installations
+          v-list-tile-title Etablissements
 
     v-list(subheader)
       v-subheader Autres outils
@@ -59,7 +59,7 @@ v-app
           v-list-tile-title
             span.mr-2 MonICPE
             v-icon open_in_new
-      v-list-tile(href="http://www.installationsclassees.developpement-durable.gouv.fr/rechercheICForm.php" target="_blank" title="Base des installations classées")
+      v-list-tile(href="http://www.installationsclassees.developpement-durable.gouv.fr/rechercheICForm.php" target="_blank" title="Base des etablissements classées")
         v-list-tile-content
           v-list-tile-title
             span.mr-2 Base des installations classées

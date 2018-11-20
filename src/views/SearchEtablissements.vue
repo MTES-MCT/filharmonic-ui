@@ -1,19 +1,19 @@
 <template lang="pug">
 v-container
-  h1.display-1.font-weight-bold.mb-4 Recherche des installations
-  v-form(ref="form" v-model="valid" lazy-validation)
+  h1.display-1.font-weight-bold.mb-4 Recherche des établissements
+  v-form(ref="form" lazy-validation)
     v-text-field(
       v-model="name"
-      :rules="nameRules"
-      label="Nom"
-      required)
+      label="Nom usuel ou raison sociale")
     v-text-field(
       v-model="localisation"
-      label="Localisation")
+      label="Localisation par commune ou code postal")
+    v-text-field(
+      v-model="s3ic"
+      label="Code S3IC")
 
     v-btn(
-      :disabled="!valid"
-      to="/installations"
+      to="/etablissements"
       color="primary") Rechercher
     v-btn(
       type="submit"
@@ -24,11 +24,6 @@ v-container
 <script>
 export default {
   data: () => ({
-    valid: false,
-    name: '',
-    nameRules: [
-      v => !!v || 'Name is required'
-    ]
   }),
 
   methods: {

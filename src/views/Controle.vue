@@ -67,22 +67,26 @@ v-container
     v-flex.xs12.md6.pa-2
       v-card
         v-toolbar(flat)
-          v-toolbar-title Entreprise contrôlée
+          v-toolbar-title Etablissement contrôlé
         v-card-text
           v-container.pa-0.grid-list-sm
             v-layout
               v-flex S3IC
-              v-flex.text-xs-right {{ controle.installation.id }}
+              v-flex.text-xs-right {{ controle.etablissement.id }}
+            v-layout
+              v-flex Nom usuel
+              v-flex.text-xs-right
+                router-link(to="/etablissements/1") {{ controle.etablissement.nom }}
             v-layout
               v-flex Raison sociale
               v-flex.text-xs-right
-                router-link(to="/installations/1") {{ controle.installation.nom }}
+                router-link(to="/etablissements/1") {{ controle.etablissement.raison }}
             v-layout
               v-flex Adresse
-              v-flex.text-xs-right {{ controle.installation.adresse }}
+              v-flex.text-xs-right {{ controle.etablissement.adresse }}
             v-layout
               v-flex Activité principale
-              v-flex.text-xs-right {{ controle.installation.activite }}
+              v-flex.text-xs-right {{ controle.etablissement.activite }}
             v-layout
               v-flex Régime Seveso
               v-flex.text-xs-right Haut
@@ -181,9 +185,10 @@ export default {
         annonce: true,
         origine: 'plan_de_controle',
         state: 2, // en cours
-        installation: {
+        etablissement: {
           id: '0999.00001',
-          nom: 'Installation A',
+          nom: 'Etablissement A',
+          raison: 'Etablissement A',
           activite: 'Fabrication de matrices composites',
           regimeSeveso: '',
           adresse: '123 rue de Paris'
