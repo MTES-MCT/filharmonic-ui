@@ -55,20 +55,28 @@ v-container
             v-layout.align-center
               v-flex Inspecteurs
               v-flex.text-xs-right
-                v-chip(close)
-                  v-avatar
-                    img(src="https://randomuser.me/api/portraits/men/85.jpg")
-                  | Alain Champion
-                v-chip(close)
-                  v-avatar
-                    img(src="https://randomuser.me/api/portraits/women/85.jpg")
-                  | Corine Dupont
+                v-autocomplete(v-model="controle.inspecteurs" :items="inspecteurs"
+                               chips deletable-chips dense multiple hide-details
+                               item-text="name" item-value="id"
+                               placeholder="Inspecteurs..."
+                              )
+                  template(slot="selection" slot-scope="data")
+                    v-chip(close @input="removeInspecteur(data.item)")
+                      v-avatar
+                        img(:src="data.item.photoURL")
+                      | {{ data.item.name }}
+                  template(slot="item" slot-scope="data")
+                    v-list-tile-avatar
+                      img(:src="data.item.photoURL")
+                    v-list-tile-content
+                      v-list-tile-title(v-html="data.item.name")
             v-layout.align-center
               v-flex Thèmes
               v-flex.text-xs-right
                 v-combobox(v-model="controle.themes" :items="themes"
                            chips small-chips deletable-chips dense multiple hide-details
                            :search-input.sync="themeSearch"
+                           placeholder="Thèmes..."
                           )
                   template(slot="no-data")
                     v-list-tile
@@ -178,7 +186,7 @@ v-container
 
 <script>
 import pdf from 'vue-pdf'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -203,6 +211,10 @@ export default {
           "Rejets dans l'eau",
           'Incendie',
           'COV'
+        ],
+        inspecteurs: [
+          1,
+          2
         ],
         etablissement: {
           id: '0999.00001',
@@ -281,13 +293,22 @@ export default {
   computed: {
     ...mapState([
       'themes'
+    ]),
+    ...mapGetters([
+      'inspecteurs'
     ])
   },
   methods: {
     removeTheme (theme) {
-      const index = this.themes.indexOf(theme)
+      const index = this.controle.themes.indexOf(theme)
       if (index !== -1) {
-        this.themes.splice(index, 1)
+        this.controle.themes.splice(index, 1)
+      }
+    },
+    removeInspecteur (inspecteur) {
+      const index = this.controle.inspecteurs.indexOf(inspecteur.id)
+      if (index !== -1) {
+        this.controle.inspecteurs.splice(index, 1)
       }
     },
     addDiscussion () {
