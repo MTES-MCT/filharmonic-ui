@@ -5,6 +5,7 @@ import Dashboard from '@/views/Dashboard.vue'
 import Home from '@/views/Home.vue'
 import Installations from '@/views/Installations.vue'
 import SearchInstallations from '@/views/SearchInstallations.vue'
+import Installation from '@/views/Installation.vue'
 import Login from '@/views/Login.vue'
 import Page404 from '@/views/Page404.vue'
 import Controles from '@/views/Controles.vue'
@@ -47,6 +48,11 @@ export default new Router({
           path: '/installations',
           name: 'installations',
           component: Installations
+        },
+        {
+          path: '/installations/:id',
+          name: 'installation',
+          component: Installation
         },
         {
           path: '/controles',

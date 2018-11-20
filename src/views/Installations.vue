@@ -6,7 +6,8 @@ v-container
       v-list-tile-content
         v-list-tile-title
           span.body-2 {{ installation.nom }}
-          span.ml-2.caption ({{ installation.id }})
+          span.ml-2.caption
+            router-link(to="/installations/1") ({{ installation.id }})
         v-list-tile-sub-title {{ installation.adresse }}
 </template>
 

@@ -10,12 +10,6 @@ v-container
     v-text-field(
       v-model="localisation"
       label="Localisation")
-    v-switch(
-      v-model="seveso"
-      label="Seveso")
-    v-radio-group(id="choixSeuil" v-model="seuil" row :disabled="!seveso")
-      v-radio(label="Haut" value="haut")
-      v-radio(label="Bas" value="bas")
 
     v-btn(
       :disabled="!valid"
@@ -34,9 +28,7 @@ export default {
     name: '',
     nameRules: [
       v => !!v || 'Name is required'
-    ],
-    seveso: false,
-    seuil: 'haut'
+    ]
   }),
 
   methods: {
