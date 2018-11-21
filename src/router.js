@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import AuthLayout from '@/views/AuthLayout.vue'
 import Dashboard from '@/views/Dashboard.vue'
-import Home from '@/views/Home.vue'
 import Etablissements from '@/views/Etablissements.vue'
 import Etablissement from '@/views/Etablissement.vue'
 import Login from '@/views/Login.vue'
@@ -17,11 +16,6 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: Home
-    },
-    {
       path: '/login',
       name: 'login',
       component: Login
@@ -29,6 +23,7 @@ export default new Router({
     {
       path: '/',
       component: AuthLayout,
+      redirect: '/login',
       meta: {
         requiresAuth: true
       },
