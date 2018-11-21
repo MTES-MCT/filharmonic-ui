@@ -5,14 +5,14 @@ v-app
       v-layout.align-center.justify-center.wrap
         v-flex.xs12.sm8.md4.text-xs-center
             v-card.elevation-12
+              v-toolbar(dark color="primary")
+                v-toolbar-title Fil'Harmonic
               v-card-text
-                h1.mb-3 Connexion à Fil'Harmonic
-                p TODO connexion Cerbère / France Connect
                 v-form(@submit.prevent="login()")
                   v-text-field(
                     prepend-icon="person"
                     name="login"
-                    label="Login"
+                    label="Identifiant"
                     required)
                   v-text-field(
                     prepend-icon="lock"
@@ -23,9 +23,8 @@ v-app
                     label="Mot de passe"
                     required)
                   v-card-actions
-                    v-btn(block type="submit" color="primary") Se connecter
-
-            v-btn.mt-4(to="/" flat small) Retourner à la page d'accueil
+                    v-btn(type="submit" color="primary") Se connecter
+                    v-btn(to="/") Annuler
 </template>
 
 <script>
