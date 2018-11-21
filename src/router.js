@@ -54,9 +54,10 @@ export default new Router({
           component: Controles
         },
         {
-          path: '/controles/:id',
+          path: '/controles/:controleId',
           name: 'controle',
-          component: Controle
+          component: Controle,
+          props: true
         }
       ]
     },
