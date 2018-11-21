@@ -1,20 +1,42 @@
 <template lang="pug">
 v-container
-  h1.display-1.font-weight-bold.mb-4 Liste des établissements
-  v-list.transparent(two-line)
-    v-list-tile(v-for="etablissement in etablissements" :key="etablissement.id")
-      v-list-tile-content
-        v-list-tile-title
-          span.body-2 {{ etablissement.nom }}
-          span.ml-2.caption
-            router-link(to="/etablissements/1") ({{ etablissement.id }})
-        v-list-tile-sub-title {{ etablissement.adresse }}
+ v-flex.xs12.md6.pa-2
+      v-card
+        v-toolbar(flat)
+          v-toolbar-title Recherche d'établissements
+        v-card-text
+          v-form(ref="form" lazy-validation)
+            v-text-field(
+              v-model="name"
+              label="Nom usuel ou raison sociale")
+            v-text-field(
+              v-model="localisation"
+              label="Localisation par commune ou code postal")
+            v-text-field(
+              v-model="s3ic"
+              label="Code S3IC")
+            v-btn(
+              @click="list = true"
+              color="primary") Rechercher
+            v-btn(
+              @click="list = false") Effacer
+      v-list(two-line v-if="list")
+          v-subheader Résultats
+          v-template(v-for="(etablissement,index) in etablissements", :key="etablissement.id")
+            v-list-tile(@click="show", :key="etablissement.id")
+              v-list-tile-action
+                v-icon location_city
+              v-list-tile-content
+                v-list-tile-title {{ etablissement.nom }}
+                v-list-tile-subtitle {{ etablissement.adresse }}
+            v-divider
 </template>
 
 <script>
 export default {
   data () {
     return {
+      list: false,
       etablissements: [
         {
           id: '0999.00001',
@@ -47,6 +69,11 @@ export default {
           adresse: '123 rue de Paris'
         }
       ]
+    }
+  },
+  methods: {
+    show () {
+      this.$router.push('/etablissements/1')
     }
   }
 }

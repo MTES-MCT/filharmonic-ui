@@ -46,7 +46,7 @@ v-app
           v-icon search
         v-list-tile-content
           v-list-tile-title Contrôles
-      v-list-tile(to="/search_etablissements" title="Etablissements")
+      v-list-tile(to="/etablissements" title="Etablissements")
         v-list-tile-action
           v-icon location_city
         v-list-tile-content

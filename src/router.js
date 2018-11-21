@@ -4,7 +4,6 @@ import AuthLayout from '@/views/AuthLayout.vue'
 import Dashboard from '@/views/Dashboard.vue'
 import Home from '@/views/Home.vue'
 import Etablissements from '@/views/Etablissements.vue'
-import SearchEtablissements from '@/views/SearchEtablissements.vue'
 import Etablissement from '@/views/Etablissement.vue'
 import Login from '@/views/Login.vue'
 import Page404 from '@/views/Page404.vue'
@@ -38,11 +37,6 @@ export default new Router({
           path: '/dashboard',
           name: 'dashboard',
           component: Dashboard
-        },
-        {
-          path: '/search_etablissements',
-          name: 'search_etablissements',
-          component: SearchEtablissements
         },
         {
           path: '/etablissements',
