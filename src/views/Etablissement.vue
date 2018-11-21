@@ -1,6 +1,6 @@
 <template lang="pug">
-v-container
- v-flex.xs12.md6.pa-2
+  v-container
+    v-flex.xs12.md6.pa-2
       v-card
         v-toolbar(flat)
           v-toolbar-title Etablissement {{ etablissement.nom }} n°{{ etablissement.id }}
@@ -24,15 +24,14 @@ v-container
             v-layout
               v-flex Régime Seveso
               v-flex.text-xs-right Haut
-      v-list(two-line)
-          v-subheader Contrôles
-          v-template(v-for="controle in controles", :key="controle.id")
-            v-list-tile(@click="show(controle.id)", :key="controle.id")
-              v-list-tile-action
-                v-chip(:color="controle.state === 2 ? 'green' : 'grey'" text-color="white") {{ controle.state === 2 ? 'En cours' : 'Terminé' }}
-              v-list-tile-content
-                v-list-tile-title Contrôle n° {{ controle.id }} du {{ controle.date.toLocaleDateString() }}
-            v-divider
+      v-list(two-line subheader)
+        v-subheader Contrôles
+        v-list-tile(@click="show(controle.id)", v-for="controle in controles", :key="controle.id")
+          v-list-tile-action
+            v-chip(:color="controle.state === 2 ? 'green' : 'grey'" text-color="white") {{ controle.state === 2 ? 'En cours' : 'Terminé' }}
+          v-list-tile-content
+            v-list-tile-title Contrôle n° {{ controle.id }} du {{ controle.date.toLocaleDateString() }}
+        v-divider
 
 </template>
 
@@ -40,14 +39,14 @@ v-container
 import { getEtablissement } from '@/api/etablissements'
 import { getControlesByEtablissement } from '@/api/controles'
 export default {
-  props: {
-    etablissement: {
-      type: Object,
-      default: null
-    },
-    controles: {
-      type: Array,
-      default: null
+  data () {
+    return {
+      etablissement: {
+        id: '',
+        nom: '',
+        date: new Date()
+      },
+      controles: []
     }
   },
   async created () {

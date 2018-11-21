@@ -4,32 +4,44 @@ import * as util from '@/util'
 
 const etablissements = [{
   id: '0999.00001',
-  nom: 'Etablissement A',
+  nom: 'A',
+  raison: 'A SARL',
+  activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris'
 },
 {
   id: '0999.00002',
-  nom: 'Etablissement B',
+  nom: 'B',
+  raison: 'B SARL',
+  activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris'
 },
 {
   id: '0999.00003',
-  nom: 'Etablissement C',
+  nom: 'C',
+  raison: 'C SARL',
+  activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris'
 },
 {
   id: '0999.00004',
-  nom: 'Etablissement D',
+  nom: 'D',
+  raison: 'D SARL',
+  activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris'
 },
 {
   id: '0999.00005',
-  nom: 'Etablissement E',
+  nom: 'E',
+  raison: 'E SARL',
+  activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris'
 },
 {
   id: '0999.00006',
-  nom: 'Etablissement F',
+  nom: 'F',
+  raison: 'F SARL',
+  activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris'
 }]
 

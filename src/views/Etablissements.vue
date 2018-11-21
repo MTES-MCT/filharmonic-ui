@@ -1,13 +1,13 @@
 <template lang="pug">
-v-container
- v-flex.xs12.md6.pa-2
+  v-container
+    v-flex.xs12.md6.pa-2
       v-card
         v-toolbar(flat)
           v-toolbar-title Recherche d'établissements
         v-card-text
           v-form(ref="form" lazy-validation)
             v-text-field(
-              v-model="name"
+              v-model="nom"
               label="Nom usuel ou raison sociale")
             v-text-field(
               v-model="localisation"
@@ -21,30 +21,27 @@ v-container
             v-btn(
               @click="list = false") Effacer
       v-list(two-line v-if="list")
-          v-subheader Résultats
-          v-template(v-for="etablissement in etablissements", :key="etablissement.id")
-            v-list-tile(@click="show(etablissement.id)", :key="etablissement.id")
-              v-list-tile-action
-                v-icon location_city
-              v-list-tile-content
-                v-list-tile-title {{ etablissement.nom }}
-                v-list-tile-subtitle {{ etablissement.adresse }}
-            v-divider
+        v-subheader Résultats
+        v-list-tile(@click="show(etablissement.id)", v-for="etablissement in etablissements", :key="etablissement.id")
+          v-list-tile-action
+            v-icon location_city
+          v-list-tile-content
+            v-list-tile-title Etablissement {{ etablissement.nom }}
+            v-list-tile-sub-title {{ etablissement.adresse }}
+        v-divider
 </template>
 
 <script>
 import { listAllEtablissements } from '@/api/etablissements'
 
 export default {
-  props: {
-    etablissements: {
-      type: Array,
-      default: null
-    }
-  },
   data () {
     return {
-      list: false
+      list: false,
+      etablissements: [],
+      nom: '',
+      localisation: '',
+      s3ic: ''
     }
   },
   async created () {
