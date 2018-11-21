@@ -22,11 +22,11 @@ v-app
           v-list-tile-title Tableau de bord
 
       v-list-group(value="true")
-        v-list-tile(slot="activator" title="Contrôles récentes")
+        v-list-tile(slot="activator" title="Contrôles favoris")
           v-list-tile-action
             v-icon star
           v-list-tile-content
-            v-list-tile-title Contrôles récents
+            v-list-tile-title Contrôles favoris
         v-list.py-0.grey.lighten-2(dense)
           v-list-tile(to="/controles/1" title="Contrôle A")
             v-list-tile-action
