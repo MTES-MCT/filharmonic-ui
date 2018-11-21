@@ -140,3 +140,12 @@ export const getControle = util.slow((id) => {
 export const getControlesByEtablissement = util.slow((etablissementId) => {
   return controles.filter(controle => controle.etablissement.id === etablissementId)
 })
+
+export const createControle = util.slow((controle) => {
+  controle.id = '' + new Date().getTime() % 1000
+  controle.date = new Date(controle.date)
+  controle.echanges = []
+  controle.comments = []
+  controles.push(controle)
+  return controle.id
+})

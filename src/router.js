@@ -8,6 +8,7 @@ import Login from '@/views/Login.vue'
 import Page404 from '@/views/Page404.vue'
 import Controles from '@/views/Controles.vue'
 import Controle from '@/views/Controle.vue'
+import NouveauControle from '@/views/NouveauControle.vue'
 
 Vue.use(Router)
 
@@ -43,6 +44,11 @@ export default new Router({
           name: 'etablissement',
           component: Etablissement,
           props: true
+        },
+        {
+          path: '/etablissements/:id/controles/new',
+          name: 'nouveau-controle',
+          component: NouveauControle
         },
         {
           path: '/controles',
