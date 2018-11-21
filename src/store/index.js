@@ -54,6 +54,9 @@ export default new Vuex.Store({
   getters: {
     inspecteurs (state) {
       return state.users.filter(u => u.type === 'inspecteur')
+    },
+    user (state, id) {
+      return state.users.find(u => u.id === id)
     }
   },
   mutations: {
