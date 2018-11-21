@@ -1,5 +1,7 @@
 <template lang="pug">
-  v-container
+div
+  p.display-1.mt-4.text-xs-center(v-if="errorNotFound") Etablissement non existant. Mauvaise URL ?
+  v-container(v-if="etablissement")
     v-flex.xs12.md6.pa-2
       v-card
         v-toolbar(flat)
@@ -39,13 +41,16 @@
 import { getEtablissement } from '@/api/etablissements'
 import { getControlesByEtablissement } from '@/api/controles'
 export default {
+  props: {
+    id: {
+      type: String,
+      default: null
+    }
+  },
   data () {
     return {
-      etablissement: {
-        id: '',
-        nom: '',
-        date: new Date()
-      },
+      errorNotFound: false,
+      etablissement: null,
       controles: []
     }
   },

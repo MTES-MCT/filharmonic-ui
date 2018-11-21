@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import AuthLayout from '@/views/AuthLayout.vue'
+import Layout from '@/views/Layout.vue'
 import Dashboard from '@/views/Dashboard.vue'
 import Etablissements from '@/views/Etablissements.vue'
 import Etablissement from '@/views/Etablissement.vue'
@@ -22,8 +22,8 @@ export default new Router({
     },
     {
       path: '/',
-      component: AuthLayout,
-      redirect: '/login',
+      component: Layout,
+      redirect: '/login', // TODO beforeEnter: requireAuth
       meta: {
         requiresAuth: true
       },
@@ -41,7 +41,8 @@ export default new Router({
         {
           path: '/etablissements/:id',
           name: 'etablissement',
-          component: Etablissement
+          component: Etablissement,
+          props: true
         },
         {
           path: '/controles',
@@ -61,13 +62,5 @@ export default new Router({
       name: 'page404',
       component: Page404
     }
-    // {
-    //   path: '/about',
-    //   name: 'about',
-    //   // route level code-splitting
-    //   // this generates a separate chunk (about.[hash].js) for this route
-    //   // which is lazy-loaded when the route is visited.
-    //   component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
-    // }
   ]
 })

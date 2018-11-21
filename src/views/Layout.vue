@@ -48,13 +48,10 @@ v-app
     v-menu(transition="slide-y-transition" bottom)
       v-btn(icon slot="activator")
         v-icon apps
-      v-list
-        v-list-tile(href="https://monicpe.developpement-durable.gouv.fr/" target="_blank" title="MonICPE")
+      v-list(v-for="app in apps", :key="app.nom")
+        v-list-tile(:href="app.url" target="_blank" :title="app.nom")
           v-icon open_in_new
-          v-list-tile-title MonICPE
-        v-list-tile(href="http://www.installationsclassees.developpement-durable.gouv.fr/rechercheICForm.php" target="_blank" title="Base des etablissements classées")
-          v-icon open_in_new
-          v-list-tile-title Base des installations classées
+          v-list-tile-title {{ app.nom }}
     v-btn(icon)
       v-icon notifications
     v-menu(
@@ -68,33 +65,41 @@ v-app
         v-list
           v-list-tile(avatar)
             v-list-tile-avatar
-              img(src="https://randomuser.me/api/portraits/men/85.jpg" alt="Alain Champion")
+              img(:src="principal.avatar" :alt="principal.nom")
             v-list-tile-content
-              v-list-tile-title Alain Champion
-              v-list-tile-sub-title Inspecteur
+              v-list-tile-title {{ principal.nom }}
+              v-list-tile-sub-title {{ principal.profil }}
       v-card-actions
-        v-btn(to="/" color="primary") Déconnexion
+        v-btn(to="/login" color="primary") Déconnexion
 
   v-content
     router-view
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { getPrincipal } from '@/api/authentication'
 export default {
   data () {
     return {
       dialog: false,
       drawer: null,
-      menu: true
+      menu: true,
+      apps: [
+        { url: 'https://monicpe.developpement-durable.gouv.fr/', nom: 'MonICPE' },
+        { url: 'http://www.installationsclassees.developpement-durable.gouv.fr/rechercheICForm.php', nom: 'Base des installations classées' }
+      ],
+      principal: {
+        nom: '',
+        avatar: '',
+        profil: ''
+      }
     }
   },
-  computed: {
-    ...mapGetters([
-      'user'
-    ])
-  },
-  methods: {
+  async created () {
+    this.principal = await getPrincipal()
+    if (!this.principal) {
+      this.errorNotFound = true
+    }
   }
 }
 </script>
