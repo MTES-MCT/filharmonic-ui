@@ -24,6 +24,15 @@ v-container
             v-layout
               v-flex Régime Seveso
               v-flex.text-xs-right Haut
+      v-list(two-line)
+          v-subheader Contrôles
+          v-template(v-for="(controle,index) in controles", :key="controle.id")
+            v-list-tile(@click="show", :key="controle.id")
+              v-list-tile-action
+                v-chip(:color="controle.state.color" text-color="white") {{ controle.state.text }}
+              v-list-tile-content
+                v-list-tile-title Contrôle n° {{ controle.id }} du {{ controle.date.toLocaleDateString() }}
+            v-divider
 
 </template>
 
@@ -46,9 +55,30 @@ export default {
           type: 'approfondi',
           annonce: true,
           origine: 'plan_de_controle',
-          state: 2 // en cours
+          state: {
+            id: 2,
+            color: 'green',
+            text: 'En cours'
+          }
+        },
+        {
+          id: '2',
+          date: new Date('2008-01-05'),
+          type: 'approfondi',
+          annonce: true,
+          origine: 'plan_de_controle',
+          state: {
+            id: 4,
+            color: 'grey',
+            text: 'Terminé'
+          }
         }
       ]
+    }
+  },
+  methods: {
+    show () {
+      this.$router.push('/controles/1')
     }
   }
 }

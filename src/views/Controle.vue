@@ -98,8 +98,7 @@ v-container
                 router-link(to="/etablissements/1") {{ controle.etablissement.nom }}
             v-layout
               v-flex Raison sociale
-              v-flex.text-xs-right
-                router-link(to="/etablissements/1") {{ controle.etablissement.raison }}
+              v-flex.text-xs-right {{ controle.etablissement.raison }}
             v-layout
               v-flex Adresse
               v-flex.text-xs-right {{ controle.etablissement.adresse }}
@@ -218,8 +217,8 @@ export default {
         ],
         etablissement: {
           id: '0999.00001',
-          nom: 'Etablissement A',
-          raison: 'Etablissement A',
+          nom: 'A',
+          raison: 'A SARL',
           activite: 'Fabrication de matrices composites',
           regimeSeveso: '',
           adresse: '123 rue de Paris'
