@@ -26,10 +26,10 @@ v-container
               v-flex.text-xs-right Haut
       v-list(two-line)
           v-subheader Contrôles
-          v-template(v-for="(controle,index) in controles", :key="controle.id")
-            v-list-tile(@click="show", :key="controle.id")
+          v-template(v-for="controle in controles", :key="controle.id")
+            v-list-tile(@click="show(controle.id)", :key="controle.id")
               v-list-tile-action
-                v-chip(:color="controle.state.color" text-color="white") {{ controle.state.text }}
+                v-chip(:color="controle.state === 2 ? 'green' : 'grey'" text-color="white") {{ controle.state === 2 ? 'En cours' : 'Terminé' }}
               v-list-tile-content
                 v-list-tile-title Contrôle n° {{ controle.id }} du {{ controle.date.toLocaleDateString() }}
             v-divider
@@ -37,48 +37,32 @@ v-container
 </template>
 
 <script>
+import { getEtablissement } from '@/api/etablissements'
+import { getControlesByEtablissement } from '@/api/controles'
 export default {
-  data () {
-    return {
-      etablissement: {
-        id: '0999.00001',
-        nom: 'A',
-        raison: 'A SARL',
-        activite: 'Fabrication de matrices composites',
-        regimeSeveso: '',
-        adresse: '123 rue des Fleurs 75000 Paris'
-      },
-      controles: [
-        {
-          id: '1',
-          date: new Date('2018-11-15'),
-          type: 'approfondi',
-          annonce: true,
-          origine: 'plan_de_controle',
-          state: {
-            id: 2,
-            color: 'green',
-            text: 'En cours'
-          }
-        },
-        {
-          id: '2',
-          date: new Date('2008-01-05'),
-          type: 'approfondi',
-          annonce: true,
-          origine: 'plan_de_controle',
-          state: {
-            id: 4,
-            color: 'grey',
-            text: 'Terminé'
-          }
-        }
-      ]
+  props: {
+    etablissement: {
+      type: Object,
+      default: null
+    },
+    controles: {
+      type: Array,
+      default: null
+    }
+  },
+  async created () {
+    this.etablissement = await getEtablissement(this.$route.params.id)
+    if (!this.etablissement) {
+      this.errorNotFound = true
+    }
+    this.controles = await getControlesByEtablissement(this.$route.params.id)
+    if (!this.controles) {
+      this.errorNotFound = true
     }
   },
   methods: {
-    show () {
-      this.$router.push('/controles/1')
+    show (id) {
+      this.$router.push('/controles/' + id)
     }
   }
 }

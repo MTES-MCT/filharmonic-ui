@@ -22,8 +22,8 @@ v-container
               @click="list = false") Effacer
       v-list(two-line v-if="list")
           v-subheader Résultats
-          v-template(v-for="(etablissement,index) in etablissements", :key="etablissement.id")
-            v-list-tile(@click="show", :key="etablissement.id")
+          v-template(v-for="etablissement in etablissements", :key="etablissement.id")
+            v-list-tile(@click="show(etablissement.id)", :key="etablissement.id")
               v-list-tile-action
                 v-icon location_city
               v-list-tile-content
@@ -33,47 +33,29 @@ v-container
 </template>
 
 <script>
+import { listAllEtablissements } from '@/api/etablissements'
+
 export default {
+  props: {
+    etablissements: {
+      type: Array,
+      default: null
+    }
+  },
   data () {
     return {
-      list: false,
-      etablissements: [
-        {
-          id: '0999.00001',
-          nom: 'Etablissement A',
-          adresse: '123 rue de Paris'
-        },
-        {
-          id: '0999.00002',
-          nom: 'Etablissement B',
-          adresse: '123 rue de Paris'
-        },
-        {
-          id: '0999.00003',
-          nom: 'Etablissement C',
-          adresse: '123 rue de Paris'
-        },
-        {
-          id: '0999.00004',
-          nom: 'Etablissement D',
-          adresse: '123 rue de Paris'
-        },
-        {
-          id: '0999.00005',
-          nom: 'Etablissement E',
-          adresse: '123 rue de Paris'
-        },
-        {
-          id: '0999.00006',
-          nom: 'Etablissement F',
-          adresse: '123 rue de Paris'
-        }
-      ]
+      list: false
+    }
+  },
+  async created () {
+    this.etablissements = await listAllEtablissements()
+    if (!this.etablissement) {
+      this.errorNotFound = true
     }
   },
   methods: {
-    show () {
-      this.$router.push('/etablissements/1')
+    show (id) {
+      this.$router.push('/etablissements/' + id)
     }
   }
 }

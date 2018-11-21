@@ -1,6 +1,8 @@
 /** Mock api server side */
 
-const _etablissements = [{
+import * as util from '@/util'
+
+const etablissements = [{
   id: '0999.00001',
   nom: 'Etablissement A',
   adresse: '123 rue de Paris'
@@ -31,11 +33,10 @@ const _etablissements = [{
   adresse: '123 rue de Paris'
 }]
 
-export default {
-  getAllEtablissements (cb) {
-    setTimeout(() => cb(_etablissements), 100)
-  },
-  getEtablissement (cb, id) {
-    setTimeout(() => cb(_etablissements.find(etablissement => etablissement.id === id), 100))
-  }
-}
+export const listAllEtablissements = util.slow(() => {
+  return etablissements
+})
+
+export const getEtablissement = util.slow((id) => {
+  return etablissements.find(etablissement => etablissement.id === id)
+})

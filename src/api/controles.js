@@ -136,3 +136,7 @@ export const listeControles = util.slow(() => {
 export const getControle = util.slow((id) => {
   return controles.find(controle => controle.id === id)
 })
+
+export const getControlesByEtablissement = util.slow((etablissementId) => {
+  return controles.filter(controle => controle.etablissement.id === etablissementId)
+})
