@@ -28,7 +28,9 @@ const controles = [
     echanges: [
       {
         sujet: 'Mesure des émissions atmosphériques canalisées par un organisme extérieur',
-        referenceReglementaire: "Articles 3.2.3., 3.2.8. et 8.2.1.2. de l'arrêté préfectoral du 28 juin 2017",
+        referencesReglementaires: [
+          "Articles 3.2.3., 3.2.8. et 8.2.1.2. de l'arrêté préfectoral du 28 juin 2017"
+        ],
         reponses: [
           {
             author: 'Alain Champion',
