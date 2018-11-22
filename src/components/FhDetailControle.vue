@@ -1,7 +1,7 @@
 <template lang="pug">
 v-container.grid-list-xl
   v-layout.align-center
-    v-flex.subheading Date du contrôle
+    v-flex.subheading.mr-2 Date du contrôle
     v-flex.text-xs-right
       v-menu(v-model="showDatePicker"
               :close-on-content-click="false"
@@ -21,7 +21,7 @@ v-container.grid-list-xl
         v-date-picker(v-model="controle.date" @input="showDatePicker = false" no-title)
 
   v-layout.align-center
-    v-flex.subheading Type
+    v-flex.subheading.mr-2 Type
     v-flex
       v-radio-group.justify-end.mt-0(row hide-details v-model="controle.type")
         v-radio(label="Approfondi" value="approfondi")
@@ -29,19 +29,19 @@ v-container.grid-list-xl
         v-radio(label="Ponctuel" value="ponctuel")
 
   v-layout.align-center
-    v-flex.subheading Annoncé
+    v-flex.subheading.mr-2 Annoncé
     v-flex
       v-checkbox.pr-3.justify-end(v-model="controle.annonce" label="Annoncé" hide-details)
 
   v-layout.align-center
-    v-flex.subheading Origine
+    v-flex.subheading.mr-2 Origine
     v-flex
       v-radio-group.mt-0.justify-end(row hide-details v-model="controle.origine")
         v-radio(label="Plan de contrôle" value="plan_de_controle")
         v-radio(label="Circonstancielle" value="circonstancielle")
 
   v-layout.align-center(v-if="controle.origine === 'circonstancielle'")
-    v-flex.subheading Circonstances
+    v-flex.subheading.mr-2 Circonstances
     v-flex
       v-radio-group.mt-0.justify-end(row v-model="controle.circonstances" hide-details required :rules="notEmpty")
         v-radio(label="Incident" value="incident")
@@ -49,12 +49,12 @@ v-container.grid-list-xl
         v-radio(label="Autre" value="autre")
 
   v-layout.align-center(v-if="controle.circonstances === 'autre'")
-    v-flex.subheading Détail des circonstances
+    v-flex.subheading.mr-2 Détail des circonstances
     v-flex
       v-text-field(v-model="controle.detailCirconstances" required :rules="notEmpty")
 
   v-layout.align-center
-    v-flex.subheading Inspecteurs
+    v-flex.subheading.mr-2 Inspecteurs
     v-flex
       v-autocomplete(v-model="controle.inspecteurs" :items="inspecteurs"
                     chips deletable-chips dense multiple
@@ -74,7 +74,7 @@ v-container.grid-list-xl
             v-list-tile-title(v-html="data.item.name")
 
   v-layout.align-center
-    v-flex.subheading Thèmes
+    v-flex.subheading.mr-2 Thèmes
     v-flex.text-xs-right
       v-combobox(v-model="controle.themes" :items="themes"
                 chips small-chips deletable-chips dense multiple
