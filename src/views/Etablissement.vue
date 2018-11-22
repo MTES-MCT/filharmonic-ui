@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  p.display-1.mt-4.text-xs-center(v-if="errorNotFound") Etablissement non existant. Mauvaise URL ?
+  router-view(v-if="errorNotFound" name="page404")
   v-container(v-if="etablissement")
     v-flex.xs12.md6.pa-2
       v-card
@@ -24,8 +24,11 @@ div
               v-flex Activité principale
               v-flex.text-xs-right {{ etablissement.activite }}
             v-layout
+              v-flex IED-MTD
+              v-flex.text-xs-right {{ etablissement.iedmtd }}
+            v-layout
               v-flex Régime Seveso
-              v-flex.text-xs-right Haut
+              v-flex.text-xs-right {{ etablissement.seveso }}
       v-list(two-line subheader)
         v-subheader
           v-flex Contrôles
