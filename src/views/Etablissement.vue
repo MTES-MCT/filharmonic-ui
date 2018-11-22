@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  router-view(v-if="errorNotFound" name="page404")
+  p.display-1.mt-4.text-xs-center(v-if="errorNotFound") Etablissement non existant. Mauvaise URL ?
   v-container(v-if="etablissement")
     v-flex.xs12.md6.pa-2
       v-card

@@ -70,14 +70,14 @@ v-app
               v-list-tile-title {{ principal.nom }}
               v-list-tile-sub-title {{ principal.profil }}
       v-card-actions
-        v-btn(to="/login" color="primary") Déconnexion
+        v-btn(@click="logout()" color="primary") Déconnexion
 
   v-content
     router-view
 </template>
 
 <script>
-import { getPrincipal } from '@/api/authentication'
+import { getPrincipal, logout } from '@/api/authentication'
 export default {
   data () {
     return {
@@ -99,6 +99,12 @@ export default {
     this.principal = await getPrincipal()
     if (!this.principal) {
       this.errorNotFound = true
+    }
+  },
+  methods: {
+    async logout () {
+      await logout()
+      this.$router.push('/login?redirect=%2F')
     }
   }
 }

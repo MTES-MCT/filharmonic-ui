@@ -9,6 +9,7 @@ import Page404 from '@/views/Page404.vue'
 import Controles from '@/views/Controles.vue'
 import Controle from '@/views/Controle.vue'
 import NouveauControle from '@/views/NouveauControle.vue'
+import { requireAuth } from '@/api/authentication'
 
 Vue.use(Router)
 
@@ -24,13 +25,13 @@ export default new Router({
     {
       path: '/',
       component: Layout,
-      redirect: '/login', // TODO beforeEnter: requireAuth
+      beforeEnter: requireAuth,
       meta: {
         requiresAuth: true
       },
       children: [
         {
-          path: '/dashboard',
+          path: '/',
           name: 'dashboard',
           component: Dashboard
         },

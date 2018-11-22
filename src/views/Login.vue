@@ -1,17 +1,18 @@
 <template lang="pug">
 v-app
   v-content
-    v-container.fluid.fill-height
+    p.display-1.mt-4.text-xs-center(v-if="errorNotFound") L'authentification a échoué.
+    v-container.fluid.fill-height(v-if="!errorNotFound")
       v-layout.align-center.justify-center.wrap
         v-flex.xs12.sm8.md4.text-xs-center
             v-card.elevation-12
               v-toolbar(dark color="primary")
                 v-toolbar-title Fil'Harmonic
               v-card-text
-                v-form(@submit.prevent="login()")
+                v-form
                   v-text-field(
                     prepend-icon="person"
-                    name="login"
+                    name="id"
                     label="Identifiant"
                     required)
                   v-text-field(
@@ -23,27 +24,36 @@ v-app
                     label="Mot de passe"
                     required)
                   v-card-actions
-                    v-btn(type="submit" color="primary") Se connecter
+                    v-btn(@click="login(id,password)" color="primary") Se connecter
                     v-btn(to="/") Annuler
 </template>
 
 <script>
+import { login, isLoggedIn } from '@/api/authentication'
 export default {
   data () {
     return {
       show: false,
+      id: '',
       password: 'Mot de passe',
       rules: {
         required: value => !!value || 'Requis.',
         min: v => v.length >= 8 || 'Min 8 caractères',
         emailMatch: () => ('Le login et le mot de passe ne correspondent pas.')
-      }
+      },
+      errorNotFound: false
     }
   },
   methods: {
-    login () {
-      console.log('TODO login')
-      this.$router.push('/dashboard')
+    async login (id, password) {
+      console.log('id=' + id, ', password=' + password)
+      await login(id, password)
+      if (await isLoggedIn()) {
+        console.log('redirect=' + this.$route.query.redirect)
+        this.$router.push(this.$route.query.redirect || '/')
+      } else {
+        this.errorNotFound = true
+      }
     }
   }
 }
