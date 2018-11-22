@@ -114,18 +114,48 @@ div
       | Échanges
       v-btn(icon title="Démarrer un nouvel échange" @click="addDiscussion()")
         v-icon add
-    v-expansion-panel
-      v-expansion-panel-content(expand v-for="(echange, index) in controle.echanges" :key="index")
-        v-layout(slot="header")
-          div.mr-2 {{ echange.question.date.toLocaleString() }}
-          strong.mr-2 {{ echange.question.author }} :
-          div {{ echange.question.text }}
-          div.ml-2.grey--text ({{ echange.reponses.length }} réponse{{ echange.reponses.length > 1 ? 's': '' }})
-        v-card
+
+    v-expansion-panel(expand)
+      v-expansion-panel-content.fh-echange(expand v-for="(echange, index) in controle.echanges" :key="index")
+        v-layout.column(slot="header")
+          .fh-echange__sujet
+            | {{ echange.sujet }}
+            span.ml-2.grey--text ({{ echange.reponses.length }} réponse{{ echange.reponses.length > 1 ? 's': '' }})
+          a.fh-echange__referenceReglementaire(v-for="referenceReglementaire in echange.referencesReglementaires"
+                                               href="https://www.legifrance.gouv.fr/eli/arrete/2017/6/28/TREP1719163A/jo/texte/fr"
+                                               target="_blank")
+            | {{ referenceReglementaire }}
+
+          .fh-echange__constat(v-if="echange.constat")
+            v-layout.align-center
+              span.subheading.mr-2 Constat finalisé :
+              span(v-if="echange.constat.type === 'conforme'")
+                v-chip(small color="green" dark text-color="white")
+                  v-avatar
+                    v-icon(large) check_circle
+                  | Conforme
+              span(v-else)
+                v-chip(small color="red" dark text-color="white")
+                  v-avatar
+                    v-icon(large) error
+                  | Non conforme
+
+            div(v-if="echange.constat.type !== 'conforme'")
+              v-layout.align-center
+                span.subheading.mr-2 Observation :
+                v-flex
+                  div {{ echange.constat.observation }}
+              v-layout.align-center
+                span.subheading.mr-2 Délai de mise en conformité :
+                v-flex
+                  | Avant le&nbsp;
+                  time(:datetime="echange.constat.echeance") {{ echange.constat.echeance.toLocaleDateString() }}
+
+        v-card.px-3
           v-card-text
+            .subheading Fil de discussion
             div(v-for="(message, index) in echange.reponses" :key="index")
-              v-divider
-              v-layout.pl-2.my-2
+              v-layout.pl-2.my-3
                 div.mr-2 {{ message.date.toLocaleString() }}
                 strong.mr-2 {{ message.author }} :
                 div {{ message.text }}
@@ -137,13 +167,15 @@ div
                     v-icon(v-if="attachment.type == 'pdf'") picture_as_pdf
                     v-icon(v-if="attachment.type == 'image'") photo
                     span.ml-2 {{ attachment.filename }}
-            v-divider
+              v-divider
             v-layout.pl-2.mt-2.align-end
               v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1" clearable)
               v-btn.mb-0
                 v-icon attach_file
               v-btn.mb-0(@click="addMessage(echange, newMessage); newMessage = ''" :disabled="!newMessage" color="primary" title="Envoyer")
                 v-icon send
+            v-btn(color="secondary")
+              | Ajouter un constat
 
     h4.display-1.my-4
       | Commentaires
@@ -282,3 +314,22 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+.fh-echange
+  background-color #f0f0f0 !important
+  &:hover
+    background-color darken(#f0f0f0, 5%) !important
+
+  &__sujet
+    font-size 1.3em
+
+  &__referenceReglementaire
+    font-size 0.9em
+    align-self start
+
+  &__constat
+    margin-top 1em
+    padding-left 1em
+    border-left 5px solid darken(#f0f0f0, 50%)
+</style>

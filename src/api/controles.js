@@ -27,13 +27,16 @@ const controles = [
     comments: [],
     echanges: [
       {
-        question: {
-          author: 'Alain Champion',
-          text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
-          date: new Date('2018-09-16T14:00:00'),
-          attachments: []
-        },
-        reponses: []
+        sujet: 'Mesure des émissions atmosphériques canalisées par un organisme extérieur',
+        referenceReglementaire: "Articles 3.2.3., 3.2.8. et 8.2.1.2. de l'arrêté préfectoral du 28 juin 2017",
+        reponses: [
+          {
+            author: 'Alain Champion',
+            text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
+            date: new Date('2018-09-16T14:00:00'),
+            attachments: []
+          }
+        ]
       }
     ]
   },
@@ -77,13 +80,19 @@ const controles = [
     ],
     echanges: [
       {
-        question: {
-          author: 'Alain Champion',
-          text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
-          date: new Date('2018-11-16T14:00:00'),
-          attachments: []
-        },
+        sujet: 'Mesure des émissions atmosphériques canalisées par un organisme extérieur',
+        referencesReglementaires: [
+          "Article 3.2.3. de l'arrêté préfectoral du 28 juin 2017",
+          "Article 3.2.8. de l'arrêté préfectoral du 28 juin 2017",
+          "Article 8.2.1.2. de l'arrêté préfectoral du 28 juin 2017"
+        ],
         reponses: [
+          {
+            author: 'Alain Champion',
+            text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
+            date: new Date('2018-11-16T14:00:00'),
+            attachments: []
+          },
           {
             author: 'Monsieur Entreprise',
             text: 'Voici le document en question.',
@@ -101,16 +110,23 @@ const controles = [
             text: 'Merci.',
             date: new Date('2018-11-17T12:55:00')
           }
-        ]
+        ],
+        constat: {
+          type: 'conforme'
+        }
       },
       {
-        question: {
-          author: 'Alain Champion',
-          text: "Auriez-vous l'obligeance de me fournir une photo de la cuve ?",
-          date: new Date('2018-11-16T14:10:00'),
-          attachments: []
-        },
+        sujet: 'Autosurveillance des émissions canalisées de COV',
+        referencesReglementaires: [
+          "Article 8.2.1.1. de l'arrêté préfectoral du 28 juin 2017"
+        ],
         reponses: [
+          {
+            author: 'Alain Champion',
+            text: "Auriez-vous l'obligeance de me fournir une photo de la cuve ?",
+            date: new Date('2018-11-16T14:10:00'),
+            attachments: []
+          },
           {
             author: 'Monsieur Entreprise',
             text: 'Voici une photo.',
@@ -123,7 +139,12 @@ const controles = [
               }
             ]
           }
-        ]
+        ],
+        constat: {
+          type: 'non_conforme',
+          observation: 'Il faut réparer la fissure de la cuve.',
+          echeance: new Date('2019-02-17T12:55:00')
+        }
       }
     ]
   }
