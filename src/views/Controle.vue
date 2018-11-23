@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  p.display-1.mt-4.text-xs-center(v-if="error") Contrôle non existant. Mauvaise URL ?
+  p.display-1.mt-4.text-xs-center(v-if="error") {{ errorMessage }}
   v-container(v-if="controle")
     h1.display-2.text-xs-center.mb-3 Contrôle n°{{ controle.id }}
     v-stepper(v-model="controle.state")
@@ -70,22 +70,8 @@ div
                   time(:datetime="echange.constat.echeance") {{ echange.constat.echeance }}
 
         v-card.px-3
-          v-card-text
-            .subheading Fil de discussion
-            div(v-for="(message, index) in echange.reponses" :key="index")
-              v-layout.pl-2.my-3
-                div.mr-2 {{ message.date.toLocaleString() }}
-                strong.mr-2 {{ message.author }} :
-                div {{ message.text }}
-                div.ml-4(v-if="message.attachments")
-                  v-btn(flat
-                        v-for="(attachment, index) in message.attachments" :key="attachment.id"
-                        @click="openAttachment(attachment)"
-                        )
-                    v-icon(v-if="attachment.type == 'pdf'") picture_as_pdf
-                    v-icon(v-if="attachment.type == 'image'") photo
-                    span.ml-2 {{ attachment.filename }}
-              v-divider
+          v-card-text.subheading Fil de discussion
+            fh-message(v-for="message in echange.reponses" v-bind:key="message.id" v-bind:message="message")
             v-layout.pl-2.mt-2.align-end
               v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1" clearable)
               v-btn.mb-0
@@ -100,51 +86,26 @@ div
     p Les commentaires sont internes et ne sont seulement visibles que par les inspecteurs.
     v-card
       v-card-text
-        div(v-for="(comment, index) in controle.comments" :key="index")
-          v-layout.pl-2.my-2
-            div.mr-2 {{ comment.date.toLocaleString() }}
-            strong.mr-2 {{ comment.author }} :
-            div {{ comment.text }}
-            div.ml-4(v-if="comment.attachments")
-              v-btn(flat
-                    v-for="(attachment, index) in comment.attachments" :key="attachment.id"
-                    @click="openAttachment(attachment)"
-                    )
-                v-icon(v-if="attachment.type == 'pdf'") picture_as_pdf
-                v-icon(v-if="attachment.type == 'image'") photo
-                span.ml-2 {{ attachment.filename }}
-          v-divider
+        fh-message(v-for="comment in controle.comments"  v-bind:key="comment.id" v-bind:message="comment")
         v-layout.pl-2.mt-2.align-end
           v-textarea(box label="Commentaire" v-model="newComment" auto-grow hideDetails rows="1" clearable)
           v-btn.mb-0
             v-icon attach_file
           v-btn.mb-0(@click="addComment();" :disabled="!newComment" color="primary" title="Envoyer")
             v-icon send
-
-  v-dialog(v-model="showAttachmentDialog" scrollable width="800px")
-    v-card(v-if="dialogAttachment")
-      v-toolbar(color="primary" dark)
-        v-toolbar-title.headline Visualisation : {{ dialogAttachment.filename }}
-        v-spacer
-        v-toolbar-items
-          v-btn(flat dark @click="closeAttachment()")
-            v-icon close
-      v-card-text
-        pdf(v-if="dialogAttachment.type == 'pdf'" src="/test/lorem-ipsum.pdf")
-        v-img(v-if="dialogAttachment.type == 'image'" :src="`https://picsum.photos/800/600?image=${dialogAttachment.id}`")
 </template>
 
 <script>
-import pdf from 'vue-pdf'
 import { getControle } from '@/api/controles'
 import FhDetailControle from '@/components/FhDetailControle.vue'
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
+import FhMessage from '@/components/FhMessage.vue'
 
 export default {
   components: {
     FhDetailControle,
     FhDetailEtablissement,
-    pdf
+    FhMessage
   },
   props: {
     controleId: {
@@ -155,15 +116,14 @@ export default {
   data () {
     return {
       error: false,
+      errorMessage: '',
       newMessage: '', // TODO partagé, il faudra faire un composant
-      showAttachmentDialog: false,
-      dialogAttachment: null,
       newComment: '',
       controle: null // fetched on init
     }
   },
   async created () {
-    this.controle = await getControle(this.controleId, { etablissement: true })
+    this.controle = await getControle(this.controleId, { etablissement: true }).catch((err) => { this.errorMessage = err.message })
     if (!this.controle) {
       this.error = true
     }
@@ -199,20 +159,6 @@ export default {
         text: message,
         attachments: []
       })
-    },
-    openAttachment (attachment) {
-      this.dialogAttachment = attachment
-      // wait for content fetch to show the dialog
-      setTimeout(() => {
-        this.showAttachmentDialog = true
-      }, 200)
-    },
-    closeAttachment () {
-      this.showAttachmentDialog = false
-      // wait the end of the transition to clear the data
-      setTimeout(() => {
-        this.dialogAttachment = null
-      }, 500)
     },
     addComment () {
       this.controle.comments.push({
