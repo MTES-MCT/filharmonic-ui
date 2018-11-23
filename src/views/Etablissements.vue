@@ -22,7 +22,7 @@
               @click="list = false") Effacer
       v-list(two-line v-if="list")
         v-subheader Résultats
-        v-list-tile(@click="show(etablissement.id)", v-for="etablissement in etablissements", :key="etablissement.id")
+        v-list-tile(:to="`/etablissements/${etablissement.id}`" v-for="etablissement in etablissements" :key="etablissement.id")
           v-list-tile-action
             v-icon location_city
           v-list-tile-content
@@ -48,11 +48,6 @@ export default {
     this.etablissements = await listAllEtablissements()
     if (!this.etablissement) {
       this.errorNotFound = true
-    }
-  },
-  methods: {
-    show (id) {
-      this.$router.push('/etablissements/' + id)
     }
   }
 }
