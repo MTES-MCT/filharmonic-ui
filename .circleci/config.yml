@@ -1,0 +1,153 @@
+version: 2.1
+
+executors:
+  node:
+    docker:
+      - image: circleci/node:10.13.0-browsers
+    working_directory: ~/project/filharmonic-ui
+
+jobs:
+  install-dependencies:
+    executor: node
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v3-cache-{{ checksum "yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v3-cache-
+      # Update from yarn 1.10 to 1.12 to enable the audit command
+      - run: yarn global add yarn@1.12.3
+      - run: yarn install --frozen-lockfile
+      - save_cache:
+          key: v3-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/Cypress/
+            - ~/.cache/yarn/
+            - ~/.config/yarn/
+            - ~/.yarn/
+            - node_modules/
+      - persist_to_workspace:
+          root: '~'
+          paths:
+            - .cache/Cypress/
+            - .cache/yarn/
+            - .config/yarn/
+            - .yarn/
+            - project/filharmonic-ui/
+
+  lint:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: '~'
+      - run: yarn run lint
+
+  test-unit:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: '~'
+      - run: yarn run test:unit
+
+  test-e2e:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: '~'
+      - run: yarn run test:e2e --headless
+      - store_artifacts:
+          path: tests/e2e/videos
+      - store_artifacts:
+          path: tests/e2e/screenshots
+
+  check-outdated-dependencies:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: '~'
+      - run: yarn outdated
+
+  check-vulnerabilities:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: '~'
+      - run: $(yarn global bin)/yarn audit
+
+  build:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: '~'
+      - run: yarn run build
+      - persist_to_workspace:
+          root: '~'
+          paths:
+            - project/filharmonic-ui/dist
+
+  build-docker:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: '~'
+      - setup_remote_docker
+      - run: |
+          if [[ -z "$DOCKERHUB_USER" || -z "$DOCKERHUB_PASSWORD" ]]; then
+            echo "Missing DOCKERHUB_USER or DOCKERHUB_PASSWORD environment variables!"
+            exit 1
+          fi
+          docker build -t betagouv/filharmonic-ui:$CIRCLE_SHA1 .
+
+          echo "$DOCKERHUB_PASSWORD" | docker login -u $DOCKERHUB_USER --password-stdin
+          docker push betagouv/filharmonic-ui:$CIRCLE_SHA1
+          if [[ "$CIRCLE_BRANCH" = "master" ]]; then
+            docker tag betagouv/filharmonic-ui:$CIRCLE_SHA1 betagouv/filharmonic-ui:latest
+            docker push betagouv/filharmonic-ui:latest
+          fi
+
+workflows:
+  weekly-dependency-check:
+    triggers:
+      - schedule:
+          cron: "0 0 * * 0" # every sunday
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - install-dependencies:
+          requires: []
+      - check-outdated-dependencies:
+          requires:
+            - install-dependencies
+      - check-vulnerabilities:
+          requires:
+            - install-dependencies
+  commit:
+    jobs:
+      - install-dependencies:
+          requires: []
+
+      - lint:
+          requires:
+            - install-dependencies
+      - test-unit:
+          requires:
+            - install-dependencies
+      - test-e2e:
+          requires:
+            - install-dependencies
+      - check-vulnerabilities:
+          requires:
+            - install-dependencies
+
+      - build:
+          requires:
+            - lint
+            - test-unit
+            - test-e2e
+
+      - build-docker:
+          requires:
+            - build
