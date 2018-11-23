@@ -1,44 +1,29 @@
 <template lang="pug">
-  v-chip(:color="color" text-color="white") {{ nom }}
+  v-chip(:color="color" text-color="white") {{ label }}
 </template>
 
 <script>
+import { allowedStates } from '@/api/controles'
 export default {
   name: 'FhEtatControle',
   props: {
-    etat: {
-      type: Number,
-      default: 0
+    state: {
+      type: String,
+      default: null
     }
   },
-  data () {
-    return {
-      nom: '',
-      color: ''
-    }
-  },
-  created () {
-    switch (this.etat) {
-      case 1:
-        this.color = 'primary'
-        this.nom = 'Créé'
-        break
-      case 2:
-        this.color = 'green'
-        this.nom = 'En cours'
-        break
-      case 3:
-        this.color = 'red'
-        this.nom = 'Validé'
-        break
-      case 4:
-        this.color = 'grey'
-        this.nom = 'Terminé'
-        break
-      default:
-        this.color = 'grey'
-        this.nom = '?'
-        break
+  computed: {
+    stateInfos () {
+      return allowedStates[this.state] || {
+        label: '?',
+        color: 'grey'
+      }
+    },
+    label () {
+      return this.stateInfos.label
+    },
+    color () {
+      return this.stateInfos.color
     }
   }
 }

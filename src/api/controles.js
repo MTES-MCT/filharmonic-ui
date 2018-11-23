@@ -9,7 +9,7 @@ const controles = [
     annonce: true,
     origine: 'plan_de_controle',
     favorite: false,
-    state: 2, // en cours
+    state: 'encours',
     themes: [
       "Rejets dans l'air",
       'COV'
@@ -43,7 +43,7 @@ const controles = [
     annonce: true,
     origine: 'plan_de_controle',
     favorite: true,
-    state: 2, // en cours
+    state: 'encours',
     themes: [
       "Rejets dans l'air",
       "Rejets dans l'eau",
@@ -138,6 +138,21 @@ const controles = [
     ]
   }
 ]
+
+export const allowedStates = {
+  encours: {
+    label: 'En cours',
+    color: 'green'
+  },
+  valide: {
+    label: 'Validé',
+    color: 'red'
+  },
+  termine: {
+    label: 'Terminé',
+    color: 'grey'
+  }
+}
 
 export const listControles = util.slow(() => {
   return controles
