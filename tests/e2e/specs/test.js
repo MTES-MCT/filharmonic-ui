@@ -3,6 +3,6 @@
 describe('My First Test', () => {
   it('Visits the app root url', () => {
     cy.visit('/')
-    cy.contains('h1', "Bienvenue sur Fil'Harmonic")
+    cy.contains('div', "Fil'Harmonic")
   })
 })
