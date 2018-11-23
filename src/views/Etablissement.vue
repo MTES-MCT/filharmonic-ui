@@ -37,7 +37,7 @@ div
             | Nouveau contrôle
         v-list-tile(@click="show(controle.id)", v-for="controle in controles", :key="controle.id")
           v-list-tile-action
-            v-chip(:color="controle.state === 2 ? 'green' : 'grey'" text-color="white") {{ controle.state === 2 ? 'En cours' : 'Terminé' }}
+            fh-etat-controle(:etat="controle.state")
           v-list-tile-content
             v-list-tile-title Contrôle n° {{ controle.id }} du {{ controle.date.toLocaleDateString() }}
         v-divider
@@ -47,7 +47,11 @@ div
 <script>
 import { getEtablissement } from '@/api/etablissements'
 import { getControlesByEtablissement } from '@/api/controles'
+import FhEtatControle from '@/components/FhEtatControle.vue'
 export default {
+  components: {
+    FhEtatControle
+  },
   props: {
     id: {
       type: String,
