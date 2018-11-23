@@ -67,7 +67,6 @@ v-container.pa-0(:class="containerClass")
           img(:src="inspecteur.photoURL")
         | {{ inspecteur.name }}
     v-flex(v-else)
-      | {{ controle.inspecteurs }}
       v-autocomplete(v-model="controle.inspecteurs" :items="inspecteurs"
                     chips dense multiple
                     item-text="name" item-value="id"
