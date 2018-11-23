@@ -39,7 +39,7 @@ div
           v-list-tile-action
             v-chip(:color="controle.state === 2 ? 'green' : 'grey'" text-color="white") {{ controle.state === 2 ? 'En cours' : 'Terminé' }}
           v-list-tile-content
-            v-list-tile-title Contrôle n° {{ controle.id }} du {{ controle.date.toLocaleDateString() }}
+            v-list-tile-title Contrôle n° {{ controle.id }} du {{ controle.date }}
         v-divider
 
 </template>
