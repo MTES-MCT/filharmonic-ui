@@ -35,11 +35,11 @@ div
           v-btn(:to="`/etablissements/${etablissement.id}/controles/new`" round color="primary" small title="Démarrer un contrôle")
             v-icon(left) add
             | Nouveau contrôle
-        v-list-tile(@click="show(controle.id)", v-for="controle in controles", :key="controle.id")
+        v-list-tile(:to="`/controles/${controle.id}`" v-for="controle in controles" :key="controle.id")
           v-list-tile-action
             fh-etat-controle(:etat="controle.state")
           v-list-tile-content
-            v-list-tile-title Contrôle n° {{ controle.id }} du {{ controle.date.toLocaleDateString() }}
+            v-list-tile-title Contrôle n° {{ controle.id }} du {{ controle.date }}
         v-divider
 
 </template>
@@ -73,11 +73,6 @@ export default {
     this.controles = await getControlesByEtablissement(this.$route.params.id)
     if (!this.controles) {
       this.errorNotFound = true
-    }
-  },
-  methods: {
-    show (id) {
-      this.$router.push('/controles/' + id)
     }
   }
 }

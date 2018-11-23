@@ -9,6 +9,7 @@ import Page404 from '@/views/Page404.vue'
 import Controles from '@/views/Controles.vue'
 import Controle from '@/views/Controle.vue'
 import NouveauControle from '@/views/NouveauControle.vue'
+import DetailControle from '@/views/DetailControle.vue'
 import { requireAuth } from '@/api/authentication'
 
 Vue.use(Router)
@@ -60,6 +61,12 @@ export default new Router({
           path: '/controles/:controleId',
           name: 'controle',
           component: Controle,
+          props: true
+        },
+        {
+          path: '/controles/:controleId/details',
+          name: 'details-controle',
+          component: DetailControle,
           props: true
         }
       ]

@@ -1,9 +1,10 @@
 import * as util from '@/util'
+import { getEtablissement } from '@/api/etablissements'
 
 const controles = [
   {
     id: '1',
-    date: new Date('2018-09-10'),
+    date: '2018-09-10',
     type: 'approfondi',
     annonce: true,
     origine: 'plan_de_controle',
@@ -16,14 +17,7 @@ const controles = [
     inspecteurs: [
       1
     ],
-    etablissement: {
-      id: '0999.00002',
-      nom: 'B',
-      raison: 'B SARL',
-      activite: 'Fabrication de matrices composites',
-      regimeSeveso: '',
-      adresse: '234 rue de Paris'
-    },
+    etablissementId: '0999.00002',
     comments: [],
     echanges: [
       {
@@ -44,7 +38,7 @@ const controles = [
   },
   {
     id: '2',
-    date: new Date('2018-11-15'),
+    date: '2018-11-15',
     type: 'approfondi',
     annonce: true,
     origine: 'plan_de_controle',
@@ -60,14 +54,7 @@ const controles = [
       1,
       2
     ],
-    etablissement: {
-      id: '0999.00001',
-      nom: 'A',
-      raison: 'A SARL',
-      activite: 'Fabrication de matrices composites',
-      regimeSeveso: '',
-      adresse: '123 rue de Paris'
-    },
+    etablissementId: '0999.00001',
     comments: [
       {
         author: 'Corine Dupont',
@@ -145,28 +132,34 @@ const controles = [
         constat: {
           type: 'non_conforme',
           observation: 'Il faut réparer la fissure de la cuve.',
-          echeance: new Date('2019-02-17T12:55:00')
+          echeance: '2019-02-17'
         }
       }
     ]
   }
 ]
 
-export const listeControles = util.slow(() => {
+export const listControles = util.slow(() => {
   return controles
 })
 
-export const getControle = util.slow((id) => {
-  return controles.find(controle => controle.id === id)
+export const getControle = util.slow(async (id, options = {}) => {
+  const controle = controles.find(controle => controle.id === id)
+  if (!controle) {
+    throw new Error(`Controle ${id} non trouvé`)
+  }
+  if (options.etablissement) {
+    controle.etablissement = await getEtablissement(controle.etablissementId)
+  }
+  return controle
 })
 
 export const getControlesByEtablissement = util.slow((etablissementId) => {
-  return controles.filter(controle => controle.etablissement.id === etablissementId)
+  return controles.filter(controle => controle.etablissementId === etablissementId)
 })
 
 export const createControle = util.slow((controle) => {
   controle.id = '' + new Date().getTime() % 1000
-  controle.date = new Date(controle.date)
   controle.echanges = []
   controle.comments = []
   controles.push(controle)

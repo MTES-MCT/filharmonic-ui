@@ -1,8 +1,11 @@
 <template lang="pug">
 v-container.grid-list-lg.controle-form
-  v-alert.text-xs-center(type="error" :value="error") L'établissement '#[strong {{ this.$route.params.id }}]' ne semble pas exister. Mauvaise URL ?
-  div(v-if="controle.etablissement")
-    h1.display-2 Nouveau contrôle
+  v-alert.text-xs-center(type="error" :value="error") Le contrôle '#[strong {{ controleId }}]' ne semble pas exister. Mauvaise URL ?
+  div(v-if="controle")
+    h1.display-2
+      v-btn(icon large :to="`/controles/${controle.id}`" title="Revenir au contrôle")
+        v-icon(x-large) chevron_left
+      | Contrôle n°{{ controle.id }}
 
     v-card.mt-4
       v-toolbar(flat)
@@ -30,50 +33,33 @@ v-container.grid-list-lg.controle-form
 
     h4.display-1.mt-4 Détails du contrôle
 
-    v-form(ref="form" v-model="validForm" lazy-validation)
-      fh-detail-controle(:controle="controle")
-      v-btn(block @click="createControle" :disabled="!validForm" color="primary") Créer le contrôle
+    fh-detail-controle(:controle="controle")
 </template>
 
 <script>
 import FhDetailControle from '@/components/FhDetailControle.vue'
-import { createControle } from '@/api/controles'
-import { getEtablissement } from '@/api/etablissements'
+import { getControle } from '@/api/controles'
 
 export default {
   components: {
     FhDetailControle
   },
+  props: {
+    controleId: {
+      type: String,
+      required: true
+    }
+  },
   data () {
     return {
       error: false,
-      controle: {
-        date: '',
-        type: 'courant',
-        annonce: true,
-        origine: 'plan_de_controle',
-        circonstances: '',
-        detailCirconstances: '',
-        inspecteurs: [],
-        themes: [],
-        etablissementId: this.$route.params.id,
-        etablissement: null // fetched on init
-      },
-      validForm: false
+      controle: null // fetched on init
     }
   },
   async created () {
-    this.controle.etablissement = await getEtablissement(this.$route.params.id)
-    if (!this.controle.etablissement) {
+    this.controle = await getControle(this.controleId, { etablissement: true })
+    if (!this.controle) {
       this.error = true
-    }
-  },
-  methods: {
-    async createControle () {
-      if (this.$refs.form.validate()) {
-        const controleId = await createControle(this.controle)
-        this.$router.push(`/controles/${controleId}`)
-      }
     }
   }
 }

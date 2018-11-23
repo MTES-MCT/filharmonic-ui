@@ -1,8 +1,9 @@
 <template lang="pug">
-v-container.grid-list-xl
+v-container.pa-0(:class="containerClass")
   v-layout.align-center
-    v-flex.subheading Date du contrôle
-    v-flex.text-xs-right
+    v-flex.subheading.mr-2 Date du contrôle
+    v-flex.text-xs-right(v-if="readonly") {{ controle.date }}
+    v-flex.text-xs-right(v-else)
       v-menu(v-model="showDatePicker"
               :close-on-content-click="false"
               lazy
@@ -21,49 +22,61 @@ v-container.grid-list-xl
         v-date-picker(v-model="controle.date" @input="showDatePicker = false" no-title)
 
   v-layout.align-center
-    v-flex.subheading Type
-    v-flex
-      v-radio-group.justify-end.mt-0(row hide-details v-model="controle.type")
+    v-flex.subheading.mr-2 Type
+    v-flex.text-xs-right(v-if="readonly") {{ controle.type | capitalize }}
+    v-flex.justify-end(v-else)
+      v-radio-group.justify-end.mt-0(row v-model="controle.type" hide-details)
         v-radio(label="Approfondi" value="approfondi")
         v-radio(label="Courant" value="courant")
         v-radio(label="Ponctuel" value="ponctuel")
 
   v-layout.align-center
-    v-flex.subheading Annoncé
-    v-flex
-      v-checkbox.pr-3.justify-end(v-model="controle.annonce" label="Annoncé" hide-details)
+    v-flex.subheading.mr-2 Annoncé
+    v-flex.text-xs-right(v-if="readonly") {{ controle.annonce | format-yesno }}
+    v-flex(v-else)
+      v-checkbox.mt-0.pr-3.justify-end(v-model="controle.annonce" label="Annoncé" hide-details :readonly="readonly")
 
   v-layout.align-center
-    v-flex.subheading Origine
-    v-flex
+    v-flex.subheading.mr-2 Origine
+    v-flex.text-xs-right(v-if="readonly") {{ controle.origine | format-origine }}
+    v-flex(v-else)
       v-radio-group.mt-0.justify-end(row hide-details v-model="controle.origine")
         v-radio(label="Plan de contrôle" value="plan_de_controle")
         v-radio(label="Circonstancielle" value="circonstancielle")
 
   v-layout.align-center(v-if="controle.origine === 'circonstancielle'")
-    v-flex.subheading Circonstances
-    v-flex
-      v-radio-group.mt-0.justify-end(row v-model="controle.circonstances" hide-details required :rules="notEmpty")
+    v-flex.subheading.mr-2 Circonstances
+    v-flex.text-xs-right(v-if="readonly") {{ controle.circonstances | capitalize }}
+    v-flex(v-else)
+      v-radio-group.mt-0.justify-end(row v-model="controle.circonstances" hide-details required :rules="notEmpty" :readonly="readonly")
         v-radio(label="Incident" value="incident")
         v-radio(label="Plainte" value="plainte")
         v-radio(label="Autre" value="autre")
 
   v-layout.align-center(v-if="controle.circonstances === 'autre'")
-    v-flex.subheading Détail des circonstances
-    v-flex
-      v-text-field(v-model="controle.detailCirconstances" required :rules="notEmpty")
+    v-flex.subheading.mr-2 Détail des circonstances
+    v-flex.text-xs-right(v-if="readonly") {{ controle.detailCirconstances }}
+    v-flex(v-else)
+      v-text-field(v-model="controle.detailCirconstances" required :rules="notEmpty" :readonly="readonly")
 
   v-layout.align-center
-    v-flex.subheading Inspecteurs
-    v-flex
+    v-flex.subheading.mr-2 Inspecteurs
+    v-flex.text-xs-right(v-if="readonly")
+      v-chip(v-for="inspecteur in inspecteursControle" :key="inspecteur.id" small)
+        v-avatar
+          img(:src="inspecteur.photoURL")
+        | {{ inspecteur.name }}
+    v-flex(v-else)
+      | {{ controle.inspecteurs }}
       v-autocomplete(v-model="controle.inspecteurs" :items="inspecteurs"
-                    chips deletable-chips dense multiple
+                    chips dense multiple
                     item-text="name" item-value="id"
                     placeholder="Inspecteurs..."
                     required :rules="inspecteursRules"
+                    :readonly="readonly"
                     )
         template(slot="selection" slot-scope="data")
-          v-chip(close @input="removeInspecteur(data.item)")
+          v-chip(:close="!readonly" @input="removeInspecteur(data.item)")
             v-avatar
               img(:src="data.item.photoURL")
             | {{ data.item.name }}
@@ -74,13 +87,16 @@ v-container.grid-list-xl
             v-list-tile-title(v-html="data.item.name")
 
   v-layout.align-center
-    v-flex.subheading Thèmes
-    v-flex.text-xs-right
+    v-flex.subheading.mr-2 Thèmes
+    v-flex.text-xs-right(v-if="readonly")
+      v-chip(v-for="(theme, index) in controle.themes" :key="index" small) {{ theme }}
+    v-flex.text-xs-right(v-else)
       v-combobox(v-model="controle.themes" :items="themes"
                 chips small-chips deletable-chips dense multiple
                 :search-input.sync="themeSearch"
                 placeholder="Thèmes..."
                 required :rules="themesRules"
+                :readonly="readonly"
                 )
         template(slot="no-data")
           v-list-tile
@@ -89,7 +105,8 @@ v-container.grid-list-xl
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { listInspecteurs } from '@/api/users'
+import { listThemes } from '@/api/themes'
 
 export default {
   name: 'FhDetailControle',
@@ -97,12 +114,14 @@ export default {
     controle: {
       type: Object,
       required: true
+    },
+    readonly: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
-      valid: true,
-      name: '',
       showDatePicker: false,
       themeSearch: null,
 
@@ -114,21 +133,31 @@ export default {
       ],
       themesRules: [
         v => v.length > 0 || 'Il faut choisir au moins un thème'
-      ]
+      ],
+
+      // fetched on init
+      inspecteurs: [],
+      themes: []
     }
   },
   computed: {
-    ...mapState([
-      'themes'
-    ]),
-    ...mapGetters([
-      'inspecteurs'
-    ]),
     controleOrigine () {
       return this.controle.origine
     },
     controleCirconstances () {
       return this.controle.circonstances
+    },
+    containerClass () {
+      return `grid-list-${this.readonly ? 'sm' : 'xl'}`
+    },
+    inspecteursControle () {
+      if (!this.inspecteurs.length) {
+        return []
+      }
+      return this.controle.inspecteurs
+        .map(inspecteurId => {
+          return this.inspecteurs.find(inspecteur => inspecteur.id === inspecteurId)
+        })
     }
   },
   watch: {
@@ -145,6 +174,9 @@ export default {
         this.controle.detailCirconstances = ''
       }
     }
+  },
+  async created () {
+    [this.inspecteurs, this.themes] = [await listInspecteurs(), await listThemes()]
   },
   methods: {
     removeTheme (theme) {

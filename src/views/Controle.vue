@@ -1,8 +1,8 @@
 <template lang="pug">
 div
-  p.display-1.mt-4.text-xs-center(v-if="errorNotFound") Contrôle non existant. Mauvaise URL ?
+  p.display-1.mt-4.text-xs-center(v-if="error") Contrôle non existant. Mauvaise URL ?
   v-container(v-if="controle")
-    h1.text-xs-center.display-1.font-weight-bold.mb-3 Contrôle n°{{ controle.id }} du {{ controle.date.toLocaleDateString() }}
+    h1.display-2.text-xs-center.mb-3 Contrôle n°{{ controle.id }}
     v-stepper(v-model="controle.state")
       v-stepper-header
         v-stepper-step(step="1" complete) Création
@@ -17,72 +17,14 @@ div
       v-flex.xs12.md6.pa-2
         v-card
           v-toolbar(flat)
-            v-toolbar-title Détails du contrôle
+            v-toolbar-title
+              | Détails du contrôle
+            v-spacer
+            v-toolbar-items
+              v-btn(flat :to="`/controles/${this.controleId}/details`" title="Modifier le contrôle")
+                v-icon(medium) edit
           v-card-text
-            v-container.pa-0.grid-list-sm
-              v-layout.align-center
-                v-flex Date du contrôle
-                v-flex.text-xs-right {{ controle.date.toLocaleDateString() }}
-              v-layout.align-center
-                v-flex État
-                v-flex.text-xs-right
-                  v-chip(color="green" text-color="white") En cours
-              v-layout.align-center
-                v-flex Type
-                v-flex
-                  v-radio-group.mt-0.justify-end(row hide-details v-model="controle.type")
-                    v-radio(label="Approfondi" value="approfondi")
-                    v-radio(label="Courant" value="courant")
-                    v-radio(label="Ponctuel" value="ponctuel")
-              v-layout.align-center
-                v-flex Annoncé
-                v-flex.text-xs-right
-                  v-radio-group.mt-0.justify-end(row hide-details v-model="controle.annonce")
-                    v-radio(label="Oui" value="true")
-                    v-radio(label="Non" value="false")
-              v-layout.align-center
-                v-flex Origine
-                v-flex.text-xs-right
-                  v-radio-group.mt-0.justify-end(row hide-details v-model="controle.origine")
-                    v-radio(label="Plan de contrôle" value="plan_de_controle")
-                    v-radio(label="Circonstancielle" value="circonstancielle")
-              v-layout.align-center(v-if="controle.origine == 'circonstancielle'")
-                v-flex Circonstances
-                v-flex.text-xs-right
-                  v-radio-group.mt-0.justify-end(row hide-details v-model="controle.circonstances")
-                    v-radio(label="Incident" value="incident")
-                    v-radio(label="Plainte" value="plainte")
-                    v-radio(label="Autre" value="autre")
-              v-layout.align-center
-                v-flex Inspecteurs
-                v-flex.text-xs-right
-                  v-autocomplete(v-model="controle.inspecteurs" :items="inspecteurs"
-                                chips deletable-chips dense multiple hide-details
-                                item-text="name" item-value="id"
-                                placeholder="Inspecteurs..."
-                                )
-                    template(slot="selection" slot-scope="data")
-                      v-chip(close @input="removeInspecteur(data.item)")
-                        v-avatar
-                          img(:src="data.item.photoURL")
-                        | {{ data.item.name }}
-                    template(slot="item" slot-scope="data")
-                      v-list-tile-avatar
-                        img(:src="data.item.photoURL")
-                      v-list-tile-content
-                        v-list-tile-title(v-html="data.item.name")
-              v-layout.align-center
-                v-flex Thèmes
-                v-flex.text-xs-right
-                  v-combobox(v-model="controle.themes" :items="themes"
-                            chips small-chips deletable-chips dense multiple hide-details
-                            :search-input.sync="themeSearch"
-                            placeholder="Thèmes..."
-                            )
-                    template(slot="no-data")
-                      v-list-tile
-                        .subheading Créer le thème
-                        v-chip(label small) {{ themeSearch }}
+            fh-detail-controle(:controle="controle" readonly)
 
       v-flex.xs12.md6.pa-2
         v-card
@@ -96,7 +38,7 @@ div
               v-layout
                 v-flex Nom usuel
                 v-flex.text-xs-right
-                  router-link(to="/etablissements/1") {{ controle.etablissement.nom }}
+                  router-link(:to="`/etablissements/${controle.etablissementId}`") {{ controle.etablissement.nom }}
               v-layout
                 v-flex Raison sociale
                 v-flex.text-xs-right {{ controle.etablissement.raison }}
@@ -149,7 +91,7 @@ div
                 span.subheading.mr-2 Délai de mise en conformité :
                 v-flex
                   | Avant le&nbsp;
-                  time(:datetime="echange.constat.echeance") {{ echange.constat.echeance.toLocaleDateString() }}
+                  time(:datetime="echange.constat.echeance") {{ echange.constat.echeance }}
 
         v-card.px-3
           v-card-text
@@ -218,11 +160,12 @@ div
 
 <script>
 import pdf from 'vue-pdf'
-import { mapState, mapGetters } from 'vuex'
 import { getControle } from '@/api/controles'
+import FhDetailControle from '@/components/FhDetailControle.vue'
 
 export default {
   components: {
+    FhDetailControle,
     pdf
   },
   props: {
@@ -233,27 +176,18 @@ export default {
   },
   data () {
     return {
-      errorNotFound: false,
+      error: false,
       newMessage: '', // TODO partagé, il faudra faire un composant
       showAttachmentDialog: false,
       dialogAttachment: null,
       newComment: '',
-      themeSearch: null,
-      controle: null
+      controle: null // fetched on init
     }
   },
-  computed: {
-    ...mapState([
-      'themes'
-    ]),
-    ...mapGetters([
-      'inspecteurs'
-    ])
-  },
   async created () {
-    this.controle = await getControle(this.controleId)
+    this.controle = await getControle(this.controleId, { etablissement: true })
     if (!this.controle) {
-      this.errorNotFound = true
+      this.error = true
     }
   },
   methods: {
