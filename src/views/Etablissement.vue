@@ -1,43 +1,17 @@
 <template lang="pug">
-div
-  p.display-1.mt-4.text-xs-center(v-if="errorNotFound") Etablissement non existant. Mauvaise URL ?
-  v-container(v-if="etablissement")
-    v-flex.xs12.md6.pa-2
-      v-card
-        v-toolbar(flat)
-          v-toolbar-title Etablissement {{ etablissement.nom }} n°{{ etablissement.id }}
-        v-card-text
-          v-container.pa-0.grid-list-sm
-            v-layout
-              v-flex S3IC
-              v-flex.text-xs-right {{ etablissement.id }}
-            v-layout
-              v-flex Nom usuel
-              v-flex.text-xs-right {{ etablissement.nom }}
-            v-layout
-              v-flex Raison sociale
-              v-flex.text-xs-right {{ etablissement.raison }}
-            v-layout
-              v-flex Adresse
-              v-flex.text-xs-right {{ etablissement.adresse }}
-            v-layout
-              v-flex Activité principale
-              v-flex.text-xs-right {{ etablissement.activite }}
-            v-layout
-              v-flex IED-MTD
-              v-flex.text-xs-right {{ etablissement.iedmtd }}
-            v-layout
-              v-flex Régime Seveso
-              v-flex.text-xs-right {{ etablissement.seveso }}
-      v-list(two-line subheader)
+  div
+    p.display-1.mt-4.text-xs-center(v-if="error") Etablissement non existant. Mauvaise URL ?
+    v-container
+      fh-detail-etablissement(v-if="!error", :etablissement="etablissement", :expand="expandEtablissement")
+      v-list(two-line subheader v-if="!error")
         v-subheader
           v-flex Contrôles
-          v-btn(:to="`/etablissements/${etablissement.id}/controles/new`" round color="primary" small title="Démarrer un contrôle")
+          v-btn(:to="`/etablissements/${id}/controles/new`" round color="primary" small title="Démarrer un contrôle")
             v-icon(left) add
             | Nouveau contrôle
         v-list-tile(:to="`/controles/${controle.id}`" v-for="controle in controles" :key="controle.id")
           v-list-tile-action
-            fh-etat-controle(:etat="controle.state")
+            fh-etat-controle(:state="controle.state")
           v-list-tile-content
             v-list-tile-title Contrôle n° {{ controle.id }} du {{ controle.date }}
         v-divider
@@ -48,31 +22,33 @@ div
 import { getEtablissement } from '@/api/etablissements'
 import { getControlesByEtablissement } from '@/api/controles'
 import FhEtatControle from '@/components/FhEtatControle.vue'
+import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 export default {
   components: {
-    FhEtatControle
-  },
-  props: {
-    id: {
-      type: String,
-      default: null
-    }
+    FhEtatControle,
+    FhDetailEtablissement
   },
   data () {
     return {
-      errorNotFound: false,
+      error: false,
+      controles: [],
+      id: '',
       etablissement: null,
-      controles: []
+      expandEtablissement: [ true ]
     }
   },
   async created () {
-    this.etablissement = await getEtablissement(this.$route.params.id)
-    if (!this.etablissement) {
-      this.errorNotFound = true
+    this.id = this.$route.params.id
+    if (!this.id) {
+      this.error = true
     }
-    this.controles = await getControlesByEtablissement(this.$route.params.id)
+    this.etablissement = await getEtablissement(this.id)
+    if (!this.etablissement) {
+      this.error = true
+    }
+    this.controles = await getControlesByEtablissement(this.id)
     if (!this.controles) {
-      this.errorNotFound = true
+      this.error = true
     }
   }
 }

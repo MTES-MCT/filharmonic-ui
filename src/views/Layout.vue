@@ -68,7 +68,7 @@ v-app
               img(:src="principal.avatar" :alt="principal.nom")
             v-list-tile-content
               v-list-tile-title {{ principal.nom }}
-              v-list-tile-sub-title {{ principal.profil }}
+              v-list-tile-sub-title {{ principal.profil | capitalize }}
       v-card-actions
         v-btn(@click="logout()" color="primary") Déconnexion
 

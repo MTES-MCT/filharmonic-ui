@@ -26,31 +26,7 @@ div
           v-card-text
             fh-detail-controle(:controle="controle" readonly)
 
-      v-flex.xs12.md6.pa-2
-        v-card
-          v-toolbar(flat)
-            v-toolbar-title Etablissement contrôlé
-          v-card-text
-            v-container.pa-0.grid-list-sm
-              v-layout
-                v-flex S3IC
-                v-flex.text-xs-right {{ controle.etablissement.id }}
-              v-layout
-                v-flex Nom usuel
-                v-flex.text-xs-right
-                  router-link(:to="`/etablissements/${controle.etablissementId}`") {{ controle.etablissement.nom }}
-              v-layout
-                v-flex Raison sociale
-                v-flex.text-xs-right {{ controle.etablissement.raison }}
-              v-layout
-                v-flex Adresse
-                v-flex.text-xs-right {{ controle.etablissement.adresse }}
-              v-layout
-                v-flex Activité principale
-                v-flex.text-xs-right {{ controle.etablissement.activite }}
-              v-layout
-                v-flex Régime Seveso
-                v-flex.text-xs-right Haut
+        fh-detail-etablissement(v-if="!error", :etablissement="controle.etablissement")
 
     h4.display-1.my-4
       | Échanges
@@ -162,10 +138,12 @@ div
 import pdf from 'vue-pdf'
 import { getControle } from '@/api/controles'
 import FhDetailControle from '@/components/FhDetailControle.vue'
+import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 
 export default {
   components: {
     FhDetailControle,
+    FhDetailEtablissement,
     pdf
   },
   props: {

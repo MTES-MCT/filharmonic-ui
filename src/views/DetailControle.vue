@@ -7,29 +7,7 @@ v-container.grid-list-lg.controle-form
         v-icon(x-large) chevron_left
       | Contrôle n°{{ controle.id }}
 
-    v-card.mt-4
-      v-toolbar(flat)
-        v-toolbar-title Etablissement {{ controle.etablissement.nom }} n°{{ controle.etablissement.id }}
-      v-card-text
-        v-container.pa-0.grid-list-sm
-          v-layout
-            v-flex S3IC
-            v-flex.text-xs-right {{ controle.etablissement.id }}
-          v-layout
-            v-flex Nom usuel
-            v-flex.text-xs-right {{ controle.etablissement.nom }}
-          v-layout
-            v-flex Raison sociale
-            v-flex.text-xs-right {{ controle.etablissement.raison }}
-          v-layout
-            v-flex Adresse
-            v-flex.text-xs-right {{ controle.etablissement.adresse }}
-          v-layout
-            v-flex Activité principale
-            v-flex.text-xs-right {{ controle.etablissement.activite }}
-          v-layout
-            v-flex Régime Seveso
-            v-flex.text-xs-right Haut
+    fh-detail-etablissement(v-if="!error", :etablissement="controle.etablissement")
 
     h4.display-1.mt-4 Détails du contrôle
 
@@ -38,11 +16,13 @@ v-container.grid-list-lg.controle-form
 
 <script>
 import FhDetailControle from '@/components/FhDetailControle.vue'
+import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 import { getControle } from '@/api/controles'
 
 export default {
   components: {
-    FhDetailControle
+    FhDetailControle,
+    FhDetailEtablissement
   },
   props: {
     controleId: {
