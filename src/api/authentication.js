@@ -1,6 +1,7 @@
 import * as util from '@/util'
 
 const principal = {
+  id: 1,
   identifiant: 'alain.champion',
   nom: 'Alain Champion',
   profil: 'inspecteur',

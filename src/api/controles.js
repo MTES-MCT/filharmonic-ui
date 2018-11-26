@@ -1,5 +1,6 @@
 import * as util from '@/util'
 import { getEtablissement } from '@/api/etablissements'
+import { getUser } from '@/api/users'
 
 const controles = [
   {
@@ -34,7 +35,12 @@ const controles = [
           }
         ]
       }
-    ]
+    ],
+    lastEvent: {
+      date: new Date('2018-11-24T09:50:00'),
+      authorId: 4,
+      type: 'message'
+    }
   },
   {
     id: '2',
@@ -135,7 +141,12 @@ const controles = [
           echeance: '2019-02-17'
         }
       }
-    ]
+    ],
+    lastEvent: {
+      date: new Date('2018-11-22T08:50:00'),
+      authorId: 2,
+      type: 'commentaire'
+    }
   }
 ]
 
@@ -167,6 +178,18 @@ export const getControle = util.slow(async (id, options = {}) => {
     controle.etablissement = await getEtablissement(controle.etablissementId)
   }
   return controle
+})
+
+export const listAssignedControles = util.slow(userId => {
+  return Promise.all(
+    controles
+      .filter(controle => controle.inspecteurs.includes(userId))
+      .map(async controle => {
+        controle.etablissement = await getEtablissement(controle.etablissementId)
+        controle.lastEvent.author = await getUser(controle.lastEvent.authorId)
+        return controle
+      })
+  )
 })
 
 export const getControlesByEtablissement = util.slow((etablissementId) => {
