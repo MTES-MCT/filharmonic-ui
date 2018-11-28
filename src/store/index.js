@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { listControlesOuverts } from '@/api/controles'
 
 Vue.use(Vuex)
 
@@ -9,8 +10,19 @@ Vue.use(Vuex)
 // }
 
 export default new Vuex.Store({
-  state: {},
+  state: {
+    controlesOuverts: []
+  },
   getters: {},
-  mutations: {},
-  actions: {}
+  mutations: {
+    loadControlesOuverts (state, controlesOuverts) {
+      state.controlesOuverts = controlesOuverts
+    }
+  },
+  actions: {
+    async loadControlesOuverts ({ commit }) {
+      const controlesOuverts = await listControlesOuverts(1) // TODO récupérer les infos de l'utilisateur à partir du store
+      commit('loadControlesOuverts', controlesOuverts)
+    }
+  }
 })

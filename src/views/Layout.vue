@@ -16,18 +16,16 @@ v-app
           v-list-tile-content
             v-list-tile-title Contrôles favoris
         v-list.py-0.grey.lighten-2(dense)
-          v-list-tile(to="/controles/1" title="Contrôle A")
-            v-list-tile-action
+          v-list-tile(v-for="controle in controlesOuverts" :key="controle.id"
+                      :to="`/controles/${controle.id}`"
+                      :title="`${controle.date} - ${controle.etablissement.nom}`"
+                      )
             v-list-tile-content
-              v-list-tile-title Contrôle A
-          v-list-tile(to="/controles/2" title="Contrôle B")
-            v-list-tile-action
-            v-list-tile-content
-              v-list-tile-title Contrôle B
-          v-list-tile(to="/controles/3" title="Contrôle C")
-            v-list-tile-action
-            v-list-tile-content
-              v-list-tile-title Contrôle C
+              v-list-tile-title
+                | {{ controle.date }}
+                strong.ml-2 {{ controle.etablissement.nom }}
+                | ,&nbsp;
+                i {{ controle.etablissement.adresse }}
 
       v-list-tile(to="/controles" title="Contrôles")
         v-list-tile-action
@@ -77,7 +75,9 @@ v-app
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { getPrincipal, logout } from '@/api/authentication'
+
 export default {
   data () {
     return {
@@ -95,11 +95,17 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState([
+      'controlesOuverts'
+    ])
+  },
   async created () {
     this.principal = await getPrincipal()
     if (!this.principal) {
       this.errorNotFound = true
     }
+    await this.$store.dispatch('loadControlesOuverts')
   },
   methods: {
     async logout () {

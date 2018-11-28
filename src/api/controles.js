@@ -192,6 +192,10 @@ export const listAssignedControles = util.slow(userId => {
   )
 })
 
+export const listControlesOuverts = util.slow(async userId => {
+  return (await listAssignedControles(userId)).filter(c => c.state === 'encours')
+})
+
 export const getControlesByEtablissement = util.slow((etablissementId) => {
   return controles.filter(controle => controle.etablissementId === etablissementId)
 })

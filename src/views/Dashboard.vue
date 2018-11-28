@@ -4,11 +4,11 @@ v-container
 
   v-card.mt-4
     v-toolbar(flat)
-      v-toolbar-title Contrôles ouverts ({{ controlesEnCours.length }})
-    v-list(v-if="controlesEnCours.length == 0")
+      v-toolbar-title Contrôles ouverts ({{ controlesOuverts.length }})
+    v-list(v-if="controlesOuverts.length == 0")
       v-list-tile Aucun contrôle
     v-list.py-0(v-else two-line)
-      fh-controle-item(v-for="controle in controlesEnCours" :key="controle.id" :controle="controle")
+      fh-controle-item(v-for="controle in controlesOuverts" :key="controle.id" :controle="controle")
 
   v-card.mt-4
     v-toolbar(flat)
@@ -20,6 +20,7 @@ v-container
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { listAssignedControles } from '@/api/controles'
 import FhControleItem from '@/components/FhControleItem.vue'
 
@@ -33,9 +34,9 @@ export default {
     }
   },
   computed: {
-    controlesEnCours () {
-      return this.controles.filter(c => c.state === 'encours')
-    },
+    ...mapState([
+      'controlesOuverts'
+    ]),
     controlesTermines () {
       return this.controles.filter(c => c.state === 'termine')
     }
