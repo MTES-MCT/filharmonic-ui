@@ -1,7 +1,20 @@
-@import '~vuetify/src/stylus/settings/_variables'
+.app-loading:after
+  border-width 0 5px 0 0
+  border-style solid
+  border-color rgba(0, 0, 0, .5)
+  border-radius 50%
+  display block
+  height 100px
+  left 50%
+  margin -25px 0 0 -25px
+  position absolute
+  top 50%
+  width 100px
+  content ""
+  animation spin 1s infinite linear
 
-$material-light.background = #FFFFFF
-$material-light.cards = #fafafa
-$material-light.bg-color = #fafafa
-
-@import '~vuetify/src/stylus/main'
+@keyframes spin
+  from
+    transform: rotate(0deg)
+  to
+    transform: rotate(360deg)

@@ -53,7 +53,6 @@ v-app
     v-btn(icon)
       v-icon notifications
     v-menu(
-      v-model="menu"
       :close-on-content-click="false"
       :nudge-width="200"
       offset-x)
@@ -63,10 +62,10 @@ v-app
         v-list
           v-list-tile(avatar)
             v-list-tile-avatar
-              img(:src="principal.avatar" :alt="principal.nom")
+              img(:src="user.avatar" :alt="user.nom")
             v-list-tile-content
-              v-list-tile-title {{ principal.nom }}
-              v-list-tile-sub-title {{ principal.profil | capitalize }}
+              v-list-tile-title {{ user.nom }}
+              v-list-tile-sub-title {{ user.profil | capitalize }}
       v-card-actions
         v-btn(@click="logout()" color="primary") Déconnexion
 
@@ -76,41 +75,31 @@ v-app
 
 <script>
 import { mapState } from 'vuex'
-import { getPrincipal, logout } from '@/api/authentication'
 
 export default {
   data () {
     return {
       dialog: false,
       drawer: null,
-      menu: true,
       apps: [
         { url: 'https://monicpe.developpement-durable.gouv.fr/', nom: 'MonICPE' },
         { url: 'http://www.installationsclassees.developpement-durable.gouv.fr/rechercheICForm.php', nom: 'Base des installations classées' }
-      ],
-      principal: {
-        nom: '',
-        avatar: '',
-        profil: ''
-      }
+      ]
     }
   },
   computed: {
-    ...mapState([
-      'controlesOuverts'
-    ])
+    ...mapState({
+      user: state => state.authentication.user,
+      controlesOuverts: 'controlesOuverts'
+    })
   },
   async created () {
-    this.principal = await getPrincipal()
-    if (!this.principal) {
-      this.errorNotFound = true
-    }
     await this.$store.dispatch('loadControlesOuverts')
   },
   methods: {
     async logout () {
-      await logout()
-      this.$router.push('/login?redirect=%2F')
+      await this.$store.dispatch('logout')
+      this.$router.push('/login?redirect=/')
     }
   }
 }

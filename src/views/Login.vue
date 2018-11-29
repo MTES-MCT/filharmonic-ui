@@ -29,7 +29,6 @@ v-app
 </template>
 
 <script>
-import { login, isLoggedIn } from '@/api/authentication'
 export default {
   data () {
     return {
@@ -46,14 +45,20 @@ export default {
   },
   methods: {
     async login (id, password) {
-      console.log('id=' + id, ', password=' + password)
-      await login(id, password)
-      if (await isLoggedIn()) {
+      const authenticationInfos = await this.$store.dispatch('login', {
+        user: id,
+        password: password
+      })
+      console.log(authenticationInfos)
+      if (authenticationInfos.valid) {
         console.log('redirect=' + this.$route.query.redirect)
         this.$router.push(this.$route.query.redirect || '/')
       } else {
         this.errorNotFound = true
       }
+      // } else {
+      //   this.errorNotFound = true
+      // }
     }
   }
 }

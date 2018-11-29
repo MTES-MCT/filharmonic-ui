@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
-import '@/styles/main.styl'
+import '@/styles/vuetify.styl'
 import fr from 'vuetify/es5/locale/fr'
 
 Vue.use(Vuetify, {

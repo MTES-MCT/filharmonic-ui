@@ -1,28 +1,26 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { listControlesOuverts } from '@/api/controles'
+import createLogger from 'vuex/dist/logger'
+import AuthenticationAPI from '@/api/authentication'
+import actions from './actions'
+import mutations from './mutations'
+import sessionStorage from '@/store/sessionStorage'
 
 Vue.use(Vuex)
 
-// makes an action with a single mutation
-// const makeAction = type => ({ commit }, ...args) => {
-//   commit(type, ...args)
-// }
+export async function createStore () {
+  const sessionToken = sessionStorage.load()
+  const authenticationInfos = await AuthenticationAPI.authenticate(sessionToken)
 
-export default new Vuex.Store({
-  state: {
-    controlesOuverts: []
-  },
-  getters: {},
-  mutations: {
-    loadControlesOuverts (state, controlesOuverts) {
-      state.controlesOuverts = controlesOuverts
-    }
-  },
-  actions: {
-    async loadControlesOuverts ({ commit }) {
-      const controlesOuverts = await listControlesOuverts(1) // TODO récupérer les infos de l'utilisateur à partir du store
-      commit('loadControlesOuverts', controlesOuverts)
-    }
-  }
-})
+  return new Vuex.Store({
+    state: {
+      authentication: authenticationInfos,
+      controlesOuverts: []
+    },
+    getters: {},
+    mutations,
+    actions,
+    strict: process.env.NODE_ENV !== 'production',
+    plugins: [createLogger()]
+  })
+}

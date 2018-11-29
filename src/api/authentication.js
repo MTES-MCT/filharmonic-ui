@@ -1,40 +1,46 @@
-import * as util from '@/util'
+class UserAPI {
+  async authenticate (sessionToken) {
+    // TODO validation auprès de l'API
+    if (sessionToken !== 'valid-token') {
+      return {
+        valid: false
+      }
+    }
+    const authenticationInfo = {
+      valid: true,
+      user: {
+        id: 1,
+        identifiant: 'alain.champion',
+        nom: 'Alain Champion',
+        profil: 'inspecteur',
+        avatar: 'https://randomuser.me/api/portraits/men/85.jpg'
+      }
+    }
+    return {
+      valid: authenticationInfo.valid,
+      sessionToken: sessionToken,
+      user: authenticationInfo.user
+    }
+  }
 
-const principal = {
-  id: 1,
-  identifiant: 'alain.champion',
-  nom: 'Alain Champion',
-  profil: 'inspecteur',
-  avatar: 'https://randomuser.me/api/portraits/men/85.jpg',
-  isAuthenticated: false
-}
-
-export const requireAuth = async (to, from, next) => {
-  if (!await isLoggedIn()) {
-    next({
-      path: '/login',
-      query: { redirect: to.fullPath }
-    })
-  } else {
-    next()
+  async login (user, password) {
+    // TODO validation auprès de l'API
+    const authenticationInfo = {
+      valid: true,
+      user: {
+        id: 1,
+        identifiant: 'alain.champion',
+        nom: 'Alain Champion',
+        profil: 'inspecteur',
+        avatar: 'https://randomuser.me/api/portraits/men/85.jpg'
+      }
+    }
+    return {
+      valid: authenticationInfo.valid,
+      sessionToken: 'valid-token',
+      user: authenticationInfo.user
+    }
   }
 }
 
-export const isLoggedIn = util.slow(() => {
-  console.log('isLoggedIn=' + principal.isAuthenticated)
-  return principal.isAuthenticated
-})
-
-export const login = util.slow((user, password) => {
-  principal.isAuthenticated = true
-  console.log('isLoggedIn=' + principal.isAuthenticated)
-})
-
-export const logout = util.slow(() => {
-  principal.isAuthenticated = false
-  console.log('isLoggedIn=' + principal.isAuthenticated)
-})
-
-export const getPrincipal = util.slow(() => {
-  return principal
-})
+export default new UserAPI()
