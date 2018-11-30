@@ -18,6 +18,12 @@ Puis démarrer le serveur de développement.
 yarn run serve
 ```
 
+### Modèle de données
+
+![Modèle de données](http://www.plantuml.com/plantuml/proxy?idx=0&src=https://raw.githubusercontent.com/MTES-MCT/filharmonic-ui/master/doc/data_model.puml)
+
+Pour le modifier, éditer le fichier [data_model.puml](./doc/data_model.puml).
+
 ### Commandes disponibles
 
 #### Project setup
