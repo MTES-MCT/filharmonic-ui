@@ -1,0 +1,127 @@
+@startuml Fil'Harmonic
+
+note as N1
+  Tous les entités auront un champ id,
+  et pour la plupart des champs created_at et/ou updated_at
+end note
+
+note top of User
+  Besoin de connaître les données renvoyées par l'API Cerbère pour modifier / compléter les champs
+end note
+
+class User {
+  nom : string
+  email : string
+  password : string
+  avatar: string
+  type : string 'inspecteur' | 'exploitant' | 'valideur'
+}
+
+class Etablissement {
+  id : string # S3IC ex: 0999.00001
+  nom : string
+  raisonSociale : string
+  activite : string
+  adresse : string
+  seveso : string 'haut' | 'bas' | 'non'
+  iedmtd : boolean
+}
+
+note top of ControlePkg
+  Les contrôles n'ont pas besoin d'être normalisés sur plusieurs tables (si SQL)
+  car tous les fils, messages, constats, etc ne sont récupérés qu'avec le contrôle
+end note
+
+package ControlePkg {
+
+  class Controle {
+    date : date
+    type: enum 'approfondi' | 'courant' | 'ponctuel'
+    annonce : boolean
+    origine : enum 'plan_de_controle' | 'circonstancielle'
+    circonstances : enum 'incident' | 'plainte' | 'autre'
+    detailCirconstances : string
+    etat : enum 'encours' | 'valide' | 'clos'
+    themes : []Theme
+    inspecteurs : [@User]
+    valideur: @User
+    etablissement : @Etablissement
+    fils : []Fil
+    commentaires : []Message
+  }
+
+  class Fil {
+    sujet : string
+    referencesReglementaires : []string
+    messages : []Message
+    constat : @Constat?
+  }
+
+  class Constat {
+    type : enum 'conforme' | 'non_conforme' | 'mise_en_demeure'
+    observation: string
+    echeance : date
+  }
+
+  class Message {
+    auteur : @User
+    contenu : string
+    visibiliteInterne: boolean
+    piecesJointes : []PieceJointe
+  }
+
+  class PieceJointe {
+    nom : string
+    mime : string
+    url : string
+  }
+
+  note right of PieceJointe
+    Les pièces-jointes seront probablement stockées sur un dépôt type Amazon S3 ou Minio
+  end note
+
+  class Suite {
+    type : enum 'aucune' | 'traitement_par_courrier' | 'suites_administratives' | 'renforcement_prescriptions'
+    synthese : string
+  }
+}
+
+
+class Evenement {
+  type : string
+  auteur : @User
+  controle : @Controle
+  data : json
+  created_at : date
+}
+
+note right of Evenement
+  Le champ data permet de recevoir un JSON avec des données diverses.
+  Par exemple un id vers des messages, données de formulaire, données avant/après, etc
+  La table permettra de savoir quel utilisateur
+end note
+
+class Theme {
+  nom : string
+}
+
+note top of Theme
+  Les thèmes doivent servir de référence.
+  Le modification d'un thème de référence ne doit pas impacter les thèmes existants
+  2 façons de faire :
+    - copier les thèmes dans le contrôle
+    - dupliquer le thème de référence à chaque modification
+end note
+
+User "*" -- Evenement
+User "*" -- Controle
+Etablissement "*" -- Controle
+Controle "*" *-- Fil
+Controle "*" -- Evenement
+Controle "0..1" *- Suite
+Controle "*" *-- Message
+Fil "*" *-- Message
+Fil "0..1" *-- Constat
+Message "*" *-- PieceJointe
+
+@enduml
