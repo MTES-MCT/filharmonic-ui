@@ -24,6 +24,15 @@ export function createRouter (store) {
       })
     }
   }
+  const redirectAuthenticatedUserToDashboard = (to, from, next) => {
+    if (store.state.authentication.valid) {
+      next({
+        path: '/'
+      })
+    } else {
+      next()
+    }
+  }
 
   return new Router({
     mode: 'history',
@@ -32,7 +41,8 @@ export function createRouter (store) {
       {
         path: '/login',
         name: 'login',
-        component: Login
+        component: Login,
+        beforeEnter: redirectAuthenticatedUserToDashboard
       },
       {
         path: '/',
