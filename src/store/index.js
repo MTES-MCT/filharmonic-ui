@@ -2,21 +2,22 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import createLogger from 'vuex/dist/logger'
 import AuthenticationAPI from '@/api/authentication'
-import actions from './actions'
-import mutations from './mutations'
+import actions from '@/store/actions'
+import mutations from '@/store/mutations'
 import sessionStorage from '@/store/sessionStorage'
+import { createInitialStoreState } from '@/store/state'
 
 Vue.use(Vuex)
 
 export async function createStore () {
   const sessionToken = sessionStorage.load()
   const authenticationInfos = await AuthenticationAPI.authenticate(sessionToken)
+  if (!authenticationInfos.valid) {
+    sessionStorage.delete()
+  }
 
   return new Vuex.Store({
-    state: {
-      authentication: authenticationInfos,
-      controlesOuverts: []
-    },
+    state: createInitialStoreState(authenticationInfos),
     getters: {},
     mutations,
     actions,

@@ -1,45 +1,34 @@
+import { getUser } from '@/api/users'
+
+async function loginAsMockedUser (idStr) {
+  const user = await getUser(parseInt(idStr, 10))
+  if (!user) {
+    return {
+      valid: false
+    }
+  }
+  return {
+    valid: true,
+    sessionToken: `valid-token-${user.id}`,
+    user: user
+  }
+}
+
 class UserAPI {
-  async authenticate (sessionToken) {
-    // TODO validation auprès de l'API
-    if (sessionToken !== 'valid-token') {
+  authenticate (sessionToken) {
+    if (!sessionToken) {
       return {
         valid: false
       }
     }
-    const authenticationInfo = {
-      valid: true,
-      user: {
-        id: 1,
-        identifiant: 'alain.champion',
-        nom: 'Alain Champion',
-        profil: 'inspecteur',
-        avatar: 'https://randomuser.me/api/portraits/men/85.jpg'
-      }
-    }
-    return {
-      valid: authenticationInfo.valid,
-      sessionToken: sessionToken,
-      user: authenticationInfo.user
-    }
+
+    // TODO validation auprès de l'API
+    return loginAsMockedUser(sessionToken.substring('valid-token-'.length))
   }
 
-  async login (user, password) {
+  login (user, password) {
     // TODO validation auprès de l'API
-    const authenticationInfo = {
-      valid: true,
-      user: {
-        id: 1,
-        identifiant: 'alain.champion',
-        nom: 'Alain Champion',
-        profil: 'inspecteur',
-        avatar: 'https://randomuser.me/api/portraits/men/85.jpg'
-      }
-    }
-    return {
-      valid: authenticationInfo.valid,
-      sessionToken: 'valid-token',
-      user: authenticationInfo.user
-    }
+    return loginAsMockedUser(user)
   }
 }
 

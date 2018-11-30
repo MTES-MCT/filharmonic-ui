@@ -62,10 +62,10 @@ v-app
         v-list
           v-list-tile(avatar)
             v-list-tile-avatar
-              img(:src="user.avatar" :alt="user.nom")
+              img(:src="user.photoURL" :alt="user.name")
             v-list-tile-content
-              v-list-tile-title {{ user.nom }}
-              v-list-tile-sub-title {{ user.profil | capitalize }}
+              v-list-tile-title {{ user.name }}
+              v-list-tile-sub-title {{ user.type | capitalize }}
       v-card-actions
         v-btn(@click="logout()" color="primary") Déconnexion
 

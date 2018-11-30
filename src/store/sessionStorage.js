@@ -11,4 +11,3 @@ export default {
     return localStorage.removeItem(localStorageSessionTokenKey)
   }
 }
-
