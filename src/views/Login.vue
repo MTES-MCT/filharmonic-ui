@@ -8,6 +8,11 @@ v-app
               v-toolbar(dark color="primary")
                 v-toolbar-title Fil'Harmonic
               v-card-text
+                | Utilisateurs de test disponibles
+                v-btn(v-for="user in users" :key="user.id"
+                      @click="login(user.id)"
+                      small color="accent"
+                      ) {{ user.name }} ({{ user.type }})
                 v-form
                   v-text-field(
                     v-model="id"
@@ -33,14 +38,22 @@ v-app
 </template>
 
 <script>
+import { listUsers } from '@/api/users'
+
 export default {
   data () {
     return {
       id: '',
       password: '',
       revealPassword: false,
-      authenticationError: false
+      authenticationError: false,
+
+      // mock
+      users: []
     }
+  },
+  async created () {
+    this.users = await listUsers()
   },
   methods: {
     async login (id, password) {
