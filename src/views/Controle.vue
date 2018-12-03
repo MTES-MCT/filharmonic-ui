@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  p.display-1.mt-4.text-xs-center(v-if="error") {{ errorMessage }}
+  p.display-1.mt-4.text-xs-center(v-if="error") {{ error }}
   v-container(v-if="controle")
     h1.display-2.text-xs-center.mb-3 Contrôle n°{{ controle.id }}
     v-stepper(v-model="controle.state")
@@ -72,16 +72,16 @@ export default {
   },
   data () {
     return {
-      error: false,
-      errorMessage: '',
+      error: '',
       newComment: '',
       controle: null // fetched on init
     }
   },
   async created () {
-    this.controle = _.cloneDeep(await getControle(this.controleId, { etablissement: true }).catch((err) => { this.errorMessage = err.message }))
-    if (!this.controle) {
-      this.error = true
+    try {
+      this.controle = _.cloneDeep(await getControle(this.controleId, { etablissement: true }))
+    } catch (err) {
+      this.error = err.message
     }
   },
   methods: {
