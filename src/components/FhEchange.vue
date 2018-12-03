@@ -1,51 +1,51 @@
 <template lang="pug">
-    v-expansion-panel(expand v-if="echange && !error")
-      v-expansion-panel-content.fh-echange
-        v-layout.column(slot="header")
-          .fh-echange__sujet
-            | {{ echange.sujet }}
-            span.ml-2.grey--text ({{ echange.reponses.length }} réponse{{ echange.reponses.length > 1 ? 's': '' }})
-          a.fh-echange__referenceReglementaire(v-for="referenceReglementaire in echange.referencesReglementaires"
-                                               href="https://www.legifrance.gouv.fr/eli/arrete/2017/6/28/TREP1719163A/jo/texte/fr"
-                                               target="_blank")
-            | {{ referenceReglementaire }}
+v-expansion-panel(expand v-if="echange && !error")
+  v-expansion-panel-content.fh-echange
+    v-layout.column(slot="header")
+      .fh-echange__sujet
+        | {{ echange.sujet }}
+        span.ml-2.grey--text ({{ echange.reponses.length }} réponse{{ echange.reponses.length > 1 ? 's': '' }})
+      a.fh-echange__referenceReglementaire(v-for="referenceReglementaire in echange.referencesReglementaires"
+                                            href="https://www.legifrance.gouv.fr/eli/arrete/2017/6/28/TREP1719163A/jo/texte/fr"
+                                            target="_blank")
+        | {{ referenceReglementaire }}
 
-          .fh-echange__constat(v-if="echange.constat")
-            v-layout.align-center
-              span.subheading.mr-2 Constat finalisé :
-              span(v-if="echange.constat.type === 'conforme'")
-                v-chip(small color="green" dark text-color="white")
-                  v-avatar
-                    v-icon(large) check_circle
-                  | Conforme
-              span(v-else)
-                v-chip(small color="red" dark text-color="white")
-                  v-avatar
-                    v-icon(large) error
-                  | Non conforme
+      .fh-echange__constat(v-if="echange.constat")
+        v-layout.align-center
+          span.subheading.mr-2 Constat finalisé :
+          span(v-if="echange.constat.type === 'conforme'")
+            v-chip(small color="green" dark text-color="white")
+              v-avatar
+                v-icon(large) check_circle
+              | Conforme
+          span(v-else)
+            v-chip(small color="red" dark text-color="white")
+              v-avatar
+                v-icon(large) error
+              | Non conforme
 
-            div(v-if="echange.constat.type !== 'conforme'")
-              v-layout.align-center
-                span.subheading.mr-2 Observation :
-                v-flex
-                  div {{ echange.constat.observation }}
-              v-layout.align-center
-                span.subheading.mr-2 Délai de mise en conformité :
-                v-flex
-                  | Avant le&nbsp;
-                  time(:datetime="echange.constat.echeance") {{ echange.constat.echeance }}
+        div(v-if="echange.constat.type !== 'conforme'")
+          v-layout.align-center
+            span.subheading.mr-2 Observation :
+            v-flex
+              div {{ echange.constat.observation }}
+          v-layout.align-center
+            span.subheading.mr-2 Délai de mise en conformité :
+            v-flex
+              | Avant le&nbsp;
+              time(:datetime="echange.constat.echeance") {{ echange.constat.echeance }}
 
-        v-card.px-3
-          v-card-text.subheading Fil de discussion
-            fh-message(v-for="message in echange.reponses" v-bind:key="message.id" v-bind:message="message")
-            v-layout.pl-2.mt-2.align-end
-              v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1" clearable)
-              v-btn.mb-0
-                v-icon attach_file
-              v-btn.mb-0(@click="addMessage(echange, newMessage); newMessage = ''" :disabled="!newMessage" color="primary" title="Envoyer")
-                v-icon send
-            v-btn(color="secondary")
-              | Ajouter un constat
+    v-card.px-3
+      v-card-text.subheading Fil de discussion
+        fh-message(v-for="message in echange.reponses" v-bind:key="message.id" v-bind:message="message")
+        v-layout.pl-2.mt-2.align-end
+          v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1" clearable)
+          v-btn.mb-0
+            v-icon attach_file
+          v-btn.mb-0(@click="addMessage(echange, newMessage); newMessage = ''" :disabled="!newMessage" color="primary" title="Envoyer")
+            v-icon send
+        v-btn(color="secondary")
+          | Ajouter un constat
 
 </template>
 
