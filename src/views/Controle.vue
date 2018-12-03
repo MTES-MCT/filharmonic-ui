@@ -30,10 +30,49 @@ div
 
     h4.display-1.my-4
       | Échanges
-      v-btn(icon title="Démarrer un nouvel échange" @click="addDiscussion()")
-        v-icon add
 
     fh-echange(v-for="echange in controle.echanges" :key="echange.id" :echange="echange")
+
+    v-slide-y-transition(hide-on-leave)
+      v-card.my-3.elevation-4(v-if="showNewEchangeForm")
+        v-toolbar(flat color="secondary" dense dark)
+          v-toolbar-title Nouvel échange
+          v-spacer
+          v-toolbar-items
+            v-btn(flat title="Annuler l'échange" @click="resetNewEchange()")
+              v-icon(medium) delete
+
+        v-card-text
+          v-container.pa-0(grid-list-md)
+            v-form(ref="newEchangeForm" v-model="validNewEchangeForm")
+              v-layout.column
+                v-text-field(label="Sujet" hideDetails clearable
+                              v-model="newEchange.sujet"
+                              required
+                              :rules="notEmpty"
+                            )
+
+                v-text-field(v-for="(referenceReglementaire, index) in newEchange.referencesReglementaires" :key="index"
+                              label="Référence réglementaire" hideDetails clearable
+                              v-model="newEchange.referencesReglementaires[index]"
+                              :append-outer-icon="newEchange.referencesReglementaires.length > 1 ? 'delete' : null"
+                              @click:append-outer="newEchange.referencesReglementaires.splice(index, 1)"
+                              required
+                              :rules="notEmpty"
+                            )
+                .d-block
+                  v-btn(flat title="Ajouter une référence réglementaire" @click="newEchange.referencesReglementaires.push('')")
+                    v-icon(medium left) add
+                    | Nouvelle référence réglementaire
+
+        v-card-actions.justify-center.pb-3
+          v-btn(color="primary" @click="saveNewEchange()" :disabled="!validNewEchangeForm")
+            v-icon(left) done
+            | Sauvegarder l'échange
+
+      v-btn.mt-4(v-if="!showNewEchangeForm" @click="showNewEchangeForm = true")
+        v-icon(left) message
+        | Démarrer un nouvel échange
 
     h4.display-1.my-4
       | Commentaires
@@ -73,8 +112,21 @@ export default {
   data () {
     return {
       error: '',
+      controle: null, // fetched on init
+      showNewEchangeForm: false,
+      validNewEchangeForm: false,
+      newEchange: {
+        sujet: '',
+        referencesReglementaires: [
+          ''
+        ],
+        reponses: []
+      },
       newComment: '',
-      controle: null // fetched on init
+
+      notEmpty: [
+        v => !!v || 'Il faut renseigner une valeur'
+      ]
     }
   },
   async created () {
@@ -95,6 +147,22 @@ export default {
       const index = this.controle.inspecteurs.indexOf(inspecteur.id)
       if (index !== -1) {
         this.controle.inspecteurs.splice(index, 1)
+      }
+    },
+    resetNewEchange () {
+      this.newEchange = {
+        sujet: '',
+        referencesReglementaires: [
+          ''
+        ],
+        reponses: []
+      }
+      this.showNewEchangeForm = false
+    },
+    saveNewEchange () {
+      if (this.$refs.newEchangeForm.validate()) {
+        this.controle.echanges.push(_.cloneDeep(this.newEchange))
+        this.resetNewEchange()
       }
     },
     addDiscussion () {
