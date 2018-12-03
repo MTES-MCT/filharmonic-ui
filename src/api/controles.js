@@ -165,6 +165,29 @@ export const allowedStates = {
   }
 }
 
+export const typesConstats = {
+  conforme: {
+    label: 'Conforme',
+    color: 'green',
+    icon: 'check_circle'
+  },
+  observation: {
+    label: 'Observation',
+    color: 'orange',
+    icon: 'info'
+  },
+  non_conforme: {
+    label: 'Non conforme',
+    color: 'red',
+    icon: 'error'
+  },
+  proposition_mise_en_demeure: {
+    label: 'Proposition de mise en demeure',
+    color: 'black',
+    icon: 'error'
+  }
+}
+
 export const listControles = util.slow(() => {
   return controles
 })

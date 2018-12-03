@@ -55,6 +55,7 @@ import FhDetailControle from '@/components/FhDetailControle.vue'
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhEchange from '@/components/FhEchange.vue'
+import * as _ from '@/util'
 
 export default {
   components: {
@@ -78,7 +79,7 @@ export default {
     }
   },
   async created () {
-    this.controle = await getControle(this.controleId, { etablissement: true }).catch((err) => { this.errorMessage = err.message })
+    this.controle = _.cloneDeep(await getControle(this.controleId, { etablissement: true }).catch((err) => { this.errorMessage = err.message }))
     if (!this.controle) {
       this.error = true
     }

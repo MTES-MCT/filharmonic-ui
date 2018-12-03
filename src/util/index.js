@@ -8,3 +8,22 @@ export function slow (func, ms = 100) {
     return func(...args)
   }
 }
+
+export function cloneDeep (source) {
+  const objectType = typeof source
+  if (objectType === 'string' || objectType === 'number' || objectType === 'boolean' || objectType === null || objectType === undefined) {
+    return source
+  } else if (source instanceof Array) {
+    return source.map(cloneDeep)
+  } else if (source instanceof Date) {
+    return new Date(source.getTime())
+  } else if (objectType === 'object') {
+    return Object.keys(source)
+      .reduce(function (clone, key) {
+        clone[key] = cloneDeep(source[key])
+        return clone
+      }, {})
+  } else {
+    throw new Error(`unknown object type: ${objectType}`)
+  }
+}
