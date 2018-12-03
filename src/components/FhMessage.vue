@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(v-if="message")
+  div
     v-layout.pl-2.my-3
       div.mr-2 {{ message.date.toLocaleString() }}
       strong.mr-2 {{ message.author }} :
@@ -7,7 +7,7 @@
       div.ml-4
         fh-attachment(
           flat
-          v-for="attachment in message.attachments" v-bind:key="attachment.id" v-bind:attachment="attachment")
+          v-for="attachment in message.attachments" :key="attachment.id" :attachment="attachment")
     v-divider
 </template>
 
@@ -21,7 +21,7 @@ export default {
   props: {
     message: {
       type: Object,
-      default: null
+      required: true
     }
   }
 }

@@ -33,14 +33,14 @@ div
       v-btn(icon title="Démarrer un nouvel échange" @click="addDiscussion()")
         v-icon add
 
-    fh-echange(v-for="echange in controle.echanges" v-bind:key="echange.id" v-bind:echange="echange")
+    fh-echange(v-for="echange in controle.echanges" :key="echange.id" :echange="echange")
 
     h4.display-1.my-4
       | Commentaires
     p Les commentaires sont internes et ne sont seulement visibles que par les inspecteurs.
     v-card
       v-card-text
-        fh-message(v-for="comment in controle.comments"  v-bind:key="comment.id" v-bind:message="comment")
+        fh-message(v-for="comment in controle.comments" :key="comment.id" :message="comment")
         v-layout.pl-2.mt-2.align-end
           v-textarea(box label="Commentaire" v-model="newComment" auto-grow hideDetails rows="1" clearable)
           v-btn.mb-0

@@ -1,5 +1,5 @@
 <template lang="pug">
-v-expansion-panel(expand v-if="echange && !error")
+v-expansion-panel(expand)
   v-expansion-panel-content.fh-echange
     v-layout.column(slot="header")
       .fh-echange__sujet
@@ -37,7 +37,7 @@ v-expansion-panel(expand v-if="echange && !error")
 
     v-card.px-3
       v-card-text.subheading Fil de discussion
-        fh-message(v-for="message in echange.reponses" v-bind:key="message.id" v-bind:message="message")
+        fh-message(v-for="message in echange.reponses" :key="message.id" :message="message")
         v-layout.pl-2.mt-2.align-end
           v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1" clearable)
           v-btn.mb-0
@@ -60,14 +60,12 @@ export default {
   props: {
     echange: {
       type: Object,
-      default: null
+      required: true
     }
   },
   data () {
     return {
-      error: false,
-      errorMessage: '',
-      newMessage: '' // TODO partagé, il faudra faire un composant
+      newMessage: ''
     }
   },
   methods: {
