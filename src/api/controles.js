@@ -233,6 +233,34 @@ export const typesConstats = {
   }
 }
 
+export const typesSuite = {
+  aucune: {
+    label: 'Aucune',
+    color: 'green',
+    icon: 'check_circle'
+  },
+  observation: {
+    label: 'Observation ou non conformités à traiter par courrier',
+    color: 'orange',
+    icon: 'info'
+  },
+  proposition_mise_en_demeure: {
+    label: 'Proposition de suites administratives',
+    color: 'black',
+    icon: 'error'
+  },
+  proposition_renforcement: {
+    label: 'Proposition de renforcement, modification ou mise à jour des prescription',
+    color: 'purple',
+    icon: 'info'
+  },
+  autre: {
+    label: 'Autre',
+    color: 'grey',
+    icon: 'info'
+  }
+}
+
 export const listControles = util.slow(() => {
   return controles
 })
