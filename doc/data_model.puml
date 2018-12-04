@@ -113,15 +113,14 @@ note top of Theme
     - dupliquer le thème de référence à chaque modification
 end note
 
-User "*" -- Evenement
-User "*" -- Controle
-Etablissement "*" -- Controle
-Controle "*" *-- Fil
-Controle "*" -- Evenement
-Controle "0..1" *- Suite
-Controle "*" *-- Message
-Fil "*" *-- Message
-Fil "0..1" *-- Constat
-Message "*" *-- PieceJointe
+User "1" -- "*" Evenement
+User "1..*" -- "*" Controle
+Etablissement *-- "*" Controle
+Controle *-- "*" Fil
+Controle "1" -- "*" Evenement
+Controle *-- "0..1" Suite
+Fil *--  "*" Message
+Fil *-- "0..1" Constat
+Message *-- "*" PieceJointe
 
 @enduml
