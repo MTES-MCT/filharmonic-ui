@@ -119,6 +119,7 @@ Etablissement *-- "*" Controle
 Controle *-- "*" Fil
 Controle "1" -- "*" Evenement
 Controle *-- "0..1" Suite
+Controle *--  "*" Message
 Fil *--  "*" Message
 Fil *-- "0..1" Constat
 Message *-- "*" PieceJointe
