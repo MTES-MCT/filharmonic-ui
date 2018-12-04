@@ -3,15 +3,7 @@ div
   p.display-1.mt-4.text-xs-center(v-if="error") {{ error }}
   v-container(v-if="controle")
     h1.display-2.text-xs-center.mb-3 Contrôle n°{{ controle.id }}
-    v-stepper(v-model="controle.state")
-      v-stepper-header
-        v-stepper-step(step="1" complete) Création
-        v-divider
-        v-stepper-step(step="2") Rapport en cours
-        v-divider
-        v-stepper-step(step="3") Validé
-        v-divider
-        v-stepper-step(step="4") Terminé
+    fh-etat-controle(:etat="controle.etat" stepper)
 
     v-layout.row.wrap.mt-3.grid-list-lg
       v-flex.xs12.md6.pa-2
@@ -90,6 +82,7 @@ div
 
 <script>
 import { getControle } from '@/api/controles'
+import FhEtatControle from '@/components/FhEtatControle.vue'
 import FhDetailControle from '@/components/FhDetailControle.vue'
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 import FhMessage from '@/components/FhMessage.vue'
@@ -99,6 +92,7 @@ import { mapState } from 'vuex'
 
 export default {
   components: {
+    FhEtatControle,
     FhDetailControle,
     FhDetailEtablissement,
     FhMessage,

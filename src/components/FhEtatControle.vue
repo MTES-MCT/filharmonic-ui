@@ -1,5 +1,15 @@
 <template lang="pug">
-  v-chip(:color="color" text-color="white") {{ label }}
+  v-stepper(v-if="stepper")
+    v-stepper-header
+      v-stepper-step(step="1" :complete="stateInfos.order >= 1") En cours
+      v-divider
+      v-stepper-step(step="2" :complete="stateInfos.order >= 2") En attente de validation
+      v-divider
+      v-stepper-step(step="3" :complete="stateInfos.order >= 3") Validé
+      v-divider
+      v-stepper-step(step="4" :complete="stateInfos.order >= 4") Clos
+  v-chip(:color="stateInfos.color" text-color="white" v-else) {{ stateInfos.label }}
+
 </template>
 
 <script>
@@ -7,23 +17,22 @@ import { allowedStates } from '@/api/controles'
 export default {
   name: 'FhEtatControle',
   props: {
-    state: {
+    etat: {
       type: String,
       default: null
+    },
+    stepper: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
     stateInfos () {
-      return allowedStates[this.state] || {
+      return allowedStates[this.etat] || {
         label: '?',
-        color: 'grey'
+        color: 'grey',
+        order: 0
       }
-    },
-    label () {
-      return this.stateInfos.label
-    },
-    color () {
-      return this.stateInfos.color
     }
   }
 }

@@ -10,7 +10,7 @@ const controles = [
     annonce: true,
     origine: 'plan_de_controle',
     favorite: false,
-    state: 'encours',
+    etat: 'en_cours',
     themes: [
       "Rejets dans l'air",
       'COV'
@@ -51,7 +51,7 @@ const controles = [
     annonce: true,
     origine: 'plan_de_controle',
     favorite: true,
-    state: 'encours',
+    etat: 'attente_validation',
     themes: [
       "Rejets dans l'air",
       "Rejets dans l'eau",
@@ -188,17 +188,25 @@ const controles = [
 ]
 
 export const allowedStates = {
-  encours: {
+  en_cours: {
     label: 'En cours',
-    color: 'green'
+    color: 'indigo',
+    order: 1
+  },
+  attente_validation: {
+    label: 'En attente de validation',
+    color: 'teal',
+    order: 2
   },
   valide: {
     label: 'Validé',
-    color: 'red'
+    color: 'green',
+    order: 3
   },
-  termine: {
-    label: 'Terminé',
-    color: 'grey'
+  clos: {
+    label: 'Clos',
+    color: 'grey',
+    order: 4
   }
 }
 
@@ -253,7 +261,7 @@ export const listAssignedControles = util.slow(userId => {
 })
 
 export const listControlesOuverts = util.slow(async userId => {
-  return (await listAssignedControles(userId)).filter(c => c.state === 'encours')
+  return (await listAssignedControles(userId)).filter(c => c.etat !== 'clos')
 })
 
 export const getControlesByEtablissement = util.slow((etablissementId) => {

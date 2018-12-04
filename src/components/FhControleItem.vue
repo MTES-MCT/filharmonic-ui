@@ -1,6 +1,9 @@
 <template lang="pug">
 v-list-tile(:to="`/controles/${controle.id}`")
-  v-list-tile-action.mr-4.fh-controle-item__date
+  .fh-controle-item__etat
+    fh-etat-controle(:etat="controle.etat")
+
+  v-list-tile-action.mr-1.fh-controle-item__date
     v-list-tile-title
       v-icon.mr-2 event
       time {{ controle.date }}
@@ -19,11 +22,13 @@ v-list-tile(:to="`/controles/${controle.id}`")
 </template>
 
 <script>
+import FhEtatControle from '@/components/FhEtatControle.vue'
 import FhMessage from '@/components/FhMessage.vue'
 
 export default {
   name: 'FhControleItem',
   components: {
+    FhEtatControle,
     FhMessage
   },
   props: {
@@ -40,4 +45,7 @@ export default {
   &__date
     min-width 130px
     font-size 1.1em
+  &__etat
+    min-width 180px
+    text-align center
 </style>
