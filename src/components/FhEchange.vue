@@ -39,6 +39,16 @@ v-expansion-panel(expand)
           v-btn.mb-0(@click="addMessage(echange, newMessage); newMessage = ''" :disabled="!newMessage" color="primary" title="Envoyer")
             v-icon send
 
+    v-card.px-3(v-if="inspecteur")
+      v-card-text.subheading Commentaires (visibles que des inspecteurs)
+        fh-message(v-for="comment in echange.comments" :key="comment.id" :message="comment")
+        v-layout.pl-2.mt-2.align-end
+          v-textarea(box label="Commentaire" v-model="newComment" auto-grow hideDetails rows="1" clearable)
+          v-btn.mb-0
+            v-icon attach_file
+          v-btn.mb-0(@click="addComment(echange, newComment); newComment = ''" :disabled="!newComment" color="primary" title="Envoyer")
+            v-icon send
+
         div(v-if="!echange.constat")
           v-slide-y-transition(hide-on-leave)
             v-card.my-3.elevation-4(v-if="showNewConstatForm")
@@ -90,6 +100,7 @@ v-expansion-panel(expand)
 import Vue from 'vue'
 import { typesConstats } from '@/api/controles'
 import FhMessage from '@/components/FhMessage.vue'
+import { mapState } from 'vuex'
 
 export default {
   name: 'FhEchange',
@@ -111,16 +122,20 @@ export default {
       },
       showNewConstatEcheancePicker: false,
       newMessage: '',
-
       notEmpty: [
         v => !!v || 'Il faut renseigner une valeur'
-      ]
+      ],
+      newComment: ''
     }
   },
   computed: {
     typeConstatEchange () {
       return this.echange.constat ? typesConstats[this.echange.constat.type] : {}
-    }
+    },
+    ...mapState({
+      inspecteur: state => state.authentication.user.type === 'inspecteur',
+      controlesOuverts: 'controlesOuverts'
+    })
   },
   methods: {
     addMessage (echange, message) {
@@ -128,6 +143,14 @@ export default {
         author: 'Alain Champion',
         date: new Date(),
         text: message,
+        attachments: []
+      })
+    },
+    addComment (echange, comment) {
+      echange.comments.push({
+        author: 'Alain Champion',
+        text: comment,
+        date: new Date(),
         attachments: []
       })
     },

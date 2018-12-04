@@ -19,7 +19,6 @@ const controles = [
       1
     ],
     etablissementId: '0999.00002',
-    comments: [],
     echanges: [
       {
         sujet: 'Mesure des émissions atmosphériques canalisées par un organisme extérieur',
@@ -33,7 +32,8 @@ const controles = [
             date: new Date('2018-09-16T14:00:00'),
             attachments: []
           }
-        ]
+        ],
+        comments: []
       }
     ],
     lastEvent: {
@@ -61,18 +61,6 @@ const controles = [
       2
     ],
     etablissementId: '0999.00001',
-    comments: [
-      {
-        author: 'Corine Dupont',
-        text: "Attention à l'article 243.",
-        date: new Date('2018-11-14T08:50:00')
-      },
-      {
-        author: 'Alain Champion',
-        text: "L'article 843 s'applique également.",
-        date: new Date('2018-11-16T16:50:00')
-      }
-    ],
     echanges: [
       {
         sujet: 'Mesure des émissions atmosphériques canalisées par un organisme extérieur',
@@ -83,15 +71,19 @@ const controles = [
         ],
         reponses: [
           {
+            id: 1,
             author: 'Alain Champion',
             text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
             date: new Date('2018-11-16T14:00:00'),
-            attachments: []
+            attachments: [],
+            confidential: false
           },
           {
+            id: 2,
             author: 'Monsieur Entreprise',
             text: 'Voici le document en question.',
             date: new Date('2018-11-16T16:50:00'),
+            confidential: false,
             attachments: [
               {
                 id: 1,
@@ -101,14 +93,35 @@ const controles = [
             ]
           },
           {
+            id: 3,
             author: 'Alain Champion',
             text: 'Merci.',
-            date: new Date('2018-11-17T12:55:00')
+            date: new Date('2018-11-17T12:55:00'),
+            confidential: false,
+            attachments: []
           }
         ],
         constat: {
           type: 'conforme'
-        }
+        },
+        comments: [
+          {
+            id: 4,
+            author: 'Corine Dupont',
+            text: "Attention à l'article 243.",
+            date: new Date('2018-11-14T08:50:00'),
+            confidential: true,
+            attachments: []
+          },
+          {
+            id: 5,
+            author: 'Alain Champion',
+            text: "L'article 843 s'applique également.",
+            date: new Date('2018-11-16T16:50:00'),
+            confidential: true,
+            attachments: []
+          }
+        ]
       },
       {
         sujet: 'Autosurveillance des émissions canalisées de COV',
@@ -117,15 +130,19 @@ const controles = [
         ],
         reponses: [
           {
+            id: 6,
             author: 'Alain Champion',
             text: "Auriez-vous l'obligeance de me fournir une photo de la cuve ?",
             date: new Date('2018-11-16T14:10:00'),
+            confidential: false,
             attachments: []
           },
           {
+            id: 7,
             author: 'Monsieur Entreprise',
             text: 'Voici une photo.',
             date: new Date('2018-11-17T08:50:00'),
+            confidential: false,
             attachments: [
               {
                 id: 2,
