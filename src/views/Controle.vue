@@ -74,6 +74,18 @@ div
         v-icon(left) message
         | Démarrer un nouvel échange
 
+    h4.display-1.my-4(v-if="inspecteur")
+      | Commentaires
+    p Les commentaires sont internes et ne sont seulement visibles que par les inspecteurs.
+    v-card
+      v-card-text
+        fh-message(v-for="comment in controle.comments" :key="comment.id" :message="comment")
+        v-layout.pl-2.mt-2.align-end
+          v-textarea(box label="Commentaire" v-model="newComment" auto-grow hideDetails rows="1" clearable)
+          v-btn.mb-0
+            v-icon attach_file
+          v-btn.mb-0(@click="addComment();" :disabled="!newComment" color="primary" title="Envoyer")
+            v-icon send
 </template>
 
 <script>
@@ -83,6 +95,7 @@ import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhEchange from '@/components/FhEchange.vue'
 import * as _ from '@/util'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -110,10 +123,18 @@ export default {
         ],
         reponses: []
       },
+      newComment: '',
+
       notEmpty: [
         v => !!v || 'Il faut renseigner une valeur'
       ]
     }
+  },
+  computed: {
+    ...mapState({
+      inspecteur: state => state.authentication.user.type === 'inspecteur',
+      controlesOuverts: 'controlesOuverts'
+    })
   },
   async created () {
     try {
@@ -161,6 +182,15 @@ export default {
         },
         reponses: []
       })
+    },
+    addComment () {
+      this.controle.comments.push({
+        author: 'Alain Champion',
+        text: this.newComment,
+        date: new Date(),
+        attachments: []
+      })
+      this.newComment = ''
     }
   }
 }

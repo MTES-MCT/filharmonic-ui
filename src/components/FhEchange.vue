@@ -133,8 +133,7 @@ export default {
       return this.echange.constat ? typesConstats[this.echange.constat.type] : {}
     },
     ...mapState({
-      inspecteur: state => state.authentication.user.type === 'inspecteur',
-      controlesOuverts: 'controlesOuverts'
+      inspecteur: state => state.authentication.user.type === 'inspecteur'
     })
   },
   methods: {

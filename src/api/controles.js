@@ -19,6 +19,7 @@ const controles = [
       1
     ],
     etablissementId: '0999.00002',
+    comments: [],
     echanges: [
       {
         sujet: 'Mesure des émissions atmosphériques canalisées par un organisme extérieur',
@@ -27,6 +28,7 @@ const controles = [
         ],
         reponses: [
           {
+            id: 1,
             author: 'Alain Champion',
             text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
             date: new Date('2018-09-16T14:00:00'),
@@ -61,6 +63,24 @@ const controles = [
       2
     ],
     etablissementId: '0999.00001',
+    comments: [
+      {
+        id: 2,
+        author: 'Corine Dupont',
+        text: "Attention à l'article 243.",
+        date: new Date('2018-11-14T08:50:00'),
+        confidential: true,
+        attachments: []
+      },
+      {
+        id: 3,
+        author: 'Alain Champion',
+        text: "L'article 843 s'applique également.",
+        date: new Date('2018-11-16T16:50:00'),
+        confidential: true,
+        attachments: []
+      }
+    ],
     echanges: [
       {
         sujet: 'Mesure des émissions atmosphériques canalisées par un organisme extérieur',
@@ -71,7 +91,7 @@ const controles = [
         ],
         reponses: [
           {
-            id: 1,
+            id: 4,
             author: 'Alain Champion',
             text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
             date: new Date('2018-11-16T14:00:00'),
@@ -79,7 +99,7 @@ const controles = [
             confidential: false
           },
           {
-            id: 2,
+            id: 5,
             author: 'Monsieur Entreprise',
             text: 'Voici le document en question.',
             date: new Date('2018-11-16T16:50:00'),
@@ -93,7 +113,7 @@ const controles = [
             ]
           },
           {
-            id: 3,
+            id: 6,
             author: 'Alain Champion',
             text: 'Merci.',
             date: new Date('2018-11-17T12:55:00'),
@@ -106,7 +126,7 @@ const controles = [
         },
         comments: [
           {
-            id: 4,
+            id: 7,
             author: 'Corine Dupont',
             text: "Attention à l'article 243.",
             date: new Date('2018-11-14T08:50:00'),
@@ -114,7 +134,7 @@ const controles = [
             attachments: []
           },
           {
-            id: 5,
+            id: 8,
             author: 'Alain Champion',
             text: "L'article 843 s'applique également.",
             date: new Date('2018-11-16T16:50:00'),
@@ -130,7 +150,7 @@ const controles = [
         ],
         reponses: [
           {
-            id: 6,
+            id: 9,
             author: 'Alain Champion',
             text: "Auriez-vous l'obligeance de me fournir une photo de la cuve ?",
             date: new Date('2018-11-16T14:10:00'),
@@ -138,7 +158,7 @@ const controles = [
             attachments: []
           },
           {
-            id: 7,
+            id: 10,
             author: 'Monsieur Entreprise',
             text: 'Voici une photo.',
             date: new Date('2018-11-17T08:50:00'),
