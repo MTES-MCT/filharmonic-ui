@@ -76,8 +76,8 @@ div
 
     h4.display-1.my-4(v-if="inspecteur")
       | Commentaires
-    p Les commentaires sont internes et ne sont seulement visibles que par les inspecteurs.
-    v-card
+    p(v-if="inspecteur") Les commentaires sont internes et ne sont seulement visibles que par les inspecteurs.
+    v-card(v-if="inspecteur")
       v-card-text
         fh-message(v-for="comment in controle.comments" :key="comment.id" :message="comment")
         v-layout.pl-2.mt-2.align-end
