@@ -20,7 +20,7 @@ yarn run serve
 
 ### Modèle de données
 
-![Modèle de données](http://www.plantuml.com/plantuml/proxy?idx=1&src=https://raw.githubusercontent.com/MTES-MCT/filharmonic-ui/master/doc/data_model.puml)
+![Modèle de données](http://www.plantuml.com/plantuml/proxy?idx=0&src=https://raw.githubusercontent.com/MTES-MCT/filharmonic-ui/master/doc/data_model.puml&cachebust=1)
 
 Pour le modifier, éditer le fichier [data_model.puml](./doc/data_model.puml).
 
