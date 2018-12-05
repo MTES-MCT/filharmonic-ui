@@ -87,20 +87,22 @@ v-container.pa-0(:class="containerClass")
 
   v-layout.align-center
     v-flex.subheading.mr-2 Thèmes
-    v-flex.text-xs-right(v-if="readonly")
-      v-chip(v-for="(theme, index) in inspection.themes" :key="index" small) {{ theme }}
-    v-flex.text-xs-right(v-else)
+    v-flex.text-xs-right
       v-combobox(v-model="inspection.themes" :items="themes"
                 chips small-chips deletable-chips dense multiple
                 :search-input.sync="themeSearch"
                 placeholder="Thèmes..."
                 required :rules="themesRules"
                 :readonly="readonly"
-                )
-        template(slot="no-data")
-          v-list-tile
-            .subheading Créer le thème
-            v-chip(label small) {{ themeSearch }}
+                append-outer-icon="filter_list"
+                :append-outer-icon-cb="() => moreThemes = !moreThemes")
+        template(slot="selection" slot-scope="{ item, index }")
+          v-chip(v-if="index < max")
+            span {{ item }}
+          span(v-if="index === max" class="grey--text caption") +{{ inspection.themes.length - max }} autres
+        template(v-if="!readonly" slot="no-data")
+            v-list-tile.subheading Créer le thème
+              v-chip(label small) {{ themeSearch }}
 </template>
 
 <script>
@@ -136,7 +138,8 @@ export default {
 
       // fetched on init
       inspecteurs: [],
-      themes: []
+      themes: [],
+      moreThemes: false
     }
   },
   computed: {
@@ -157,6 +160,9 @@ export default {
         .map(inspecteurId => {
           return this.inspecteurs.find(inspecteur => inspecteur.id === inspecteurId)
         })
+    },
+    max () {
+      return this.moreThemes ? this.inspection.themes.length : 2
     }
   },
   watch: {
