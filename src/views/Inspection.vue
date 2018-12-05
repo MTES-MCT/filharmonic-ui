@@ -23,10 +23,10 @@ div
     h4.display-1.my-4
       | Points de contrôle
 
-    fh-echange(v-for="echange in inspection.echanges" :key="echange.id" :echange="echange")
+    fh-echange(v-for="echange in inspection.echanges" :key="echange.id" :echange="echange" :etatInspection="inspection.etat")
 
     v-slide-y-transition(hide-on-leave)
-      v-card.my-3.elevation-4(v-if="showNewEchangeForm")
+      v-card.my-3.elevation-4(v-if="showNewEchange && showNewEchangeForm")
         v-toolbar(flat color="secondary" dense dark)
           v-toolbar-title Nouvel échange
           v-spacer
@@ -62,7 +62,7 @@ div
             v-icon(left) done
             | Sauvegarder l'échange
 
-      v-btn.mt-4(v-if="!showNewEchangeForm" @click="showNewEchangeForm = true")
+      v-btn.mt-4(v-if="!showNewEchangeForm && showNewEchange" @click="showNewEchangeForm = true")
         v-icon(left) message
         | Démarrer un nouvel échange
 
@@ -133,7 +133,7 @@ div
 </template>
 
 <script>
-import { getInspection, typesSuite } from '@/api/inspections'
+import { getInspection, typesSuite, allowedStates } from '@/api/inspections'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhDetailInspection from '@/components/FhDetailInspection.vue'
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
@@ -160,8 +160,8 @@ export default {
     return {
       error: '',
       inspection: null, // fetched on init
-      showNewEchangeForm: false,
       validNewEchangeForm: false,
+      showNewEchangeForm: false,
       newEchange: {
         sujet: '',
         referencesReglementaires: [
@@ -187,7 +187,10 @@ export default {
     ...mapState({
       inspecteur: state => state.authentication.user.type === 'inspecteur',
       inspectionsOuverts: 'inspectionsOuverts'
-    })
+    }),
+    showNewEchange () {
+      return allowedStates[this.inspection.etat].order < 4
+    }
   },
   async created () {
     try {

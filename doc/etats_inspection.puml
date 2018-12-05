@@ -1,0 +1,14 @@
+@startuml
+
+[*] --> AvantVisite
+AvantVisite -> VisiteSurSite: Date visite
+VisiteSurSite -down-> RapportSuites: Visite faite
+RapportSuites -down-> AttenteValidation: Rapport terminé
+AttenteValidation -left-> Validee: Ok
+Validee --> [*]
+
+note right of AttenteValidation
+  Echanges figés avant Rapport terminé
+end note
+
+@enduml

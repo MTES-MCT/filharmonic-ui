@@ -214,24 +214,34 @@ const inspections = [
 
 export const allowedStates = {
   en_cours: {
-    label: 'En cours',
+    label: 'Avant visite',
     color: 'indigo',
     order: 1
+  },
+  visite_site: {
+    label: 'Visite sur site',
+    color: 'primary',
+    order: 2
+  },
+  rapport_suites: {
+    label: 'Rédaction du rapport sur les suites',
+    color: 'warning',
+    order: 3
   },
   attente_validation: {
     label: 'En attente de validation',
     color: 'teal',
-    order: 2
+    order: 4
   },
   valide: {
     label: 'Validé',
     color: 'green',
-    order: 3
+    order: 5
   },
   clos: {
     label: 'Clos',
     color: 'grey',
-    order: 4
+    order: 6
   }
 }
 
