@@ -103,6 +103,13 @@ v-container.pa-0(:class="containerClass")
         template(v-if="!readonly" slot="no-data")
             v-list-tile.subheading Créer le thème
               v-chip(label small) {{ themeSearch }}
+
+  v-layout.align-center
+    v-flex.subheading.mr-2 Contexte
+    v-flex.text-xs-right(v-if="readonly") {{ inspection.contexte }}
+    v-flex(v-else)
+      v-textarea(box v-model="inspection.contexte" required :rules="notEmpty" :readonly="readonly")
+
 </template>
 
 <script>
