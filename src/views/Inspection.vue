@@ -1,29 +1,29 @@
 <template lang="pug">
 div
   p.display-1.mt-4.text-xs-center(v-if="error") {{ error }}
-  v-container(v-if="controle")
-    h1.display-2.text-xs-center.mb-3 Contrôle n°{{ controle.id }}
-    fh-etat-controle(:etat="controle.etat" stepper)
+  v-container(v-if="inspection")
+    h1.display-2.text-xs-center.mb-3 Inspection n°{{ inspection.id }}
+    fh-etat-inspection(:etat="inspection.etat" stepper)
 
     v-layout.row.wrap.mt-3.grid-list-lg
       v-flex.xs12.md6.pa-2
         v-card
           v-toolbar(flat)
             v-toolbar-title
-              | Détails du contrôle
+              | Détails
             v-spacer
             v-toolbar-items
-              v-btn(flat :to="`/controles/${this.controleId}/details`" title="Modifier le contrôle")
+              v-btn(flat :to="`/inspections/${this.inspectionId}/details`" title="Modifier le inspection")
                 v-icon(medium) edit
           v-card-text
-            fh-detail-controle(:controle="controle" readonly)
+            fh-detail-inspection(:inspection="inspection" readonly)
 
-        fh-detail-etablissement(v-if="!error", :etablissement="controle.etablissement")
+        fh-detail-etablissement(v-if="!error", :etablissement="inspection.etablissement")
 
     h4.display-1.my-4
-      | Échanges
+      | Points de contrôle
 
-    fh-echange(v-for="echange in controle.echanges" :key="echange.id" :echange="echange")
+    fh-echange(v-for="echange in inspection.echanges" :key="echange.id" :echange="echange")
 
     v-slide-y-transition(hide-on-leave)
       v-card.my-3.elevation-4(v-if="showNewEchangeForm")
@@ -71,7 +71,7 @@ div
     p(v-if="inspecteur") Les commentaires sont internes et ne sont seulement visibles que par les inspecteurs.
     v-card(v-if="inspecteur")
       v-card-text
-        fh-message(v-for="comment in controle.comments" :key="comment.id" :message="comment")
+        fh-message(v-for="comment in inspection.comments" :key="comment.id" :message="comment")
         v-layout.pl-2.mt-2.align-end
           v-textarea(box label="Commentaire" v-model="newComment" auto-grow hideDetails rows="1" clearable)
           v-btn.mb-0
@@ -83,17 +83,17 @@ div
       h4.display-1.my-4(v-if="inspecteur") Suites
       p Les suites sont décidées lorsque tous les échanges sont soldés par des constats.
 
-      .fh-controle__suite.elevation-2.pa-3(v-if="controle.suite")
+      .fh-inspection__suite.elevation-2.pa-3(v-if="inspection.suite")
         v-layout.align-center
           span.subheading.mr-2 Type de suite :
-          v-chip(small :color="typeSuiteControle.color" dark text-color="white")
+          v-chip(small :color="typeSuiteInspection.color" dark text-color="white")
             v-avatar
-              v-icon() {{ typeSuiteControle.icon }}
-            | {{ typeSuiteControle.label }}
+              v-icon() {{ typeSuiteInspection.icon }}
+            | {{ typeSuiteInspection.label }}
         v-layout.align-center
           span.subheading.mr-2 Synthèse :
           v-flex
-            div {{ controle.suite.synthese }}
+            div {{ inspection.suite.synthese }}
 
       div(v-else)
         v-slide-y-transition(hide-on-leave)
@@ -127,15 +127,15 @@ div
                 v-icon(left) gavel
                 | Sauvegarder la suite
 
-        v-btn(color="secondary" v-if="!controle.suite && !showNewSuiteForm" @click="prepareAndShowNewSuiteForm()")
+        v-btn(color="secondary" v-if="!inspection.suite && !showNewSuiteForm" @click="prepareAndShowNewSuiteForm()")
           v-icon(left) gavel
           | Ajouter une suite
 </template>
 
 <script>
-import { getControle, typesSuite } from '@/api/controles'
-import FhEtatControle from '@/components/FhEtatControle.vue'
-import FhDetailControle from '@/components/FhDetailControle.vue'
+import { getInspection, typesSuite } from '@/api/inspections'
+import FhEtatInspection from '@/components/FhEtatInspection.vue'
+import FhDetailInspection from '@/components/FhDetailInspection.vue'
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhEchange from '@/components/FhEchange.vue'
@@ -144,14 +144,14 @@ import { mapState } from 'vuex'
 
 export default {
   components: {
-    FhEtatControle,
-    FhDetailControle,
+    FhEtatInspection,
+    FhDetailInspection,
     FhDetailEtablissement,
     FhMessage,
     FhEchange
   },
   props: {
-    controleId: {
+    inspectionId: {
       type: String,
       default: null
     }
@@ -159,7 +159,7 @@ export default {
   data () {
     return {
       error: '',
-      controle: null, // fetched on init
+      inspection: null, // fetched on init
       showNewEchangeForm: false,
       validNewEchangeForm: false,
       newEchange: {
@@ -181,32 +181,32 @@ export default {
     }
   },
   computed: {
-    typeSuiteControle () {
-      return this.controle.suite ? typesSuite[this.controle.suite.type] : {}
+    typeSuiteInspection () {
+      return this.inspection.suite ? typesSuite[this.inspection.suite.type] : {}
     },
     ...mapState({
       inspecteur: state => state.authentication.user.type === 'inspecteur',
-      controlesOuverts: 'controlesOuverts'
+      inspectionsOuverts: 'inspectionsOuverts'
     })
   },
   async created () {
     try {
-      this.controle = _.cloneDeep(await getControle(this.controleId, { etablissement: true }))
+      this.inspection = _.cloneDeep(await getInspection(this.inspectionId, { etablissement: true }))
     } catch (err) {
       this.error = err.message
     }
   },
   methods: {
     removeTheme (theme) {
-      const index = this.controle.themes.indexOf(theme)
+      const index = this.inspection.themes.indexOf(theme)
       if (index !== -1) {
-        this.controle.themes.splice(index, 1)
+        this.inspection.themes.splice(index, 1)
       }
     },
     removeInspecteur (inspecteur) {
-      const index = this.controle.inspecteurs.indexOf(inspecteur.id)
+      const index = this.inspection.inspecteurs.indexOf(inspecteur.id)
       if (index !== -1) {
-        this.controle.inspecteurs.splice(index, 1)
+        this.inspection.inspecteurs.splice(index, 1)
       }
     },
     resetNewEchange () {
@@ -221,7 +221,7 @@ export default {
     },
     saveNewEchange () {
       if (this.$refs.newEchangeForm.validate()) {
-        this.controle.echanges.push(_.cloneDeep(this.newEchange))
+        this.inspection.echanges.push(_.cloneDeep(this.newEchange))
         this.resetNewEchange()
       }
     },
@@ -244,12 +244,12 @@ export default {
     },
     saveNewSuite () {
       if (this.$refs.newSuiteForm.validate()) {
-        this.controle.suite = this.newSuite
+        this.inspection.suite = this.newSuite
         this.resetNewSuite()
       }
     },
     addDiscussion () {
-      this.controle.echanges.unshift({
+      this.inspection.echanges.unshift({
         question: {
           author: 'Alain Champion',
           text: 'Nouvel échange...',
@@ -260,7 +260,7 @@ export default {
       })
     },
     addComment () {
-      this.controle.comments.push({
+      this.inspection.comments.push({
         author: 'Alain Champion',
         text: this.newComment,
         date: new Date(),
@@ -273,7 +273,7 @@ export default {
 </script>
 
 <style lang="stylus">
-.fh-controle
+.fh-inspection
   &__suite
     margin-top 1em
     padding-left 1em

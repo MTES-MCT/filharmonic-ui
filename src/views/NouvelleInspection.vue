@@ -1,36 +1,36 @@
 <template lang="pug">
-v-container.grid-list-lg.controle-form
+v-container.grid-list-lg.inspection-form
   v-alert.text-xs-center(type="error" :value="error") L'établissement '#[strong {{ this.$route.params.id }}]' ne semble pas exister. Mauvaise URL ?
-  div(v-if="controle.etablissement")
-    h1.display-2 Nouveau contrôle
-    fh-detail-etablissement(v-if="!error", :etablissement="controle.etablissement")
+  div(v-if="inspection.etablissement")
+    h1.display-2 Nouveau inspection
+    fh-detail-etablissement(v-if="!error", :etablissement="inspection.etablissement")
 
-    h4.display-1.mt-4 Détails du contrôle
+    h4.display-1.mt-4 Détails du inspection
 
     v-form(ref="form" v-model="validForm" lazy-validation)
-      fh-detail-controle(:controle="controle")
-      v-btn(block @click="createControle" :disabled="!validForm" color="primary") Créer le contrôle
+      fh-detail-inspection(:inspection="inspection")
+      v-btn(block @click="createInspection" :disabled="!validForm" color="primary") Créer le inspection
 </template>
 
 <script>
-import FhDetailControle from '@/components/FhDetailControle.vue'
-import { createControle } from '@/api/controles'
+import FhDetailInspection from '@/components/FhDetailInspection.vue'
+import { createInspection } from '@/api/inspections'
 import { getEtablissement } from '@/api/etablissements'
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 
 export default {
   components: {
-    FhDetailControle,
+    FhDetailInspection,
     FhDetailEtablissement
   },
   data () {
     return {
       error: false,
-      controle: {
+      inspection: {
         date: '',
         type: 'courant',
         annonce: true,
-        origine: 'plan_de_controle',
+        origine: 'plan_de_inspection',
         circonstances: '',
         detailCirconstances: '',
         inspecteurs: [],
@@ -42,16 +42,16 @@ export default {
     }
   },
   async created () {
-    this.controle.etablissement = await getEtablissement(this.$route.params.id)
-    if (!this.controle.etablissement) {
+    this.inspection.etablissement = await getEtablissement(this.$route.params.id)
+    if (!this.inspection.etablissement) {
       this.error = true
     }
   },
   methods: {
-    async createControle () {
+    async createInspection () {
       if (this.$refs.form.validate()) {
-        const controleId = await createControle(this.controle)
-        this.$router.push(`/controles/${controleId}`)
+        const inspectionId = await createInspection(this.inspection)
+        this.$router.push(`/inspections/${inspectionId}`)
       }
     }
   }
@@ -59,6 +59,6 @@ export default {
 </script>
 
 <style lang="stylus">
-.controle-form
+.inspection-form
   max-width 600px
 </style>

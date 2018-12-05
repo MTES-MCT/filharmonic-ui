@@ -2,13 +2,13 @@ import * as util from '@/util'
 import { getEtablissement } from '@/api/etablissements'
 import { getUser } from '@/api/users'
 
-const controles = [
+const inspections = [
   {
     id: '1',
     date: '2018-09-10',
     type: 'approfondi',
     annonce: true,
-    origine: 'plan_de_controle',
+    origine: 'plan_de_inspection',
     favorite: false,
     etat: 'en_cours',
     themes: [
@@ -49,7 +49,7 @@ const controles = [
     date: '2018-11-15',
     type: 'approfondi',
     annonce: true,
-    origine: 'plan_de_controle',
+    origine: 'plan_de_inspection',
     favorite: true,
     etat: 'attente_validation',
     themes: [
@@ -261,45 +261,45 @@ export const typesSuite = {
   }
 }
 
-export const listControles = util.slow(() => {
-  return controles
+export const listInspections = util.slow(() => {
+  return inspections
 })
 
-export const getControle = util.slow(async (id, options = {}) => {
-  const controle = controles.find(controle => controle.id === id)
-  if (!controle) {
-    throw new Error(`Controle ${id} non trouvé`)
+export const getInspection = util.slow(async (id, options = {}) => {
+  const inspection = inspections.find(inspection => inspection.id === id)
+  if (!inspection) {
+    throw new Error(`Inspection ${id} non trouvée`)
   }
   if (options.etablissement) {
-    controle.etablissement = await getEtablissement(controle.etablissementId)
+    inspection.etablissement = await getEtablissement(inspection.etablissementId)
   }
-  return controle
+  return inspection
 })
 
-export const listAssignedControles = util.slow(userId => {
+export const listAssignedInspections = util.slow(userId => {
   return Promise.all(
-    controles
-      .filter(controle => controle.inspecteurs.includes(userId))
-      .map(async controle => {
-        controle.etablissement = await getEtablissement(controle.etablissementId)
-        controle.lastEvent.author = await getUser(controle.lastEvent.authorId)
-        return controle
+    inspections
+      .filter(inspection => inspection.inspecteurs.includes(userId))
+      .map(async inspection => {
+        inspection.etablissement = await getEtablissement(inspection.etablissementId)
+        inspection.lastEvent.author = await getUser(inspection.lastEvent.authorId)
+        return inspection
       })
   )
 })
 
-export const listControlesOuverts = util.slow(async userId => {
-  return (await listAssignedControles(userId)).filter(c => c.etat !== 'clos')
+export const listInspectionsOuvertes = util.slow(async userId => {
+  return (await listAssignedInspections(userId)).filter(c => c.etat !== 'clos')
 })
 
-export const getControlesByEtablissement = util.slow((etablissementId) => {
-  return controles.filter(controle => controle.etablissementId === etablissementId)
+export const getInspectionsByEtablissement = util.slow((etablissementId) => {
+  return inspections.filter(inspection => inspection.etablissementId === etablissementId)
 })
 
-export const createControle = util.slow((controle) => {
-  controle.id = '' + new Date().getTime() % 1000
-  controle.echanges = []
-  controle.comments = []
-  controles.push(controle)
-  return controle.id
+export const createInspection = util.slow((inspection) => {
+  inspection.id = '' + new Date().getTime() % 1000
+  inspection.echanges = []
+  inspection.comments = []
+  inspections.push(inspection)
+  return inspection.id
 })

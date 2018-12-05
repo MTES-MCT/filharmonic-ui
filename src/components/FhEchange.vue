@@ -98,7 +98,7 @@ v-expansion-panel(expand)
 
 <script>
 import Vue from 'vue'
-import { typesConstats } from '@/api/controles'
+import { typesConstats } from '@/api/inspections'
 import FhMessage from '@/components/FhMessage.vue'
 import { mapState } from 'vuex'
 

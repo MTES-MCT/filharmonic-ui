@@ -4,45 +4,45 @@ v-container
 
   v-card.mt-4
     v-toolbar(flat)
-      v-toolbar-title Contrôles ouverts ({{ controlesOuverts.length }})
-    v-list(v-if="controlesOuverts.length == 0")
-      v-list-tile Aucun contrôle
+      v-toolbar-title Inspections ouvertes ({{ inspectionsOuvertes.length }})
+    v-list(v-if="inspectionsOuvertes.length == 0")
+      v-list-tile Aucune inspection
     v-list.py-0(v-else two-line)
-      fh-controle-item(v-for="controle in controlesOuverts" :key="controle.id" :controle="controle")
+      fh-inspection-item(v-for="inspection in inspectionsOuvertes" :key="inspection.id" :inspection="inspection")
 
   v-card.mt-4
     v-toolbar(flat)
-      v-toolbar-title Contrôles terminés
-    v-list(v-if="controlesTermines.length == 0")
-      v-list-tile Aucun contrôle
+      v-toolbar-title Inspections terminées
+    v-list(v-if="inspectionsTerminees.length == 0")
+      v-list-tile Aucune inspection
     v-list.py-0(v-else two-line)
-      fh-controle-item(v-for="controle in controlesTermines" :key="controle.id" :controle="controle")
+      fh-inspection-item(v-for="inspection in inspectionsTerminees" :key="inspection.id" :inspection="inspection")
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import { listAssignedControles } from '@/api/controles'
-import FhControleItem from '@/components/FhControleItem.vue'
+import { listAssignedInspections } from '@/api/inspections'
+import FhInspectionItem from '@/components/FhInspectionItem.vue'
 
 export default {
   components: {
-    FhControleItem
+    FhInspectionItem
   },
   data () {
     return {
-      controles: []
+      inspections: []
     }
   },
   computed: {
     ...mapState([
-      'controlesOuverts'
+      'inspectionsOuvertes'
     ]),
-    controlesTermines () {
-      return this.controles.filter(c => c.state === 'termine')
+    inspectionsTerminees () {
+      return this.inspections.filter(c => c.state === 'termine')
     }
   },
   async created () {
-    this.controles = await listAssignedControles(1)
+    this.inspections = await listAssignedInspections(1)
   }
 }
 </script>

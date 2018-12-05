@@ -1,5 +1,5 @@
 import AuthenticationAPI from '@/api/authentication'
-import { listControlesOuverts } from '@/api/controles'
+import { listInspectionsOuvertes } from '@/api/inspections'
 import sessionStorage from '@/store/sessionStorage'
 import { createInitialStoreState } from '@/store/state'
 
@@ -9,9 +9,9 @@ import { createInitialStoreState } from '@/store/state'
 // }
 
 export default {
-  async loadControlesOuverts ({ commit, state }) {
-    const controlesOuverts = await listControlesOuverts(state.authentication.user.id)
-    commit('loadControlesOuverts', controlesOuverts)
+  async loadInspectionsOuvertes ({ commit, state }) {
+    const inspectionsOuvertes = await listInspectionsOuvertes(state.authentication.user.id)
+    commit('loadInspectionsOuvertes', inspectionsOuvertes)
   },
   async login ({ commit }, { user, password }) {
     const authenticationInfos = await AuthenticationAPI.login(user, password)

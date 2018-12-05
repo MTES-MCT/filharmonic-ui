@@ -1,6 +1,6 @@
 export default {
-  loadControlesOuverts (state, controlesOuverts) {
-    state.controlesOuverts = controlesOuverts
+  loadInspectionsOuvertes (state, inspectionsOuvertes) {
+    state.inspectionsOuvertes = inspectionsOuvertes
   },
   login (state, authenticationInfos) {
     state.authentication = authenticationInfos

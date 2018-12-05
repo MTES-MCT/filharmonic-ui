@@ -6,10 +6,10 @@ import Etablissements from '@/views/Etablissements.vue'
 import Etablissement from '@/views/Etablissement.vue'
 import Login from '@/views/Login.vue'
 import Page404 from '@/views/Page404.vue'
-import Controles from '@/views/Controles.vue'
-import Controle from '@/views/Controle.vue'
-import NouveauControle from '@/views/NouveauControle.vue'
-import DetailControle from '@/views/DetailControle.vue'
+import Inspections from '@/views/Inspections.vue'
+import Inspection from '@/views/Inspection.vue'
+import NouvelleInspection from '@/views/NouvelleInspection.vue'
+import DetailInspection from '@/views/DetailInspection.vue'
 
 Vue.use(Router)
 
@@ -66,25 +66,25 @@ export function createRouter (store) {
             props: true
           },
           {
-            path: '/etablissements/:id/controles/new',
-            name: 'nouveau-controle',
-            component: NouveauControle
+            path: '/etablissements/:id/inspections/new',
+            name: 'nouvelle-inspection',
+            component: NouvelleInspection
           },
           {
-            path: '/controles',
-            name: 'controles',
-            component: Controles
+            path: '/inspections',
+            name: 'inspections',
+            component: Inspections
           },
           {
-            path: '/controles/:controleId',
-            name: 'controle',
-            component: Controle,
+            path: '/inspections/:inspectionId',
+            name: 'inspection',
+            component: Inspection,
             props: true
           },
           {
-            path: '/controles/:controleId/details',
-            name: 'details-controle',
-            component: DetailControle,
+            path: '/inspections/:inspectionId/details',
+            name: 'details-inspection',
+            component: DetailInspection,
             props: true
           }
         ]

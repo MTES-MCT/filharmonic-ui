@@ -5,33 +5,33 @@
       fh-detail-etablissement(v-if="!error", :etablissement="etablissement", :expand="expandEtablissement")
       v-list(two-line subheader v-if="!error")
         v-subheader
-          v-flex Contrôles
-          v-btn(:to="`/etablissements/${id}/controles/new`" round color="primary" small title="Démarrer un contrôle")
+          v-flex Inspections
+          v-btn(:to="`/etablissements/${id}/inspections/new`" round color="primary" small title="Démarrer un inspection")
             v-icon(left) add
-            | Nouveau contrôle
-        v-list-tile(:to="`/controles/${controle.id}`" v-for="controle in controles" :key="controle.id")
+            | Nouvelle inspection
+        v-list-tile(:to="`/inspections/${inspection.id}`" v-for="inspection in inspections" :key="inspection.id")
           v-list-tile-action
-            fh-etat-controle(:state="controle.state")
+            fh-etat-inspection(:etat="inspection.etat")
           v-list-tile-content
-            v-list-tile-title Contrôle n° {{ controle.id }} du {{ controle.date }}
+            v-list-tile-title Inspection n° {{ inspection.id }} du {{ inspection.date }}
         v-divider
 
 </template>
 
 <script>
 import { getEtablissement } from '@/api/etablissements'
-import { getControlesByEtablissement } from '@/api/controles'
-import FhEtatControle from '@/components/FhEtatControle.vue'
+import { getInspectionsByEtablissement } from '@/api/inspections'
+import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 export default {
   components: {
-    FhEtatControle,
+    FhEtatInspection,
     FhDetailEtablissement
   },
   data () {
     return {
       error: false,
-      controles: [],
+      inspections: [],
       id: '',
       etablissement: null,
       expandEtablissement: [ true ]
@@ -46,8 +46,8 @@ export default {
     if (!this.etablissement) {
       this.error = true
     }
-    this.controles = await getControlesByEtablissement(this.id)
-    if (!this.controles) {
+    this.inspections = await getInspectionsByEtablissement(this.id)
+    if (!this.inspections) {
       this.error = true
     }
   }

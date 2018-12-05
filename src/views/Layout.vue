@@ -10,28 +10,28 @@ v-app
           v-list-tile-title Tableau de bord
 
       v-list-group(value="true")
-        v-list-tile(slot="activator" title="Contrôles favoris")
+        v-list-tile(slot="activator" title="Inspections favoris")
           v-list-tile-action
             v-icon star
           v-list-tile-content
-            v-list-tile-title Contrôles favoris
+            v-list-tile-title Inspections favoris
         v-list.py-0.grey.lighten-2(dense)
-          v-list-tile(v-for="controle in controlesOuverts" :key="controle.id"
-                      :to="`/controles/${controle.id}`"
-                      :title="`${controle.date} - ${controle.etablissement.nom}`"
+          v-list-tile(v-for="inspection in inspectionsOuverts" :key="inspection.id"
+                      :to="`/inspections/${inspection.id}`"
+                      :title="`${inspection.date} - ${inspection.etablissement.nom}`"
                       )
             v-list-tile-content
               v-list-tile-title
-                | {{ controle.date }}
-                strong.ml-2 {{ controle.etablissement.nom }}
+                | {{ inspection.date }}
+                strong.ml-2 {{ inspection.etablissement.nom }}
                 | ,&nbsp;
-                i {{ controle.etablissement.adresse }}
+                i {{ inspection.etablissement.adresse }}
 
-      v-list-tile(to="/controles" title="Contrôles")
+      v-list-tile(to="/inspections" title="Inspections")
         v-list-tile-action
           v-icon search
         v-list-tile-content
-          v-list-tile-title Contrôles
+          v-list-tile-title Inspections
       v-list-tile(to="/etablissements" title="Etablissements")
         v-list-tile-action
           v-icon location_city
@@ -90,11 +90,11 @@ export default {
   computed: {
     ...mapState({
       user: state => state.authentication.user,
-      controlesOuverts: 'controlesOuverts'
+      inspectionsOuvertes: 'inspectionsOuvertes'
     })
   },
   async created () {
-    await this.$store.dispatch('loadControlesOuverts')
+    await this.$store.dispatch('loadInspectionsOuvertes')
   },
   methods: {
     async logout () {

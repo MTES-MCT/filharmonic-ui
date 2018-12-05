@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import { allowedStates } from '@/api/controles'
+import { allowedStates } from '@/api/inspections'
 export default {
-  name: 'FhEtatControle',
+  name: 'FhEtatInspection',
   props: {
     etat: {
       type: String,

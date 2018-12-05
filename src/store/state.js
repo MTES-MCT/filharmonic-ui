@@ -3,6 +3,6 @@ export function createInitialStoreState (authenticationInfos) {
     authentication: authenticationInfos || {
       valid: false
     },
-    controlesOuverts: []
+    inspectionsOuvertes: []
   }
 }

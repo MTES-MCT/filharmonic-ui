@@ -27,18 +27,18 @@ class Etablissement {
   iedmtd : boolean
 }
 
-note top of ControlePkg
-  Les contrôles n'ont pas besoin d'être normalisés sur plusieurs tables (si SQL)
-  car tous les fils, messages, constats, etc ne sont récupérés qu'avec le contrôle
+note top of InspectionPkg
+  Les inspections n'ont pas besoin d'être normalisées sur plusieurs tables (si SQL)
+  car tous les fils, messages, constats, etc ne sont récupérés qu'avec l'inspection
 end note
 
-package ControlePkg {
+package InspectionPkg {
 
-  class Controle {
+  class Inspection {
     date : date
     type: enum 'approfondi' | 'courant' | 'ponctuel'
     annonce : boolean
-    origine : enum 'plan_de_controle' | 'circonstancielle'
+    origine : enum 'plan_de_inspection' | 'circonstancielle'
     circonstances : enum 'incident' | 'plainte' | 'autre'
     detailCirconstances : string
     etat : enum 'encours' | 'valide' | 'clos'
@@ -90,7 +90,7 @@ package ControlePkg {
 class Evenement {
   type : string
   auteur : @User
-  controle : @Controle
+  inspection : @Inspection
   data : json
   created_at : date
 }
@@ -114,12 +114,12 @@ note top of Theme
 end note
 
 User "1" -- "*" Evenement
-User "1..*" -- "*" Controle
-Etablissement *-- "*" Controle
-Controle *-- "*" Fil
-Controle "1" -- "*" Evenement
-Controle *-- "0..1" Suite
-Controle *--  "*" Message
+User "1..*" -- "*" Inspection
+Etablissement *-- "*" Inspection
+Inspection *-- "*" Fil
+Inspection "1" -- "*" Evenement
+Inspection *-- "0..1" Suite
+Inspection *--  "*" Message
 Fil *--  "*" Message
 Fil *-- "0..1" Constat
 Message *-- "*" PieceJointe
