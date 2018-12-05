@@ -144,6 +144,29 @@ const inspections = [
         ]
       },
       {
+        sujet: 'Atelier de malaxage filage',
+        referencesReglementaires: [
+          "Article 3.1 de l'arrêté préfectoral du 9 juin 1999"
+        ],
+        reponses: [],
+        constat: {
+          type: 'observation',
+          remarques: 'Les rejets X2 sont contrôlés semestriellement pour les MES, la DBO5, la DCO, le pH, les hydrocarbures totaux. Les HAP ont été contrôlés dans le cadre de la campagne RSDE.'
+        }
+      },
+      {
+        sujet: 'Eau - Air',
+        referencesReglementaires: [
+          "Article 1 de l'Arrêté ministériel du 28 avril 2014"
+        ],
+        reponses: [],
+        constat: {
+          type: 'non_conforme',
+          remarques: `Au jour de l'inspection, les données 2018 n'ont pas été télétransmises par l'exploitant pour les données des rejets en eau + légionnelle. L'inspection rappelle l'obligation réglementaire faite à l'exploitant de produire toute pièce ou documents mentionnés dans les différents arrêtés dans les délais prescrits. Les moyens humains et matériels correspondants doivent être mis en place pour que ces données puissent être disponibles pour l'IIC.`,
+          echeance: '2019-05-17'
+        }
+      },
+      {
         sujet: 'Autosurveillance des émissions canalisées de COV',
         referencesReglementaires: [
           "Article 8.2.1.1. de l'arrêté préfectoral du 28 juin 2017"
@@ -173,8 +196,8 @@ const inspections = [
           }
         ],
         constat: {
-          type: 'non_conforme',
-          observation: 'Il faut réparer la fissure de la cuve.',
+          type: 'proposition_mise_en_demeure',
+          remarques: 'Il faut réparer la fissure de la cuve.',
           echeance: '2019-02-17'
         }
       }
@@ -228,7 +251,7 @@ export const typesConstats = {
   },
   proposition_mise_en_demeure: {
     label: 'Proposition de mise en demeure',
-    color: 'black',
+    color: '#600060',
     icon: 'error'
   }
 }

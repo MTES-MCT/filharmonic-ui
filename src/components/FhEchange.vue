@@ -10,7 +10,7 @@ v-expansion-panel(expand)
                                             target="_blank")
         | {{ referenceReglementaire }}
 
-      .fh-echange__constat(v-if="echange.constat")
+      .fh-echange__constat(v-if="echange.constat" :style="`border-left-color: ${typeConstatEchange.color}`")
         v-layout.align-center
           span.subheading.mr-2 Constat finalisé :
           v-chip(small :color="typeConstatEchange.color" dark text-color="white")
@@ -18,16 +18,15 @@ v-expansion-panel(expand)
               v-icon(large) {{ typeConstatEchange.icon }}
             | {{ typeConstatEchange.label }}
 
-        div(v-if="echange.constat.type !== 'conforme'")
-          v-layout.align-center
-            span.subheading.mr-2 Observation :
-            v-flex
-              div {{ echange.constat.observation }}
-          v-layout.align-center(v-if="echange.constat.echeance")
-            span.subheading.mr-2 Délai de mise en conformité :
-            v-flex
-              | Avant le&nbsp;
-              time(:datetime="echange.constat.echeance") {{ echange.constat.echeance }}
+        v-layout.my-2(v-if="echange.constat.remarques")
+          span.subheading.mr-2 Remarques&nbsp;:
+          v-flex
+            div {{ echange.constat.remarques }}
+        v-layout.align-center(v-if="echange.constat.echeance")
+          span.subheading.mr-2 Délai de mise en conformité :
+          v-flex
+            | Avant le&nbsp;
+            time(:datetime="echange.constat.echeance") {{ echange.constat.echeance }}
 
     v-card.px-3
       v-card-text.subheading Fil de discussion
@@ -64,10 +63,10 @@ v-expansion-panel(expand)
                   v-radio(v-for="(typeConstats, key) in typesConstats" :key="key" :label="typeConstats.label" :value="key")
 
                 v-container.pa-0(grid-list-md)
-                  v-layout.mt-3.wrap(v-if="newConstat.type !== 'conforme'")
+                  v-layout.mt-3.wrap
                     v-flex.sm-12
-                      v-textarea(box label="Observation" v-model="newConstat.observation" auto-grow hideDetails rows="3" clearable)
-                    v-flex.shrink
+                      v-textarea(box label="Remarques" v-model="newConstat.remarques" auto-grow hideDetails rows="3" clearable)
+                    v-flex.shrink(v-if="newConstat.type !== 'conforme'")
                       v-menu(
                         v-model="showNewConstatEcheancePicker"
                               :close-on-content-click="false"
