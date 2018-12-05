@@ -95,7 +95,7 @@ v-container.pa-0(:class="containerClass")
                 required :rules="themesRules"
                 :readonly="readonly"
                 append-outer-icon="filter_list"
-                @click:append-outer="() => moreThemes = !moreThemes")
+                @click:append-outer="moreThemes = !moreThemes")
         template(slot="selection" slot-scope="{ item, index }")
           v-chip(v-if="index < max")
             span {{ item }}
