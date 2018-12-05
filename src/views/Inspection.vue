@@ -186,7 +186,7 @@ export default {
     },
     ...mapState({
       inspecteur: state => state.authentication.user.type === 'inspecteur',
-      inspectionsOuverts: 'inspectionsOuverts'
+      inspectionsOuvertes: 'inspectionsOuvertes'
     }),
     showNewEchange () {
       return allowedStates[this.inspection.etat].order < 4
