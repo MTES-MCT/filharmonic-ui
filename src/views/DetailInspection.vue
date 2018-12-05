@@ -2,10 +2,10 @@
 v-container.grid-list-lg.inspection-form
   v-alert.text-xs-center(type="error" :value="error") L'inspection '#[strong {{ inspectionId }}]' ne semble pas exister. Mauvaise URL ?
   div(v-if="inspection")
-    h1.display-2
+    h1.display-1
       v-btn(icon large :to="`/inspections/${inspection.id}`" title="Revenir au inspection")
         v-icon(x-large) chevron_left
-      | Inspection n°{{ inspection.id }}
+      | Inspection de l'établissement {{ inspection.etablissement.nom }} du {{ inspection.date.toLocaleString() }}
 
     fh-detail-etablissement(v-if="!error", :etablissement="inspection.etablissement")
 

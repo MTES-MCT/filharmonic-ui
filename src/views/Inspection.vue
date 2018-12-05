@@ -2,7 +2,7 @@
 div
   p.display-1.mt-4.text-xs-center(v-if="error") {{ error }}
   v-container(v-if="inspection")
-    h1.display-2.text-xs-center.mb-3 Inspection n°{{ inspection.id }}
+    h1.display-2.text-xs-center.mb-3 Inspection de l'établissement {{ inspection.etablissement.nom }} du {{ inspection.date.toLocaleString() }}
     fh-etat-inspection(:etat="inspection.etat" stepper)
 
     v-layout.row.wrap.mt-3.grid-list-lg
