@@ -10,6 +10,7 @@ import Inspections from '@/views/Inspections.vue'
 import Inspection from '@/views/Inspection.vue'
 import NouvelleInspection from '@/views/NouvelleInspection.vue'
 import DetailInspection from '@/views/DetailInspection.vue'
+import ActiviteInspection from '@/views/ActiviteInspection.vue'
 
 Vue.use(Router)
 
@@ -85,6 +86,12 @@ export function createRouter (store) {
             path: '/inspections/:inspectionId/details',
             name: 'details-inspection',
             component: DetailInspection,
+            props: true
+          },
+          {
+            path: '/inspections/:inspectionId/activite',
+            name: 'activite-inspection',
+            component: ActiviteInspection,
             props: true
           }
         ]

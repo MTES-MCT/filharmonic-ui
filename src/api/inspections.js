@@ -1,6 +1,6 @@
 import * as util from '@/util'
 import { getEtablissement } from '@/api/etablissements'
-import { getUser } from '@/api/users'
+import evenementsAPI from '@/api/evenements'
 
 const inspections = [
   {
@@ -23,6 +23,7 @@ const inspections = [
     comments: [],
     echanges: [
       {
+        id: 1,
         sujet: 'Mesure des émissions atmosphériques canalisées par un organisme extérieur',
         referencesReglementaires: [
           "Articles 3.2.3., 3.2.8. et 8.2.1.2. de l'arrêté préfectoral du 28 juin 2017"
@@ -38,12 +39,7 @@ const inspections = [
         ],
         comments: []
       }
-    ],
-    lastEvent: {
-      date: new Date('2018-11-24T09:50:00'),
-      authorId: 4,
-      type: 'message'
-    }
+    ]
   },
   {
     id: '2',
@@ -85,6 +81,7 @@ const inspections = [
     ],
     echanges: [
       {
+        id: 2,
         sujet: 'Mesure des émissions atmosphériques canalisées par un organisme extérieur',
         referencesReglementaires: [
           "Article 3.2.3. de l'arrêté préfectoral du 28 juin 2017",
@@ -146,6 +143,7 @@ const inspections = [
         ]
       },
       {
+        id: 3,
         sujet: 'Atelier de malaxage filage',
         referencesReglementaires: [
           "Article 3.1 de l'arrêté préfectoral du 9 juin 1999"
@@ -157,6 +155,7 @@ const inspections = [
         }
       },
       {
+        id: 4,
         sujet: 'Eau - Air',
         referencesReglementaires: [
           "Article 1 de l'Arrêté ministériel du 28 avril 2014"
@@ -169,6 +168,7 @@ const inspections = [
         }
       },
       {
+        id: 5,
         sujet: 'Autosurveillance des émissions canalisées de COV',
         referencesReglementaires: [
           "Article 8.2.1.1. de l'arrêté préfectoral du 28 juin 2017"
@@ -203,12 +203,7 @@ const inspections = [
           echeance: '2019-02-17'
         }
       }
-    ],
-    lastEvent: {
-      date: new Date('2018-11-22T08:50:00'),
-      authorId: 2,
-      type: 'commentaire'
-    }
+    ]
   }
 ]
 
@@ -308,6 +303,9 @@ export const getInspection = util.slow(async (id, options = {}) => {
   if (options.etablissement) {
     inspection.etablissement = await getEtablissement(inspection.etablissementId)
   }
+  if (options.activite) {
+    inspection.activite = (await evenementsAPI.list()).filter(e => e.inspectionId === inspection.id)
+  }
   return inspection
 })
 
@@ -317,7 +315,7 @@ export const listAssignedInspections = util.slow(userId => {
       .filter(inspection => inspection.inspecteurs.includes(userId))
       .map(async inspection => {
         inspection.etablissement = await getEtablissement(inspection.etablissementId)
-        inspection.lastEvent.author = await getUser(inspection.lastEvent.authorId)
+        inspection.activite = (await evenementsAPI.list()).filter(e => e.inspectionId === inspection.id)
         return inspection
       })
   )
