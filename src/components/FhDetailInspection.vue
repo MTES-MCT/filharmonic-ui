@@ -99,7 +99,7 @@ v-container.pa-0(:class="containerClass")
         template(slot="selection" slot-scope="{ item, index }")
           v-chip(v-if="index < max")
             span {{ item }}
-          span(v-if="index === max" class="grey--text caption") +{{ inspection.themes.length - max }} autres
+          span(v-if="index === max" class="grey--text caption") +{{ numberOtherThemes }} {{ others }}
         template(v-if="!readonly" slot="no-data")
             v-list-tile.subheading Créer le thème
               v-chip(label small) {{ themeSearch }}
@@ -170,6 +170,12 @@ export default {
     },
     max () {
       return this.moreThemes ? this.inspection.themes.length : 2
+    },
+    numberOtherThemes () {
+      return this.inspection.themes.length - this.max
+    },
+    others () {
+      return this.numberOtherThemes > 1 ? 'autres' : 'autre'
     }
   },
   watch: {
