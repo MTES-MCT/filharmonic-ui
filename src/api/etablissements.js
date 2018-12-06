@@ -4,8 +4,8 @@ import * as util from '@/util'
 
 const etablissements = [{
   id: '0999.00001',
-  nom: 'A',
-  raison: 'A SARL',
+  nom: 'EtablissementA',
+  raison: 'EtablissementA SARL',
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -13,8 +13,8 @@ const etablissements = [{
 },
 {
   id: '0999.00002',
-  nom: 'B',
-  raison: 'B SARL',
+  nom: 'EtablissementB',
+  raison: 'EtablissementB SARL',
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -22,8 +22,8 @@ const etablissements = [{
 },
 {
   id: '0999.00003',
-  nom: 'C',
-  raison: 'C SARL',
+  nom: 'EtablissementC',
+  raison: 'EtablissementC SARL',
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -31,8 +31,8 @@ const etablissements = [{
 },
 {
   id: '0999.00004',
-  nom: 'D',
-  raison: 'D SARL',
+  nom: 'EtablissementD',
+  raison: 'EtablissementD SARL',
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -40,8 +40,8 @@ const etablissements = [{
 },
 {
   id: '0999.00005',
-  nom: 'E',
-  raison: 'E SARL',
+  nom: 'EtablissementE',
+  raison: 'EtablissementE SARL',
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -49,8 +49,8 @@ const etablissements = [{
 },
 {
   id: '0999.00006',
-  nom: 'F',
-  raison: 'F SARL',
+  nom: 'EtablissementF',
+  raison: 'EtablissementF SARL',
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
