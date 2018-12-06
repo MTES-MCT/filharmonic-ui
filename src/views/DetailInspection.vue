@@ -5,7 +5,7 @@ v-container.grid-list-lg.inspection-form
     h1.display-1
       v-btn(icon large :to="`/inspections/${inspection.id}`" title="Revenir au inspection")
         v-icon(x-large) chevron_left
-      | Inspection de l'établissement {{ inspection.etablissement.nom }} du {{ inspection.date.toLocaleString() }}
+      | Inspection de {{ inspection.etablissement.nom }} du {{ inspection.date.toLocaleString() }}
 
     fh-detail-etablissement(v-if="!error", :etablissement="inspection.etablissement")
 
