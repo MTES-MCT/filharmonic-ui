@@ -31,7 +31,8 @@ v-expansion-panel(expand v-if="showEchange")
     v-card.px-3
       v-card-text.subheading Fil de discussion
         v-switch(v-model="echange.brouillon" :label="`${echange.brouillon ? 'Brouillon' : 'Public'}`")
-        fh-message(v-for="message in echange.reponses" :key="message.id" :message="message")
+        v-timeline
+          fh-message(v-for="message in echange.reponses" :key="message.id" :message="message")
         v-layout.pl-2.mt-2.align-end(v-if="showNewMessageForm")
           v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1" clearable)
           v-btn.mb-0

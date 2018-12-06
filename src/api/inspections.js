@@ -32,7 +32,7 @@ const inspections = [
         reponses: [
           {
             id: 1,
-            author: 'Alain Champion',
+            authorId: 1,
             text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
             date: new Date('2018-09-16T14:00:00'),
             lu: false,
@@ -66,19 +66,20 @@ const inspections = [
     comments: [
       {
         id: 2,
-        author: 'Corine Dupont',
+        authorId: 2,
         text: "Attention à l'article 243.",
         date: new Date('2018-11-14T08:50:00'),
         confidential: true,
+        lu: true,
         attachments: []
       },
       {
         id: 3,
-        author: 'Alain Champion',
+        authorId: 1,
         text: "L'article 843 s'applique également.",
         date: new Date('2018-11-16T16:50:00'),
         confidential: true,
-        lu: false,
+        lu: true,
         attachments: []
       }
     ],
@@ -95,7 +96,7 @@ const inspections = [
         reponses: [
           {
             id: 4,
-            author: 'Alain Champion',
+            authorId: 1,
             text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
             date: new Date('2018-11-16T14:00:00'),
             confidential: false,
@@ -104,7 +105,7 @@ const inspections = [
           },
           {
             id: 5,
-            author: 'Monsieur Entreprise',
+            authorId: 4,
             text: 'Voici le document en question.',
             date: new Date('2018-11-16T16:50:00'),
             confidential: false,
@@ -119,10 +120,10 @@ const inspections = [
           },
           {
             id: 6,
-            author: 'Alain Champion',
+            authorId: 1,
             text: 'Merci.',
             date: new Date('2018-11-17T12:55:00'),
-            lu: false,
+            lu: true,
             confidential: false,
             attachments: []
           }
@@ -130,7 +131,7 @@ const inspections = [
         comments: [
           {
             id: 7,
-            author: 'Corine Dupont',
+            authorId: 2,
             text: "Attention à l'article 243.",
             date: new Date('2018-11-14T08:50:00'),
             confidential: true,
@@ -139,7 +140,7 @@ const inspections = [
           },
           {
             id: 8,
-            author: 'Alain Champion',
+            authorId: 1,
             text: "L'article 843 s'applique également.",
             date: new Date('2018-11-16T16:50:00'),
             confidential: true,
@@ -190,7 +191,7 @@ const inspections = [
         reponses: [
           {
             id: 9,
-            author: 'Alain Champion',
+            authorId: 1,
             text: "Auriez-vous l'obligeance de me fournir une photo de la cuve ?",
             date: new Date('2018-11-16T14:10:00'),
             confidential: false,
@@ -199,7 +200,7 @@ const inspections = [
           },
           {
             id: 10,
-            author: 'Monsieur Entreprise',
+            authorId: 4,
             text: 'Voici une photo.',
             date: new Date('2018-11-17T08:50:00'),
             confidential: false,
