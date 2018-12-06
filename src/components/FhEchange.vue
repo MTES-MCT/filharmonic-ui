@@ -1,5 +1,5 @@
 <template lang="pug">
-v-expansion-panel(expand)
+v-expansion-panel(expand v-if="showEchange")
   v-expansion-panel-content.fh-echange
     v-layout.column(slot="header")
       .fh-echange__sujet
@@ -30,6 +30,7 @@ v-expansion-panel(expand)
 
     v-card.px-3
       v-card-text.subheading Fil de discussion
+        v-switch(v-model="echange.brouillon" :label="`${echange.brouillon ? 'Brouillon' : 'Public'}`")
         fh-message(v-for="message in echange.reponses" :key="message.id" :message="message")
         v-layout.pl-2.mt-2.align-end(v-if="showNewMessageForm")
           v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1" clearable)
@@ -141,6 +142,9 @@ export default {
     }),
     showNewMessageForm () {
       return allowedStates[this.etatInspection].order < 4
+    },
+    showEchange () {
+      return this.echange.brouillon ? this.inspecteur : true
     }
   },
   methods: {
