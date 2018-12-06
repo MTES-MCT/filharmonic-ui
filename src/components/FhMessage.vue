@@ -1,10 +1,15 @@
 <template lang="pug">
   v-timeline-item(fill-dot :icon="`${message.lu ? 'drafts' : 'markunread'}`" :color="`${message.lu ? 'grey' : 'blue'}`")
     v-card(dark :color="`${message.lu ? 'grey' : 'blue'}`")
-      v-card-title(v-if="author" class="title") {{ message.date.toLocaleString() }} {{ author.name }}
+      v-card-title(v-if="author" class="title")
+        v-chip(:color="`${message.lu ? 'grey' : 'blue'}`")
+          v-avatar
+            img(:src="author.photoURL" :alt="author.name")
+          | {{ author.name }}
       v-card-text
         p {{ message.text }}
         v-switch(v-if="inspecteur" v-model="message.lu" :label="`${message.lu ? 'Lu' : 'Non lu'}`")
+        p {{ message.date.toLocaleString() }}
         fh-attachment(
           flat
           v-for="attachment in message.attachments" :key="attachment.id" :attachment="attachment")
