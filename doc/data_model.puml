@@ -67,6 +67,7 @@ package InspectionPkg {
     auteur : @User
     contenu : string
     visibiliteInterne: boolean
+    lu : boolean
     piecesJointes : []PieceJointe
   }
 

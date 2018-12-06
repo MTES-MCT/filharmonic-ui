@@ -34,6 +34,7 @@ const inspections = [
             author: 'Alain Champion',
             text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
             date: new Date('2018-09-16T14:00:00'),
+            lu: false,
             attachments: []
           }
         ],
@@ -76,6 +77,7 @@ const inspections = [
         text: "L'article 843 s'applique également.",
         date: new Date('2018-11-16T16:50:00'),
         confidential: true,
+        lu: false,
         attachments: []
       }
     ],
@@ -94,8 +96,9 @@ const inspections = [
             author: 'Alain Champion',
             text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
             date: new Date('2018-11-16T14:00:00'),
-            attachments: [],
-            confidential: false
+            confidential: false,
+            lu: true,
+            attachments: []
           },
           {
             id: 5,
@@ -103,6 +106,7 @@ const inspections = [
             text: 'Voici le document en question.',
             date: new Date('2018-11-16T16:50:00'),
             confidential: false,
+            lu: true,
             attachments: [
               {
                 id: 1,
@@ -116,13 +120,11 @@ const inspections = [
             author: 'Alain Champion',
             text: 'Merci.',
             date: new Date('2018-11-17T12:55:00'),
+            lu: false,
             confidential: false,
             attachments: []
           }
         ],
-        constat: {
-          type: 'conforme'
-        },
         comments: [
           {
             id: 7,
@@ -130,6 +132,7 @@ const inspections = [
             text: "Attention à l'article 243.",
             date: new Date('2018-11-14T08:50:00'),
             confidential: true,
+            lu: true,
             attachments: []
           },
           {
@@ -138,9 +141,13 @@ const inspections = [
             text: "L'article 843 s'applique également.",
             date: new Date('2018-11-16T16:50:00'),
             confidential: true,
+            lu: true,
             attachments: []
           }
-        ]
+        ],
+        constat: {
+          type: 'conforme'
+        }
       },
       {
         id: 3,
@@ -149,6 +156,7 @@ const inspections = [
           "Article 3.1 de l'arrêté préfectoral du 9 juin 1999"
         ],
         reponses: [],
+        comments: [],
         constat: {
           type: 'observation',
           remarques: 'Les rejets X2 sont contrôlés semestriellement pour les MES, la DBO5, la DCO, le pH, les hydrocarbures totaux. Les HAP ont été contrôlés dans le cadre de la campagne RSDE.'
@@ -161,6 +169,7 @@ const inspections = [
           "Article 1 de l'Arrêté ministériel du 28 avril 2014"
         ],
         reponses: [],
+        comments: [],
         constat: {
           type: 'non_conforme',
           remarques: 'Au jour de l\'inspection, les données 2018 n\'ont pas été télétransmises par l\'exploitant pour les données des rejets en eau + légionnelle. L\'inspection rappelle l\'obligation réglementaire faite à l\'exploitant de produire toute pièce ou documents mentionnés dans les différents arrêtés dans les délais prescrits. Les moyens humains et matériels correspondants doivent être mis en place pour que ces données puissent être disponibles pour l\'IIC.',
@@ -180,6 +189,7 @@ const inspections = [
             text: "Auriez-vous l'obligeance de me fournir une photo de la cuve ?",
             date: new Date('2018-11-16T14:10:00'),
             confidential: false,
+            lu: true,
             attachments: []
           },
           {
@@ -188,6 +198,7 @@ const inspections = [
             text: 'Voici une photo.',
             date: new Date('2018-11-17T08:50:00'),
             confidential: false,
+            lu: true,
             attachments: [
               {
                 id: 2,
@@ -197,6 +208,7 @@ const inspections = [
             ]
           }
         ],
+        comments: [],
         constat: {
           type: 'proposition_mise_en_demeure',
           remarques: 'Il faut réparer la fissure de la cuve.',
@@ -239,6 +251,14 @@ export const allowedStates = {
     order: 6
   }
 }
+
+export const nomsEtatsEnCours = Object.keys(allowedStates)
+  .map(nomEtat => ({
+    nom: nomEtat,
+    etat: allowedStates[nomEtat]
+  }))
+  .filter(({ etat }) => etat.order < allowedStates.attente_validation.order)
+  .map(({ nom }) => nom)
 
 export const typesConstats = {
   conforme: {
@@ -300,29 +320,41 @@ export const getInspection = util.slow(async (id, options = {}) => {
   if (!inspection) {
     throw new Error(`Inspection ${id} non trouvée`)
   }
+  return addOptionalProps(inspection, options)
+})
+
+export const listAssignedInspections = util.slow((userId, options = {}) => {
+  return Promise.all(
+    inspections
+      .filter(inspection => inspection.inspecteurs.includes(userId))
+      .map(inspection => addOptionalProps(inspection, options))
+  )
+})
+
+async function addOptionalProps (inspection, options = {}) {
   if (options.etablissement) {
     inspection.etablissement = await getEtablissement(inspection.etablissementId)
   }
   if (options.activite) {
-    inspection.activite = (await evenementsAPI.list()).filter(e => e.inspectionId === inspection.id)
+    inspection.activite = (await evenementsAPI.list()).filter(event => event.inspectionId === inspection.id)
+  }
+  if (options.messagesNonLus) {
+    inspection.messagesNonLus = inspection.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
+      inspection.echanges.reduce((acc, echange) => (
+        acc +
+        echange.reponses.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
+        echange.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
+      ), 0)
   }
   return inspection
-})
+}
 
-export const listAssignedInspections = util.slow(userId => {
+export const listInspectionsOuvertes = util.slow(async (userId, options) => {
   return Promise.all(
-    inspections
-      .filter(inspection => inspection.inspecteurs.includes(userId))
-      .map(async inspection => {
-        inspection.etablissement = await getEtablissement(inspection.etablissementId)
-        inspection.activite = (await evenementsAPI.list()).filter(e => e.inspectionId === inspection.id)
-        return inspection
-      })
+    (await listAssignedInspections(userId))
+      .filter(inspection => nomsEtatsEnCours.includes(inspection.etat))
+      .map(inspection => addOptionalProps(inspection, options))
   )
-})
-
-export const listInspectionsOuvertes = util.slow(async userId => {
-  return (await listAssignedInspections(userId)).filter(c => c.etat !== 'clos')
 })
 
 export const getInspectionsByEtablissement = util.slow((etablissementId) => {

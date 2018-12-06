@@ -15,8 +15,8 @@ v-list-tile(:to="`/inspections/${inspection.id}`")
     v-list-tile-sub-title
       v-chip(v-for="(theme, index) in inspection.themes" :key="index" small) {{ theme }}
 
-  v-layout.justify-end(v-if="inspection.nouveauxMessages")
-    v-icon.ml-4(color="primary" medium title="Des nouveaux messages sont disponibles") feedback
+  v-layout.justify-end(v-if="inspection.messagesNonLus")
+    v-icon.ml-4(color="primary" medium :title="`${inspection.messagesNonLus} nouveaux messages`") feedback
 
 </template>
 

@@ -10,7 +10,9 @@ import { createInitialStoreState } from '@/store/state'
 
 export default {
   async loadInspectionsOuvertes ({ commit, state }) {
-    const inspectionsOuvertes = await listInspectionsOuvertes(state.authentication.user.id)
+    const inspectionsOuvertes = await listInspectionsOuvertes(state.authentication.user.id, {
+      etablissement: true
+    })
     commit('loadInspectionsOuvertes', inspectionsOuvertes)
   },
   async login ({ commit }, { user, password }) {
