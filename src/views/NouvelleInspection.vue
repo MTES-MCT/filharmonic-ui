@@ -2,14 +2,14 @@
 v-container.grid-list-lg.inspection-form
   v-alert.text-xs-center(type="error" :value="error") L'établissement '#[strong {{ this.$route.params.id }}]' ne semble pas exister. Mauvaise URL ?
   div(v-if="inspection.etablissement")
-    h1.display-2 Nouveau inspection
-    fh-detail-etablissement(v-if="!error", :etablissement="inspection.etablissement")
+    h1.display-2 Nouvelle inspection
+    fh-detail-etablissement(:etablissement="inspection.etablissement")
 
-    h4.display-1.mt-4 Détails du inspection
+    h4.display-1.mt-4 Détails de l'inspection
 
     v-form(ref="form" v-model="validForm" lazy-validation)
       fh-detail-inspection(:inspection="inspection")
-      v-btn(block @click="createInspection" :disabled="!validForm" color="primary") Créer le inspection
+      v-btn(block @click="createInspection" :disabled="!validForm" color="primary") Créer l'inspection
 </template>
 
 <script>

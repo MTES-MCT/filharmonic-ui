@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-expansion-panel(expand v-model="panel" v-if="etablissement")
+  v-expansion-panel(expand v-model="panelExpansion")
     v-expansion-panel-content
       div(slot="header") Etablissement {{ etablissement.nom }} n°{{ etablissement.id }}
       v-card
@@ -36,22 +36,20 @@ export default {
   props: {
     etablissement: {
       type: Object,
-      default: null
+      required: true
     },
     expand: {
-      type: Array,
-      default: function () {
-        return [ false ]
-      }
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
-      panel: [ false ]
+      panelExpansion: null
     }
   },
   created () {
-    this.panel = this.expand
+    this.panelExpansion = [ this.expand ]
   }
 }
 </script>

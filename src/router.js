@@ -9,7 +9,11 @@ import Page404 from '@/views/Page404.vue'
 import Inspections from '@/views/Inspections.vue'
 import Inspection from '@/views/Inspection.vue'
 import NouvelleInspection from '@/views/NouvelleInspection.vue'
+import DashboardInspection from '@/views/DashboardInspection.vue'
 import DetailInspection from '@/views/DetailInspection.vue'
+import EditDetailInspection from '@/views/EditDetailInspection.vue'
+import CommentairesInspection from '@/views/CommentairesInspection.vue'
+import RecapitulatifInspection from '@/views/RecapitulatifInspection.vue'
 import ActiviteInspection from '@/views/ActiviteInspection.vue'
 
 Vue.use(Router)
@@ -78,21 +82,40 @@ export function createRouter (store) {
           },
           {
             path: '/inspections/:inspectionId',
-            name: 'inspection',
             component: Inspection,
-            props: true
-          },
-          {
-            path: '/inspections/:inspectionId/details',
-            name: 'details-inspection',
-            component: DetailInspection,
-            props: true
-          },
-          {
-            path: '/inspections/:inspectionId/activite',
-            name: 'activite-inspection',
-            component: ActiviteInspection,
-            props: true
+            props: true,
+            children: [
+              {
+                path: '',
+                name: 'dashboard-inspection',
+                component: DashboardInspection
+              },
+              {
+                path: 'details',
+                name: 'details-inspection',
+                component: DetailInspection
+              },
+              {
+                path: 'details/edit',
+                name: 'edit-details-inspection',
+                component: EditDetailInspection
+              },
+              {
+                path: 'commentaires',
+                name: 'commentaires-inspection',
+                component: CommentairesInspection
+              },
+              {
+                path: 'recapitulatif',
+                name: 'recapitulatif-inspection',
+                component: RecapitulatifInspection
+              },
+              {
+                path: 'activite',
+                name: 'activite-inspection',
+                component: ActiviteInspection
+              }
+            ]
           }
         ]
       },

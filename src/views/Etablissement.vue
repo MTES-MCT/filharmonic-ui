@@ -1,9 +1,9 @@
 <template lang="pug">
   div
     p.display-1.mt-4.text-xs-center(v-if="error") Etablissement non existant. Mauvaise URL ?
-    v-container
-      fh-detail-etablissement(v-if="!error", :etablissement="etablissement", :expand="expandEtablissement")
-      v-list(two-line subheader v-if="!error")
+    v-container(v-if="etablissement")
+      fh-detail-etablissement(:etablissement="etablissement" expand)
+      v-list(two-line subheader)
         v-subheader
           v-flex Inspections
           v-btn(:to="`/etablissements/${id}/inspections/new`" round color="primary" small title="Démarrer un inspection")
@@ -33,8 +33,7 @@ export default {
       error: false,
       inspections: [],
       id: '',
-      etablissement: null,
-      expandEtablissement: [ true ]
+      etablissement: null
     }
   },
   async created () {

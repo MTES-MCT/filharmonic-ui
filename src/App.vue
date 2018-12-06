@@ -1,16 +1,10 @@
 <template lang="pug">
 #app
-  router-view(:key="$route.fullPath")
+  router-view
 </template>
 
 <script>
-
 export default {
-  name: 'App',
-  data () {
-    return {
-      //
-    }
-  }
+  name: 'App'
 }
 </script>

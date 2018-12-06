@@ -1,23 +1,24 @@
 <template lang="pug">
-v-container.grid-list-lg.inspection-form
-  v-alert.text-xs-center(type="error" :value="error") L'inspection '#[strong {{ inspectionId }}]' ne semble pas exister. Mauvaise URL ?
-  div(v-if="inspection")
-    h1.display-1
-      v-btn(icon large :to="`/inspections/${inspection.id}`" title="Revenir au inspection")
-        v-icon(x-large) chevron_left
-      | Inspection de {{ inspection.etablissement.nom }} du {{ inspection.date.toLocaleString() }}
-
-    fh-detail-etablissement(v-if="!error", :etablissement="inspection.etablissement")
-
-    h4.display-1.mt-4 Détails
-
-    fh-detail-inspection(:inspection="inspection")
+v-container
+  v-layout.row.wrap.mt-3.grid-list-lg
+    v-flex.xs12.md6.pa-2
+      v-card
+        v-toolbar(flat)
+          v-toolbar-title
+            | Détails
+          v-spacer
+          v-toolbar-items
+            v-btn(flat :to="`/inspections/${inspection.id}/details/edit`" title="Modifier l'inspection")
+              v-icon(medium) edit
+        v-card-text
+          fh-detail-inspection(:inspection="inspection" readonly)
+    v-flex.xs12.md6.pa-2
+      fh-detail-etablissement(:etablissement="inspection.etablissement" expand)
 </template>
 
 <script>
 import FhDetailInspection from '@/components/FhDetailInspection.vue'
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
-import { getInspection } from '@/api/inspections'
 
 export default {
   components: {
@@ -25,27 +26,13 @@ export default {
     FhDetailEtablissement
   },
   props: {
-    inspectionId: {
-      type: String,
+    inspection: {
+      type: Object,
       required: true
-    }
-  },
-  data () {
-    return {
-      error: false,
-      inspection: null // fetched on init
-    }
-  },
-  async created () {
-    this.inspection = await getInspection(this.inspectionId, { etablissement: true })
-    if (!this.inspection) {
-      this.error = true
     }
   }
 }
 </script>
 
 <style lang="stylus">
-.inspection-form
-  max-width 600px
 </style>
