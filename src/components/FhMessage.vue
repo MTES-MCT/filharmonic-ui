@@ -7,17 +7,19 @@
             img(:src="author.photoURL" :alt="author.name")
           | {{ author.name }}
       v-card-text
+        p Le {{ message.date.toLocaleString() }}
         p {{ message.text }}
-        v-switch(v-if="inspecteur" v-model="message.lu" :label="label")
-        p {{ message.date.toLocaleString() }}
         fh-attachment(
           flat
           v-for="attachment in message.attachments" :key="attachment.id" :attachment="attachment")
+      v-card-actions
+        v-switch(v-if="inspecteur" v-model="message.lu" :label="label")
 </template>
 
 <script>
 import FhAttachment from '@/components/FhAttachment.vue'
 import { getUser } from '@/api/users'
+import { mapState } from 'vuex'
 
 export default {
   name: 'FhMessage',
@@ -44,14 +46,17 @@ export default {
     },
     label () {
       return this.message.lu ? 'Lu' : 'Non lu'
-    }
+    },
+    ...mapState({
+      userInspecteur: state => state.authentication.user.type === 'inspecteur'
+    })
   },
   async created () {
     this.author = await getUser(this.message.authorId)
   },
   methods: {
     inspecteur () {
-      return this.author.type === 'inspecteur'
+      return this.author.type === 'inspecteur' && this.userInspecteur
     }
   }
 }
