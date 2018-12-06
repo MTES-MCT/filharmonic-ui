@@ -1,14 +1,14 @@
 <template lang="pug">
-  v-timeline-item(fill-dot :icon="`${message.lu ? 'drafts' : 'markunread'}`" :color="`${message.lu ? 'grey' : 'blue'}`")
-    v-card(dark :color="`${message.lu ? 'grey' : 'blue'}`")
+  v-timeline-item(fill-dot :icon="icon" :color="color")
+    v-card(dark :color="color")
       v-card-title(v-if="author" class="title")
-        v-chip(:color="`${message.lu ? 'grey' : 'blue'}`")
+        v-chip(:color="color")
           v-avatar
             img(:src="author.photoURL" :alt="author.name")
           | {{ author.name }}
       v-card-text
         p {{ message.text }}
-        v-switch(v-if="inspecteur" v-model="message.lu" :label="`${message.lu ? 'Lu' : 'Non lu'}`")
+        v-switch(v-if="inspecteur" v-model="message.lu" :label="label")
         p {{ message.date.toLocaleString() }}
         fh-attachment(
           flat
@@ -35,6 +35,17 @@ export default {
       author: null
     }
   },
+  computed: {
+    color () {
+      return this.message.lu ? 'grey' : 'blue'
+    },
+    icon () {
+      return this.message.lu ? 'drafts' : 'markunread'
+    },
+    label () {
+      return this.message.lu ? 'Lu' : 'Non lu'
+    }
+  },
   async created () {
     this.author = await getUser(this.message.authorId)
   },
@@ -43,6 +54,5 @@ export default {
       return this.author.type === 'inspecteur'
     }
   }
-
 }
 </script>
