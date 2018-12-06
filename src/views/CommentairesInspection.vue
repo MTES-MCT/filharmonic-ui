@@ -1,7 +1,5 @@
 <template lang="pug">
 v-container(v-if="inspecteur")
-  h4.display-1.my-4
-    | Commentaires
   p Les commentaires sont internes et ne sont seulement visibles que par les inspecteurs.
   v-card
     v-card-text

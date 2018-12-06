@@ -1,8 +1,5 @@
 <template lang="pug">
-v-container
-  h4.display-1.my-4
-    | Points de contrôle
-
+v-container.fluid
   fh-echange(v-for="echange in inspection.echanges" :key="echange.id" :echange="echange" :etatInspection="inspection.etat")
 
   v-slide-y-transition(hide-on-leave)

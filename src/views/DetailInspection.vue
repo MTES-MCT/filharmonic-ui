@@ -1,6 +1,6 @@
 <template lang="pug">
 v-container
-  v-layout.row.wrap.mt-3.grid-list-lg
+  v-layout.row.wrap.grid-list-lg
     v-flex.xs12.md6.pa-2
       v-card
         v-toolbar(flat)

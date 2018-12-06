@@ -1,9 +1,8 @@
 <template lang="pug">
 v-container
-  h2.heading
-    | Activité
-    v-btn(icon @click="toggleSort()" :class="{'fh-toggle--active': sortAscending}")
-      v-icon sort
+  p Voici l'activité survenue pour cette inspection.
+  v-btn(icon @click="toggleSort()" :class="{'fh-toggle--active': sortAscending}")
+    v-icon sort
   div(v-for="evenement in activiteSorted" :key="evenement.id")
     | {{ evenement.created_at.toLocaleString() }} - {{ evenement.auteur.name }} : {{ evenement.type }}
 </template>

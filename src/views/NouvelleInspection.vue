@@ -13,10 +13,10 @@ v-container.grid-list-lg.inspection-form
 </template>
 
 <script>
-import FhDetailInspection from '@/components/FhDetailInspection.vue'
 import { createInspection } from '@/api/inspections'
 import { getEtablissement } from '@/api/etablissements'
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
+import FhDetailInspection from '@/components/FhDetailInspection.vue'
 
 export default {
   components: {

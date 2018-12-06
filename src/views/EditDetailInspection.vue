@@ -1,32 +1,39 @@
 <template lang="pug">
 v-container.grid-list-lg.inspection-form
-  v-alert.text-xs-center(type="error" :value="error") L'inspection '#[strong {{ inspectionId }}]' ne semble pas exister. Mauvaise URL ?
-  div(v-if="inspection")
-    h1.display-1
-      v-btn(icon large :to="`/inspections/${inspection.id}/details`" title="Revenir à l'inspection")
-        v-icon(x-large) chevron_left
-      | Inspection de l'établissement {{ inspection.etablissement.nom }} du {{ inspection.date.toLocaleString() }}
-
-    fh-detail-etablissement(:etablissement="inspection.etablissement")
-
-    h4.display-1.mt-4 Détails
-
-    fh-detail-inspection(:inspection="inspection")
+  v-form(ref="form" v-model="validForm" lazy-validation)
+    fh-detail-inspection(:inspection="updatedInspection")
+    v-btn(block @click="saveInspection" :disabled="!validForm" color="primary") Sauvegarder
 </template>
 
 <script>
+import { saveInspection } from '@/api/inspections'
 import FhDetailInspection from '@/components/FhDetailInspection.vue'
-import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
+import * as _ from '@/util'
 
 export default {
   components: {
-    FhDetailInspection,
-    FhDetailEtablissement
+    FhDetailInspection
   },
   props: {
     inspection: {
       type: Object,
       required: true
+    }
+  },
+  data () {
+    return {
+      validForm: false
+    }
+  },
+  created () {
+    this.updatedInspection = _.cloneDeep(this.inspection)
+  },
+  methods: {
+    async saveInspection () {
+      if (this.$refs.form.validate()) {
+        await saveInspection(this.updatedInspection)
+        this.$router.push(`/inspections/${this.inspection.id}/details`)
+      }
     }
   }
 }

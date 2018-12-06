@@ -374,3 +374,9 @@ export const createInspection = util.slow((inspection) => {
   inspections.push(inspection)
   return inspection.id
 })
+
+export const saveInspection = util.slow((updatedInspection) => {
+  const inspection = inspections.find(i => i.id === updatedInspection.id)
+  // on devrait nettoyer l'objet pour ne garder que les champs autorisés
+  Object.assign(inspection, updatedInspection)
+})
