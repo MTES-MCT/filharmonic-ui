@@ -1,6 +1,8 @@
 <template lang="pug">
   div
     v-layout.pl-2.my-3
+      v-icon(v-if="message.lu") drafts
+      v-icon(v-else) markunread
       div.mr-2 {{ message.date.toLocaleString() }}
       strong.mr-2 {{ message.author }} :
       div {{ message.text }}

@@ -24,6 +24,7 @@ const inspections = [
     echanges: [
       {
         id: 1,
+        brouillon: false,
         sujet: 'Mesure des émissions atmosphériques canalisées par un organisme extérieur',
         referencesReglementaires: [
           "Articles 3.2.3., 3.2.8. et 8.2.1.2. de l'arrêté préfectoral du 28 juin 2017"
@@ -38,8 +39,7 @@ const inspections = [
             attachments: []
           }
         ],
-        comments: [],
-        brouillon: false
+        comments: []
       }
     ]
   },
