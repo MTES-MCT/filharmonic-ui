@@ -40,6 +40,16 @@ const inspections = [
           }
         ],
         comments: []
+      },
+      {
+        id: 6,
+        brouillon: false,
+        sujet: 'Autosurveillance des émissions canalisées de COV',
+        referencesReglementaires: [
+          "Article 8.2.1.1. de l'arrêté préfectoral du 28 juin 2017"
+        ],
+        reponses: [],
+        comments: []
       }
     ]
   },
@@ -346,6 +356,12 @@ class InspectionsAPI {
               echange.reponses.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
               echange.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
             ), 0)
+        }
+        if (options.detailMessagesNonLus) {
+          inspection.echanges.forEach(echange => {
+            echange.messagesNonLus = echange.reponses.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
+                                    echange.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
+          })
         }
         return _.cloneDeep(inspection)
       })

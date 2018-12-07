@@ -22,7 +22,8 @@ export default {
     }
     commit('loadInspection', await InspectionsAPI.get(inspectionId, {
       etablissement: true,
-      activite: true
+      activite: true,
+      detailMessagesNonLus: true
     }))
   },
   async saveInspection ({ commit, dispatch }, updatedInspection) {

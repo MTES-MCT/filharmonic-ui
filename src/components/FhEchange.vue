@@ -4,7 +4,11 @@ v-expansion-panel(expand v-if="showEchange")
     v-layout.column(slot="header")
       .fh-echange__sujet
         | {{ echange.sujet }}
-        span.ml-2.grey--text ({{ echange.reponses.length }} réponse{{ echange.reponses.length > 1 ? 's': '' }})
+        v-icon.ml-4(v-if="echange.messagesNonLus"
+                    :title="`${echange.messagesNonLus} nouveaux messages`"
+                    color="primary"
+                    ) feedback
+
       a.fh-echange__referenceReglementaire(v-for="referenceReglementaire in echange.referencesReglementaires"
                                             href="https://www.legifrance.gouv.fr/eli/arrete/2017/6/28/TREP1719163A/jo/texte/fr"
                                             target="_blank")
