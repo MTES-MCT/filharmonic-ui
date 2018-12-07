@@ -1,7 +1,7 @@
 <template lang="pug">
   v-expansion-panel(expand v-model="panelExpansion")
     v-expansion-panel-content
-      div(slot="header") Etablissement {{ etablissement.nom }} n°{{ etablissement.id }}
+      div(slot="header") {{ etablissement.nom }} n°{{ etablissement.id }}
       v-card
         v-toolbar(flat)
           v-toolbar-title Détails

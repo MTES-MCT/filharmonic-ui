@@ -26,7 +26,7 @@
           v-list-tile-action
             v-icon location_city
           v-list-tile-content
-            v-list-tile-title Etablissement {{ etablissement.nom }}
+            v-list-tile-title {{ etablissement.nom }}
             v-list-tile-sub-title {{ etablissement.adresse }}
         v-divider
 </template>
