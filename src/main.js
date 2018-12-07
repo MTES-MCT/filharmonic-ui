@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import './plugins/vuetify'
+import PermissionsPlugin from './plugins/permissions'
 import './filters/capitalize'
 import './filters/format-origine'
 import './filters/format-yesno'
@@ -16,6 +17,7 @@ Vue.config.productionTip = false
 ;(async function () {
   try {
     const store = await createStore()
+    Vue.use(PermissionsPlugin, { store })
     new Vue({
       router: createRouter(store),
       store,

@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import createLogger from 'vuex/dist/logger'
 import AuthenticationAPI from '@/api/authentication'
 import actions from '@/store/actions'
+import getters from '@/store/getters'
 import mutations from '@/store/mutations'
 import sessionStorage from '@/store/sessionStorage'
 import { createInitialStoreState } from '@/store/state'
@@ -18,7 +19,7 @@ export async function createStore () {
 
   return new Vuex.Store({
     state: createInitialStoreState(authenticationInfos),
-    getters: {},
+    getters,
     mutations,
     actions,
     strict: process.env.NODE_ENV !== 'production',

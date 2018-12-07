@@ -17,11 +17,10 @@ const users = [
   },
   {
     id: 3,
-    name: 'Albert Valide',
-    email: 'albert.valide@developpement-durable.gouv.fr',
+    name: 'Albert Approbe',
+    email: 'albert.approbe@developpement-durable.gouv.fr',
     photoURL: 'https://randomuser.me/api/portraits/men/86.jpg',
-    type: 'inspecteur',
-    validateur: true
+    type: 'approbateur'
   },
   {
     id: 4,
