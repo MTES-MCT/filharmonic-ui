@@ -3,7 +3,7 @@ div
   p.display-1.mt-4.text-xs-center(v-if="error") {{ error }}
   .app-loading(v-if="loading")
   div(v-if="!loading && inspection")
-    .grey.lighten-4.elevation-2
+    .grey.lighten-4.elevation-2(:style="toolbarStyles")
       v-container.pa-0
         v-toolbar(flat dense)
           v-breadcrumbs(:items="breadcrumbs" divider=">" large)
@@ -66,6 +66,13 @@ export default {
           to: `/inspections/${this.inspection.id}`
         }
       ] : []
+    },
+    toolbarStyles () {
+      return {
+        position: 'sticky',
+        top: `${this.$vuetify.application.top}px`,
+        'z-index': 2
+      }
     }
   },
   watch: {
