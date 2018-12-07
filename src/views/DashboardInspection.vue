@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container.fluid
+v-container
   fh-echange(v-for="echange in inspection.echanges" :key="echange.id" :echange="echange" :etatInspection="inspection.etat")
 
   v-slide-y-transition(hide-on-leave)
