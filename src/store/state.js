@@ -3,6 +3,9 @@ export function createInitialStoreState (authenticationInfos) {
     authentication: authenticationInfos || {
       valid: false
     },
-    inspectionsOuvertes: []
+    inspectionsOuvertes: [],
+
+    // utilisé si l'utilisateur navigue sur une page d'inspection
+    inspectionOuverte: null
   }
 }

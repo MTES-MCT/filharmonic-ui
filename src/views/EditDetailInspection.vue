@@ -6,7 +6,6 @@ v-container.grid-list-lg.inspection-form
 </template>
 
 <script>
-import { saveInspection } from '@/api/inspections'
 import FhDetailInspection from '@/components/FhDetailInspection.vue'
 import * as _ from '@/util'
 
@@ -31,7 +30,7 @@ export default {
   methods: {
     async saveInspection () {
       if (this.$refs.form.validate()) {
-        await saveInspection(this.updatedInspection)
+        await this.$store.dispatch('saveInspection', this.updatedInspection)
         this.$router.push(`/inspections/${this.inspection.id}/details`)
       }
     }

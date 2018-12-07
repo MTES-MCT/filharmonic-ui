@@ -27,8 +27,7 @@ div
 </template>
 
 <script>
-import { getInspection } from '@/api/inspections'
-import * as _ from '@/util'
+import { mapState } from 'vuex'
 
 export default {
   props: {
@@ -39,11 +38,13 @@ export default {
   },
   data () {
     return {
-      error: '',
-      inspection: null // fetched on init
+      error: ''
     }
   },
   computed: {
+    ...mapState({
+      inspection: state => state.inspectionOuverte
+    }),
     breadcrumbs () {
       return this.inspection ? [
         {
@@ -59,11 +60,9 @@ export default {
   },
   async created () {
     try {
-      this.inspection = _.cloneDeep(await getInspection(this.inspectionId, {
-        etablissement: true,
-        activite: true
-      }))
+      await this.$store.dispatch('loadInspection', parseInt(this.inspectionId, 10))
     } catch (err) {
+      console.error(err)
       this.error = err.message
     }
   }

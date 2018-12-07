@@ -5,7 +5,7 @@ const evenements = [
     id: 1,
     type: 'message',
     auteurId: 1,
-    inspectionId: '1',
+    inspectionId: 1,
     created_at: new Date('2018-09-16T14:00:00'),
     data: {
       messageId: 1,
@@ -16,7 +16,7 @@ const evenements = [
     id: 2,
     type: 'commentaire_general',
     auteurId: 2,
-    inspectionId: '2',
+    inspectionId: 2,
     created_at: new Date('2018-11-14T08:50:00'),
     data: {
       messageId: 2
@@ -26,7 +26,7 @@ const evenements = [
     id: 3,
     type: 'commentaire_general',
     auteurId: 1,
-    inspectionId: '2',
+    inspectionId: 2,
     created_at: new Date('2018-11-16T16:50:00'),
     data: {
       messageId: 3
@@ -36,7 +36,7 @@ const evenements = [
     id: 4,
     type: 'message',
     auteurId: 1,
-    inspectionId: '2',
+    inspectionId: 2,
     created_at: new Date('2018-11-16T14:00:00'),
     data: {
       messageId: 4,
@@ -47,7 +47,7 @@ const evenements = [
     id: 5,
     type: 'message',
     auteurId: 4,
-    inspectionId: '2',
+    inspectionId: 2,
     created_at: new Date('2018-11-16T16:50:00'),
     data: {
       messageId: 5,
@@ -58,7 +58,7 @@ const evenements = [
     id: 6,
     type: 'message',
     auteurId: 1,
-    inspectionId: '2',
+    inspectionId: 2,
     created_at: new Date('2018-11-17T12:55:00'),
     data: {
       messageId: 6,
@@ -69,7 +69,7 @@ const evenements = [
     id: 7,
     type: 'commentaire',
     auteurId: 2,
-    inspectionId: '2',
+    inspectionId: 2,
     created_at: new Date('2018-11-14T08:50:00'),
     data: {
       messageId: 7,
@@ -80,7 +80,7 @@ const evenements = [
     id: 8,
     type: 'commentaire',
     auteurId: 1,
-    inspectionId: '2',
+    inspectionId: 2,
     created_at: new Date('2018-11-16T16:50:00'),
     data: {
       messageId: 8,
@@ -91,7 +91,7 @@ const evenements = [
     id: 9,
     type: 'message',
     auteurId: 1,
-    inspectionId: '2',
+    inspectionId: 2,
     created_at: new Date('2018-11-16T14:10:00'),
     data: {
       messageId: 9,
@@ -102,7 +102,7 @@ const evenements = [
     id: 10,
     type: 'message',
     auteurId: 4,
-    inspectionId: '2',
+    inspectionId: 2,
     created_at: new Date('2018-11-17T08:50:00'),
     data: {
       messageId: 10,

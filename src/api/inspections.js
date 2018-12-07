@@ -4,7 +4,7 @@ import evenementsAPI from '@/api/evenements'
 
 const inspections = [
   {
-    id: '1',
+    id: 1,
     date: '2018-09-10',
     type: 'approfondi',
     annonce: true,
@@ -44,7 +44,7 @@ const inspections = [
     ]
   },
   {
-    id: '2',
+    id: 2,
     date: '2018-11-15',
     type: 'approfondi',
     annonce: true,
@@ -326,7 +326,7 @@ export const getInspection = util.slow(async (id, options = {}) => {
   if (!inspection) {
     throw new Error(`Inspection ${id} non trouvée`)
   }
-  return addOptionalProps(inspection, options)
+  return util.cloneDeep(await addOptionalProps(inspection, options))
 })
 
 export const listAssignedInspections = util.slow((userId, options = {}) => {
@@ -378,5 +378,5 @@ export const createInspection = util.slow((inspection) => {
 export const saveInspection = util.slow((updatedInspection) => {
   const inspection = inspections.find(i => i.id === updatedInspection.id)
   // on devrait nettoyer l'objet pour ne garder que les champs autorisés
-  Object.assign(inspection, updatedInspection)
+  Object.assign(inspection, util.cloneDeep(updatedInspection))
 })
