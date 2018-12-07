@@ -41,7 +41,7 @@ v-container.pa-0(:class="containerClass")
     v-flex.text-xs-right(v-if="readonly") {{ inspection.origine | format-origine }}
     v-flex(v-else)
       v-radio-group.mt-0.justify-end(row hide-details v-model="inspection.origine")
-        v-radio(label="Plan de inspection" value="plan_de_inspection")
+        v-radio(label="Plan de contrôle" value="plan_de_controle")
         v-radio(label="Circonstancielle" value="circonstancielle")
 
   v-layout.align-center(v-if="inspection.origine === 'circonstancielle'")

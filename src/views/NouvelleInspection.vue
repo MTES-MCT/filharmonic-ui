@@ -30,7 +30,7 @@ export default {
         date: '',
         type: 'courant',
         annonce: true,
-        origine: 'plan_de_inspection',
+        origine: 'plan_de_controle',
         circonstances: '',
         detailCirconstances: '',
         inspecteurs: [],
