@@ -53,6 +53,7 @@ export default {
         },
         {
           text: `Inspection du ${this.inspection.date.toLocaleString()}`,
+          'active-class': null,
           to: `/inspections/${this.inspection.id}`
         }
       ] : []
