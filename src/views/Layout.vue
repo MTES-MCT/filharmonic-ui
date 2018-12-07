@@ -66,8 +66,9 @@ v-app
             v-list-tile-content
               v-list-tile-title {{ user.name }}
               v-list-tile-sub-title {{ user.type | capitalize }}
-      v-card-actions
-        v-btn(@click="logout()" color="primary") Déconnexion
+        v-divider
+        v-card-actions
+          v-btn(@click="logout()" color="primary") Déconnexion
 
   v-content
     router-view
