@@ -1,4 +1,5 @@
 import { getUser } from '@/api/users'
+import * as _ from '@/util'
 
 const evenements = [
   {
@@ -123,10 +124,9 @@ Pour l'instant, les types d'événements sont :
 - commentaire
 */
 class EvenementsAPI {
-  list () {
+  async list () {
     return Promise.all(
-      evenements
-        .slice()
+      _.cloneDeep(evenements)
         // tri car les éléments mockés ne sont pas ordonnés
         .sort((a, b) => a.created_at < b.created_at ? -1 : 1)
         .map(async evenement => {
@@ -135,8 +135,11 @@ class EvenementsAPI {
         })
     )
   }
-  create (evenement) {
-    evenements.push(evenement)
+
+  async create (evenement) {
+    evenement.id = new Date().getTime() % 1000
+    evenement.created_at = new Date()
+    evenements.push(_.cloneDeep(evenement))
   }
 }
 

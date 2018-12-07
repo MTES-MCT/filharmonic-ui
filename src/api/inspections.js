@@ -1,5 +1,5 @@
 import { getEtablissement } from '@/api/etablissements'
-import evenementsAPI from '@/api/evenements'
+import EvenementsAPI from '@/api/evenements'
 import * as _ from '@/util'
 
 const inspections = [
@@ -337,7 +337,7 @@ class InspectionsAPI {
           inspection.etablissement = await getEtablissement(inspection.etablissementId)
         }
         if (options.activite) {
-          inspection.activite = (await evenementsAPI.list()).filter(event => event.inspectionId === inspection.id)
+          inspection.activite = (await EvenementsAPI.list()).filter(event => event.inspectionId === inspection.id)
         }
         if (options.messagesNonLus) {
           inspection.messagesNonLus = inspection.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
@@ -369,6 +369,11 @@ class InspectionsAPI {
     inspection.echanges = []
     inspection.comments = []
     inspections.push(_.cloneDeep(inspection))
+    EvenementsAPI.create({
+      type: 'create_inspection',
+      auteurId: 1, // TODO récupérer l'utilisateur authentifié
+      inspectionId: inspection.id
+    })
     return inspection.id
   }
 
