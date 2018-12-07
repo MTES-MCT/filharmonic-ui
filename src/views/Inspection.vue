@@ -6,7 +6,9 @@ div
     .grey.lighten-4.elevation-2
       v-container.pa-0
         v-toolbar(flat dense)
-          v-breadcrumbs.mt-2(:items="breadcrumbs" divider=">" large)
+          v-breadcrumbs(:items="breadcrumbs" divider=">" large)
+          fh-etat-inspection(:etat="inspection.etat" small)
+
           v-toolbar-items(slot="extension")
             v-btn(flat :to="`/inspections/${inspection.id}`" exact)
               v-icon(left) check_circle
@@ -29,9 +31,13 @@ div
 </template>
 
 <script>
+import FhEtatInspection from '@/components/FhEtatInspection'
 import { mapState } from 'vuex'
 
 export default {
+  components: {
+    FhEtatInspection
+  },
   props: {
     inspectionId: {
       type: String,

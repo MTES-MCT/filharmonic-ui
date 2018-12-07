@@ -12,7 +12,7 @@
       v-stepper-step(step="5" :complete="stateInfos.order >= 5") Validé
       v-divider
       v-stepper-step(step="6" :complete="stateInfos.order >= 6") Clos
-  v-chip(:color="stateInfos.color" text-color="white" v-else) {{ stateInfos.label }}
+  v-chip(:color="stateInfos.color" text-color="white" :small="small" v-else) {{ stateInfos.label }}
 
 </template>
 
@@ -26,6 +26,10 @@ export default {
       default: null
     },
     stepper: {
+      type: Boolean,
+      default: false
+    },
+    small: {
       type: Boolean,
       default: false
     }
