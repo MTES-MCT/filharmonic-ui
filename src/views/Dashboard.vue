@@ -32,7 +32,7 @@ v-container
 </template>
 
 <script>
-import { listAssignedInspections, nomsEtatsEnCours } from '@/api/inspections'
+import InspectionsAPI, { nomsEtatsEnCours } from '@/api/inspections'
 import FhInspectionItem from '@/components/FhInspectionItem.vue'
 
 export default {
@@ -56,7 +56,7 @@ export default {
     }
   },
   async created () {
-    this.inspections = await listAssignedInspections(this.$store.state.authentication.user.id, {
+    this.inspections = await InspectionsAPI.listAssigned(this.$store.state.authentication.user.id, {
       etablissement: true,
       messagesNonLus: true
     })

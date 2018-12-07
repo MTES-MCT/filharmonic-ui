@@ -1,6 +1,6 @@
-import * as util from '@/util'
 import { getEtablissement } from '@/api/etablissements'
 import evenementsAPI from '@/api/evenements'
+import * as _ from '@/util'
 
 const inspections = [
   {
@@ -317,66 +317,86 @@ export const typesSuite = {
   }
 }
 
-export const listInspections = util.slow(() => {
-  return inspections
-})
+class InspectionsAPI {
+  /*
+  options = {
+    filter: function : utilisé pour filtrer les résultats
+    etablissement: bool : récupère l'établissement
+    activite: bool : récupère l'activité
+    messagesNonLus: bool : calcule le nombre de messages non lus
+  }
+  */
+  async list (options = {}) {
+    let filteredInspections = _.cloneDeep(inspections)
+    if (options.filter) {
+      filteredInspections = filteredInspections.filter(options.filter)
+    }
+    return Promise.all(
+      filteredInspections.map(async inspection => {
+        if (options.etablissement) {
+          inspection.etablissement = await getEtablissement(inspection.etablissementId)
+        }
+        if (options.activite) {
+          inspection.activite = (await evenementsAPI.list()).filter(event => event.inspectionId === inspection.id)
+        }
+        if (options.messagesNonLus) {
+          inspection.messagesNonLus = inspection.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
+            inspection.echanges.reduce((acc, echange) => (
+              acc +
+              echange.reponses.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
+              echange.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
+            ), 0)
+        }
+        return _.cloneDeep(inspection)
+      })
+    )
+  }
 
-export const getInspection = util.slow(async (id, options = {}) => {
-  const inspection = inspections.find(inspection => inspection.id === id)
-  if (!inspection) {
-    throw new Error(`Inspection ${id} non trouvée`)
+  async get (inspectionId, options) {
+    const inspection = (await this.list({
+      ...options,
+      filter: inspection => inspection.id === inspectionId
+    }))[0]
+    if (!inspection) {
+      throw new Error(`Inspection ${inspectionId} non trouvée`)
+    }
+    return inspection
   }
-  return util.cloneDeep(await addOptionalProps(inspection, options))
-})
 
-export const listAssignedInspections = util.slow((userId, options = {}) => {
-  return Promise.all(
-    inspections
-      .filter(inspection => inspection.inspecteurs.includes(userId))
-      .map(inspection => addOptionalProps(inspection, options))
-  )
-})
+  async create (inspection) {
+    inspection.id = new Date().getTime() % 1000
+    inspection.etat = 'en_cours'
+    inspection.echanges = []
+    inspection.comments = []
+    inspections.push(_.cloneDeep(inspection))
+    return inspection.id
+  }
 
-async function addOptionalProps (inspection, options = {}) {
-  if (options.etablissement) {
-    inspection.etablissement = await getEtablissement(inspection.etablissementId)
+  async save (updatedInspection) {
+    const inspection = inspections.find(i => i.id === updatedInspection.id)
+    // on devrait nettoyer l'objet pour ne garder que les champs autorisés
+    Object.assign(inspection, _.cloneDeep(updatedInspection))
   }
-  if (options.activite) {
-    inspection.activite = (await evenementsAPI.list()).filter(event => event.inspectionId === inspection.id)
+
+  // helpers
+  async listByEtablissement (etablissementId, options) {
+    return this.list({
+      ...options,
+      filter: inspection => inspection.etablissementId === etablissementId
+    })
   }
-  if (options.messagesNonLus) {
-    inspection.messagesNonLus = inspection.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
-      inspection.echanges.reduce((acc, echange) => (
-        acc +
-        echange.reponses.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
-        echange.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
-      ), 0)
+  async listAssigned (userId, options) {
+    return this.list({
+      ...options,
+      filter: inspection => inspection.inspecteurs.includes(userId)
+    })
   }
-  return inspection
+  async listAssignedOuvertes (userId, options) {
+    return this.list({
+      ...options,
+      filter: inspection => inspection.inspecteurs.includes(userId) && nomsEtatsEnCours.includes(inspection.etat)
+    })
+  }
 }
 
-export const listInspectionsOuvertes = util.slow(async (userId, options) => {
-  return Promise.all(
-    (await listAssignedInspections(userId))
-      .filter(inspection => nomsEtatsEnCours.includes(inspection.etat))
-      .map(inspection => addOptionalProps(inspection, options))
-  )
-})
-
-export const getInspectionsByEtablissement = util.slow((etablissementId) => {
-  return inspections.filter(inspection => inspection.etablissementId === etablissementId)
-})
-
-export const createInspection = util.slow((inspection) => {
-  inspection.id = '' + new Date().getTime() % 1000
-  inspection.echanges = []
-  inspection.comments = []
-  inspections.push(inspection)
-  return inspection.id
-})
-
-export const saveInspection = util.slow((updatedInspection) => {
-  const inspection = inspections.find(i => i.id === updatedInspection.id)
-  // on devrait nettoyer l'objet pour ne garder que les champs autorisés
-  Object.assign(inspection, util.cloneDeep(updatedInspection))
-})
+export default new InspectionsAPI()

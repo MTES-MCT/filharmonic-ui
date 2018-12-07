@@ -32,7 +32,7 @@ export const listThemes = util.slow(() => {
 })
 
 export const createTheme = util.slow(theme => {
-  theme.id = '' + new Date().getTime() % 1000
+  theme.id = new Date().getTime() % 1000
   return themes.push(theme)
 })
 

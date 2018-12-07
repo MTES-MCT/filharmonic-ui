@@ -1,5 +1,5 @@
 import AuthenticationAPI from '@/api/authentication'
-import { getInspection, listInspectionsOuvertes, saveInspection } from '@/api/inspections'
+import InspectionsAPI from '@/api/inspections'
 import sessionStorage from '@/store/sessionStorage'
 import { createInitialStoreState } from '@/store/state'
 
@@ -10,7 +10,7 @@ import { createInitialStoreState } from '@/store/state'
 
 export default {
   async loadInspectionsOuvertes ({ commit, state }) {
-    const inspectionsOuvertes = await listInspectionsOuvertes(state.authentication.user.id, {
+    const inspectionsOuvertes = await InspectionsAPI.listAssignedOuvertes(state.authentication.user.id, {
       etablissement: true
     })
     commit('loadInspectionsOuvertes', inspectionsOuvertes)
@@ -20,7 +20,7 @@ export default {
     if (typeof inspectionId !== 'number') {
       throw new TypeError(`expected number, got: \`${typeof inspectionId}\``)
     }
-    commit('loadInspection', await getInspection(inspectionId, {
+    commit('loadInspection', await InspectionsAPI.get(inspectionId, {
       etablissement: true,
       activite: true
     }))
@@ -29,7 +29,7 @@ export default {
     if (typeof updatedInspection !== 'object') {
       throw new TypeError(`expected object, got: \`${typeof updatedInspection}\``)
     }
-    await saveInspection(updatedInspection)
+    await InspectionsAPI.save(updatedInspection)
     await dispatch('loadInspection', updatedInspection.id)
   },
 

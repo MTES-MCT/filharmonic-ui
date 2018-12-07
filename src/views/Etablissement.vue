@@ -20,7 +20,7 @@
 
 <script>
 import { getEtablissement } from '@/api/etablissements'
-import { getInspectionsByEtablissement } from '@/api/inspections'
+import InspectionAPI from '@/api/inspections'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 export default {
@@ -45,7 +45,7 @@ export default {
     if (!this.etablissement) {
       this.error = true
     }
-    this.inspections = await getInspectionsByEtablissement(this.id)
+    this.inspections = await InspectionAPI.listByEtablissement(this.id)
     if (!this.inspections) {
       this.error = true
     }
