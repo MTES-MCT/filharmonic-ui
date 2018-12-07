@@ -49,21 +49,29 @@ export default {
       return this.inspection ? [
         {
           text: this.inspection.etablissement.nom,
-          href: `/etablissements/${this.inspection.etablissement.id}`
+          to: `/etablissements/${this.inspection.etablissement.id}`
         },
         {
           text: `Inspection du ${this.inspection.date.toLocaleString()}`,
-          href: `/inspections/${this.inspection.id}`
+          to: `/inspections/${this.inspection.id}`
         }
       ] : []
     }
   },
-  async created () {
-    try {
-      await this.$store.dispatch('loadInspection', parseInt(this.inspectionId, 10))
-    } catch (err) {
-      console.error(err)
-      this.error = err.message
+  watch: {
+    inspectionId: {
+      handler: 'loadInspection',
+      immediate: true
+    }
+  },
+  methods: {
+    async loadInspection () {
+      try {
+        await this.$store.dispatch('loadInspection', parseInt(this.inspectionId, 10))
+      } catch (err) {
+        console.error(err)
+        this.error = err.message
+      }
     }
   }
 }
