@@ -80,7 +80,6 @@ export default {
       try {
         await this.$store.dispatch('loadInspection', parseInt(this.inspectionId, 10))
       } catch (err) {
-        console.error(err)
         this.error = err.message
       }
       this.loading = false

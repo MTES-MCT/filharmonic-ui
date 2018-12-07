@@ -25,6 +25,6 @@ Vue.config.productionTip = false
     }).$mount('#app')
     document.body.classList.remove('app-loading')
   } catch (err) {
-    console.error('Failed to start application', err)
+    console.error('Failed to start application', err) // eslint-disable-line no-console
   }
 })()

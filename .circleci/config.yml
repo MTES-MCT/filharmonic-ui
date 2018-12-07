@@ -41,7 +41,10 @@ jobs:
     steps:
       - attach_workspace:
           at: '~'
-      - run: yarn run lint
+      - run:
+          command: yarn run lint
+          environment:
+            NODE_ENV: production
 
   test-unit:
     executor: node
