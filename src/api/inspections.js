@@ -399,6 +399,21 @@ class InspectionsAPI {
     Object.assign(inspection, _.cloneDeep(updatedInspection))
   }
 
+  async valider (inspectionId, approbateurId) {
+    const inspection = inspections.find(i => i.id === inspectionId)
+    inspection.etat = 'valide'
+    inspection.approbation = {
+      auteur: approbateurId,
+      date: new Date()
+    }
+    EvenementsAPI.create({
+      type: 'validation_inspection',
+      auteurId: approbateurId,
+      inspectionId: inspection.id
+    })
+    await _.sleep(1000)
+  }
+
   // helpers
   async listByEtablissement (etablissementId, options) {
     return this.list({

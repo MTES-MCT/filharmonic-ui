@@ -33,6 +33,16 @@ export default {
     await InspectionsAPI.save(updatedInspection)
     await dispatch('loadInspection', updatedInspection.id)
   },
+  async validerInspection ({ commit, dispatch }, { inspectionId, approbateurId }) {
+    if (typeof inspectionId !== 'number') {
+      throw new TypeError(`expected number, got: \`${typeof inspectionId}\``)
+    }
+    if (typeof approbateurId !== 'number') {
+      throw new TypeError(`expected number, got: \`${typeof approbateurId}\``)
+    }
+    await InspectionsAPI.valider(inspectionId, approbateurId)
+    await dispatch('loadInspection', inspectionId)
+  },
 
   async login ({ commit }, { user, password }) {
     const authenticationInfos = await AuthenticationAPI.login(user, password)

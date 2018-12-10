@@ -44,10 +44,15 @@ package InspectionPkg {
     etat : enum 'encours' | 'valide' | 'clos'
     themes : []Theme
     inspecteurs : [@User]
-    valideur: @User
     etablissement : @Etablissement
     fils : []Fil
     commentaires : []Message
+    approbation: @Approbation?
+  }
+
+  class Approbation {
+    auteur : @User
+    date : Date
   }
 
   class Fil {
@@ -121,6 +126,7 @@ Inspection *-- "*" Fil
 Inspection "1" -- "*" Evenement
 Inspection *-- "0..1" Suite
 Inspection *--  "*" Message
+Inspection *-- "0..1" Approbation
 Fil *--  "*" Message
 Fil *-- "0..1" Constat
 Message *-- "*" PieceJointe

@@ -8,7 +8,15 @@ div
         v-toolbar(flat dense)
           v-breadcrumbs(:items="breadcrumbs" divider=">" large)
           fh-etat-inspection(:etat="inspection.etat" small)
-
+          v-spacer
+          v-btn.white--text(v-if="$permissions.isApprobateur && inspection.etat == 'attente_validation'"
+                            :loading="workflowActionLoading"
+                            :disabled="workflowActionLoading"
+                            color="green"
+                            @click="validerInspection()"
+                            )
+            v-icon(left) done
+            | Valider
           v-toolbar-items(slot="extension")
             v-btn(flat :to="`/inspections/${inspection.id}`" exact)
               v-icon(left) check_circle
@@ -47,7 +55,8 @@ export default {
   data () {
     return {
       error: '',
-      loading: false
+      loading: false,
+      workflowActionLoading: false
     }
   },
   computed: {
@@ -90,6 +99,18 @@ export default {
         this.error = err.message
       }
       this.loading = false
+    },
+    async validerInspection () {
+      this.workflowActionLoading = true
+      try {
+        await this.$store.dispatch('validerInspection', {
+          inspectionId: this.inspection.id,
+          approbateurId: this.$store.state.authentication.user.id
+        })
+      } catch (err) {
+        this.error = err.message
+      }
+      this.workflowActionLoading = false
     }
   }
 }
