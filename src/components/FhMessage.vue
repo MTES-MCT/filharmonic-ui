@@ -7,7 +7,7 @@
             span {{ message.text }}
             fh-attachment(flat
               v-for="attachment in message.attachments" :key="attachment.id" :attachment="attachment")
-      v-chip(:color="color" small text-color="white")
+      v-chip(:color="color" small text-color="white" v-if="author")
         v-avatar
           img(:src="author.photoURL" :alt="author.name")
         | {{ author.name }}
@@ -20,6 +20,7 @@
 <script>
 import FhAttachment from '@/components/FhAttachment.vue'
 import { getUser } from '@/api/users'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'FhMessage',
@@ -38,6 +39,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      isInspecteur: 'isInspecteur'
+    }),
     color () {
       return this.message.lu ? 'grey' : 'blue'
     },
@@ -48,7 +52,7 @@ export default {
       return this.message.lu ? 'Lu' : 'Non lu'
     },
     inspecteur () {
-      return this.author.type === 'inspecteur' && this.$permissions.isInspecteur
+      return this.author && this.author.type === 'exploitant' && this.isInspecteur
     }
   },
   async created () {

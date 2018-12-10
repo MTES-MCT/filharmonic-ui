@@ -6,7 +6,7 @@
             span {{ comment.text }}
             fh-attachment(flat
               v-for="attachment in comment.attachments" :key="attachment.id" :attachment="attachment")
-      v-chip(small text-color="white")
+      v-chip(small text-color="white" v-if="author")
         v-avatar
           img(:src="author.photoURL" :alt="author.name")
         | {{ author.name }}
