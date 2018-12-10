@@ -7,16 +7,19 @@ v-container
     v-flex.text-xs-right
       v-text-field.d-inline-flex(v-model="$filter" label="Filtre établissement" clearable) Filtre
   v-tabs.elevation-1.mt-4(grow)
-    v-tab.fh-tab
+    v-tab.fh-tab(v-if="$permissions.isInspecteur")
       | En cours&nbsp;
       .fh-badge {{ inspectionsOuvertes.length }}
     v-tab.fh-tab
       | En attente de validation&nbsp;
       .fh-badge {{ inspectionsAttenteValidation.length }}
+    v-tab.fh-tab(v-if="$permissions.isApprobateur")
+      | En cours&nbsp;
+      .fh-badge {{ inspectionsOuvertes.length }}
     v-tab.fh-tab
       | Clos&nbsp;
       .fh-badge {{ inspectionsTerminees.length }}
-    v-tab-item
+    v-tab-item(v-if="$permissions.isInspecteur")
       v-list(v-if="inspectionsOuvertes.length == 0")
         v-list-tile Aucune inspection
       v-list.py-0(v-else two-line)
@@ -26,6 +29,11 @@ v-container
         v-list-tile Aucune inspection
       v-list.py-0(v-else two-line)
         fh-inspection-item(v-for="inspection in inspectionsAttenteValidation" :key="inspection.id" :inspection="inspection")
+    v-tab-item(v-if="$permissions.isApprobateur")
+      v-list(v-if="inspectionsOuvertes.length == 0")
+        v-list-tile Aucune inspection
+      v-list.py-0(v-else two-line)
+        fh-inspection-item(v-for="inspection in inspectionsOuvertes" :key="inspection.id" :inspection="inspection")
     v-tab-item
       v-list(v-if="inspectionsTerminees.length == 0")
         v-list-tile Aucune inspection
@@ -81,10 +89,17 @@ export default {
     }
   },
   async created () {
-    this.inspections = await InspectionsAPI.listAssigned(this.$store.state.authentication.user.id, {
-      etablissement: true,
-      messagesNonLus: true
-    })
+    if (this.$permissions.isApprobateur) {
+      this.inspections = await InspectionsAPI.list({
+        etablissement: true,
+        messagesNonLus: true
+      })
+    } else {
+      this.inspections = await InspectionsAPI.listAssigned(this.$store.state.authentication.user.id, {
+        etablissement: true,
+        messagesNonLus: true
+      })
+    }
   }
 }
 </script>
