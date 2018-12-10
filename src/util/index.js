@@ -27,3 +27,26 @@ export function cloneDeep (source) {
     throw new Error(`unknown object type: ${objectType}`)
   }
 }
+
+export function normalize (string) {
+  return string == null ? '' : string.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+}
+
+export function debounce (func, wait) {
+  let lastThis
+  let lastArgs
+  let timerId
+  function wrapper (...args) {
+    lastThis = this
+    lastArgs = args
+    if (timerId) {
+      clearTimeout(timerId)
+    }
+    timerId = setTimeout(invoke, wait)
+  }
+  function invoke () {
+    timerId = null
+    func.apply(lastThis, lastArgs)
+  }
+  return wrapper
+}

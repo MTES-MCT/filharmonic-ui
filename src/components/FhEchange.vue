@@ -44,7 +44,7 @@ v-expansion-panel(expand v-if="showEchange")
           v-btn.mb-0(@click="addMessage(echange, newMessage); newMessage = ''" :disabled="!newMessage" color="primary" title="Envoyer")
             v-icon send
 
-    v-card.px-3(v-if="inspecteur")
+    v-card.px-3(v-if="!$permissions.isExploitant")
       v-card-text.subheading Commentaires (visibles que des inspecteurs)
         fh-comment(v-for="comment in echange.comments" :key="comment.id" :comment="comment")
         v-layout.pl-2.mt-2.align-end
@@ -106,7 +106,6 @@ import Vue from 'vue'
 import { typesConstats, allowedStates } from '@/api/inspections'
 import FhMessage from '@/components/FhMessage.vue'
 import FhComment from '@/components/FhComment.vue'
-import { mapState } from 'vuex'
 
 export default {
   name: 'FhEchange',
@@ -144,14 +143,11 @@ export default {
     typeConstatEchange () {
       return this.echange.constat ? typesConstats[this.echange.constat.type] : {}
     },
-    ...mapState({
-      inspecteur: state => state.authentication.user.type === 'inspecteur'
-    }),
     showNewMessageForm () {
       return allowedStates[this.etatInspection].order < 4
     },
     showEchange () {
-      return this.echange.brouillon ? this.inspecteur : true
+      return !this.$permissions.isExploitant || !this.echange.brouillon
     }
   },
   methods: {

@@ -43,8 +43,8 @@ v-container
       v-icon(left) message
       | Démarrer un nouvel échange
 
-  section(v-if="inspecteur")
-    h4.display-1.my-4(v-if="inspecteur") Suites
+  section(v-if="!$permissions.isExploitant")
+    h4.display-1.my-4 Suites
     p Les suites sont décidées lorsque tous les échanges sont soldés par des constats.
 
     .fh-inspection__suite.elevation-2.pa-3(v-if="inspection.suite")
@@ -102,7 +102,6 @@ import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhEchange from '@/components/FhEchange.vue'
 import * as _ from '@/util'
-import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -142,9 +141,6 @@ export default {
     typeSuiteInspection () {
       return this.inspection.suite ? typesSuite[this.inspection.suite.type] : {}
     },
-    ...mapState({
-      inspecteur: state => state.authentication.user.type === 'inspecteur'
-    }),
     showNewEchange () {
       return allowedStates[this.inspection.etat].order < 4
     }

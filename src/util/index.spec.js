@@ -46,4 +46,26 @@ describe('util', () => {
     expect(clone[0].name).toEqual('first')
     expect(clone[1].name).toEqual('second')
   })
+  it('#normalize()', () => {
+    expect(_.normalize('hello')).toBe('hello')
+    expect(_.normalize('élo')).toBe('elo')
+    expect(_.normalize('')).toBe('')
+    expect(_.normalize(null)).toBe('')
+    expect(_.normalize(undefined)).toBe('')
+  })
+  it('#debounce()', async () => {
+    const recorder = []
+    const func = _.debounce((a, b) => recorder.push([a, b]), 50)
+    func(1, 2)
+    func(3, 4)
+    func(5, 6)
+    await _.sleep(100)
+    func(7, 8)
+    func(9, 10)
+    await _.sleep(100)
+    expect(recorder).toEqual([
+      [5, 6],
+      [9, 10]
+    ])
+  })
 })

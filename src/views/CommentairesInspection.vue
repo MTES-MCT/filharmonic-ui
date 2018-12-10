@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container(v-if="inspecteur")
+v-container(v-if="!$permission.isExploitant")
   p Les commentaires sont internes et ne sont seulement visibles que par les inspecteurs.
   v-card
     v-card-text
@@ -31,12 +31,6 @@ export default {
     return {
       newComment: ''
     }
-  },
-  computed: {
-    ...mapState({
-      inspecteur: state => state.authentication.user.type === 'inspecteur',
-      inspectionsOuvertes: 'inspectionsOuvertes'
-    })
   },
   methods: {
     addComment () {
