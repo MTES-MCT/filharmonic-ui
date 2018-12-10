@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container(v-if="inspecteur")
+v-container(v-if="!$permission.isExploitant")
   p Les commentaires sont internes et ne sont seulement visibles que par les inspecteurs.
   v-card
     v-card-text
@@ -15,7 +15,6 @@ v-container(v-if="inspecteur")
 
 <script>
 import FhMessage from '@/components/FhMessage.vue'
-import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -31,12 +30,6 @@ export default {
     return {
       newComment: ''
     }
-  },
-  computed: {
-    ...mapState({
-      inspecteur: state => state.authentication.user.type === 'inspecteur',
-      inspectionsOuvertes: 'inspectionsOuvertes'
-    })
   },
   methods: {
     addComment () {

@@ -19,7 +19,6 @@
 <script>
 import FhAttachment from '@/components/FhAttachment.vue'
 import { getUser } from '@/api/users'
-import { mapState } from 'vuex'
 
 export default {
   name: 'FhMessage',
@@ -47,17 +46,12 @@ export default {
     label () {
       return this.message.lu ? 'Lu' : 'Non lu'
     },
-    ...mapState({
-      userInspecteur: state => state.authentication.user.type === 'inspecteur'
-    })
+    inspecteur () {
+      return this.author.type === 'inspecteur' && this.$permissions.isInspecteur
+    }
   },
   async created () {
     this.author = await getUser(this.message.authorId)
-  },
-  methods: {
-    inspecteur () {
-      return this.author.type === 'inspecteur' && this.userInspecteur
-    }
   }
 }
 </script>
