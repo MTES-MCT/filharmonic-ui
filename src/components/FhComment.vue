@@ -1,16 +1,16 @@
 <template lang="pug">
     v-card(raised)
-      v-card-title(v-if="author" class="title")
-        v-chip
-          v-avatar
-            img(:src="author.photoURL" :alt="author.name")
-          | {{ author.name }}
-      v-card-text
-        p Le {{ comment.date.toLocaleString() }}
-        p {{ comment.text }}
-        fh-attachment(
-          flat
-          v-for="attachment in comment.attachments" :key="attachment.id" :attachment="attachment")
+      v-card-title(primary-title v-if="author" class="title")
+        div
+          div(class="headline")
+            span {{ comment.text }}
+            fh-attachment(flat
+              v-for="attachment in comment.attachments" :key="attachment.id" :attachment="attachment")
+      v-chip(small text-color="white")
+        v-avatar
+          img(:src="author.photoURL" :alt="author.name")
+        | {{ author.name }}
+      span Le {{ comment.date.toLocaleString() }}
 </template>
 
 <script>

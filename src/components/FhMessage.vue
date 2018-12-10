@@ -1,18 +1,19 @@
 <template lang="pug">
   v-timeline-item(fill-dot :icon="icon" :color="color")
     v-card(dark :color="color")
-      v-card-title(v-if="author" class="title")
-        v-chip(:color="color")
-          v-avatar
-            img(:src="author.photoURL" :alt="author.name")
-          | {{ author.name }}
-      v-card-text
-        p Le {{ message.date.toLocaleString() }}
-        p {{ message.text }}
-        fh-attachment(
-          flat
-          v-for="attachment in message.attachments" :key="attachment.id" :attachment="attachment")
+      v-card-title(primary-title v-if="author" class="title")
+        div
+          div(class="headline")
+            span {{ message.text }}
+            fh-attachment(flat
+              v-for="attachment in message.attachments" :key="attachment.id" :attachment="attachment")
+      v-chip(:color="color" small text-color="white")
+        v-avatar
+          img(:src="author.photoURL" :alt="author.name")
+        | {{ author.name }}
+      span Le {{ message.date.toLocaleString() }}
       v-card-actions
+        v-spacer
         v-switch(v-if="inspecteur" v-model="message.lu" :label="label")
 </template>
 

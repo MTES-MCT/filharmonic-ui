@@ -3,7 +3,7 @@ v-container(v-if="inspecteur")
   p Les commentaires sont internes et ne sont seulement visibles que par les inspecteurs.
   v-card
     v-card-text
-      fh-message(v-for="comment in inspection.comments" :key="comment.id" :message="comment")
+      fh-comment(v-for="comment in inspection.comments" :key="comment.id" :comment="comment")
       v-layout.pl-2.mt-2.align-end
         v-textarea(box label="Commentaire" v-model="newComment" auto-grow hideDetails rows="1" clearable)
         v-btn.mb-0
@@ -14,12 +14,12 @@ v-container(v-if="inspecteur")
 </template>
 
 <script>
-import FhMessage from '@/components/FhMessage.vue'
+import FhComment from '@/components/FhComment.vue'
 import { mapState } from 'vuex'
 
 export default {
   components: {
-    FhMessage
+    FhComment
   },
   props: {
     inspection: {
