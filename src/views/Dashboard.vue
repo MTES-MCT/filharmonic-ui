@@ -2,7 +2,10 @@
 v-container
   h1.display-1.font-weight-bold.mb-4 Tableau de bord
 
-  h2 Inspections
+  v-layout.row.align-center
+    h2 Inspections
+    v-flex.text-xs-right
+      v-text-field.d-inline-flex(v-model="$filter" label="Filtre établissement" clearable) Filtre
   v-tabs.elevation-1.mt-4(grow)
     v-tab.fh-tab
       | En cours&nbsp;
@@ -34,6 +37,7 @@ v-container
 <script>
 import InspectionsAPI, { nomsEtatsEnCours } from '@/api/inspections'
 import FhInspectionItem from '@/components/FhInspectionItem.vue'
+import * as _ from '@/util'
 
 export default {
   components: {
@@ -41,18 +45,39 @@ export default {
   },
   data () {
     return {
-      inspections: []
+      inspections: [],
+      filter: ''
     }
   },
   computed: {
+    $filter: {
+      get () {
+        return this.filter
+      },
+      set: _.debounce(function (filter) {
+        this.filter = filter
+      }, 100)
+    },
+    inspectionsFiltrees () {
+      const normalizedFilter = _.normalize(this.filter).trim()
+
+      return this.inspections.filter(inspection => {
+        if (this.filter === '') {
+          return true
+        }
+        return _.normalize(inspection.etablissement.nom).includes(normalizedFilter) ||
+          _.normalize(inspection.etablissement.raison).includes(normalizedFilter) ||
+          _.normalize(inspection.etablissement.adresse).includes(normalizedFilter)
+      })
+    },
     inspectionsOuvertes () {
-      return this.inspections.filter(inspection => nomsEtatsEnCours.includes(inspection.etat))
+      return this.inspectionsFiltrees.filter(inspection => nomsEtatsEnCours.includes(inspection.etat))
     },
     inspectionsAttenteValidation () {
-      return this.inspections.filter(inspection => inspection.etat === 'attente_validation')
+      return this.inspectionsFiltrees.filter(inspection => inspection.etat === 'attente_validation')
     },
     inspectionsTerminees () {
-      return this.inspections.filter(inspection => inspection.etat === 'termine')
+      return this.inspectionsFiltrees.filter(inspection => inspection.etat === 'termine')
     }
   },
   async created () {
