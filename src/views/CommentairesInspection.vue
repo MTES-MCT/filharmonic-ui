@@ -15,7 +15,6 @@ v-container(v-if="!$permission.isExploitant")
 
 <script>
 import FhComment from '@/components/FhComment.vue'
-import { mapState } from 'vuex'
 
 export default {
   components: {
