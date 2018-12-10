@@ -9,6 +9,7 @@ div
           v-breadcrumbs(:items="breadcrumbs" divider=">" large)
           fh-etat-inspection(:etat="inspection.etat" small)
           v-spacer
+
           v-btn.white--text(v-if="$permissions.isApprobateur && inspection.etat == 'attente_validation'"
                             :loading="workflowActionLoading"
                             :disabled="workflowActionLoading"
@@ -17,6 +18,8 @@ div
                             )
             v-icon(left) done
             | Valider
+          fh-lettre-annonce(:inspection="inspection" v-if="$permissions.isInspecteur && inspection.etat == 'en_cours'")
+
           v-toolbar-items(slot="extension")
             v-btn(flat :to="`/inspections/${inspection.id}`" exact)
               v-icon(left) check_circle
@@ -40,11 +43,13 @@ div
 
 <script>
 import FhEtatInspection from '@/components/FhEtatInspection'
+import FhLettreAnnonce from '@/components/FhLettreAnnonce'
 import { mapState } from 'vuex'
 
 export default {
   components: {
-    FhEtatInspection
+    FhEtatInspection,
+    FhLettreAnnonce
   },
   props: {
     inspectionId: {
