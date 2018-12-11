@@ -401,7 +401,7 @@ export default class InspectionsAPI extends BaseAPI {
   }
 
   async valider (inspectionId, approbateurId) {
-    this.requireValideur()
+    this.requireApprobateur()
     const inspection = inspections.find(i => i.id === inspectionId)
     inspection.etat = 'valide'
     inspection.approbation = {

@@ -1,5 +1,9 @@
 <template lang="pug">
 v-app
+  v-snackbar(v-model="showSnackbar" top :color="snackbar.color" :timeout="4000")
+    | {{ snackbar.message }}
+    v-btn(icon @click="showSnackbar = false")
+      v-icon close
   v-navigation-drawer(:clipped="$vuetify.breakpoint.lgAndUp" v-model="drawer" fixed app)
 
     v-list.py-0
@@ -71,11 +75,17 @@ v-app
           v-btn(@click="logout()" color="primary") Déconnexion
 
   v-content
-    router-view
+    router-view(@alert='updateAlert')
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import events from '@/events'
+
+const snackbarColor = {
+  error: 'red',
+  success: 'green'
+}
 
 export default {
   data () {
@@ -85,7 +95,12 @@ export default {
       apps: [
         { url: 'https://monicpe.developpement-durable.gouv.fr/', nom: 'MonICPE' },
         { url: 'http://www.installationsclassees.developpement-durable.gouv.fr/rechercheICForm.php', nom: 'Base des installations classées' }
-      ]
+      ],
+      showSnackbar: false,
+      snackbar: {
+        message: '',
+        color: ''
+      }
     }
   },
   computed: {
@@ -95,12 +110,21 @@ export default {
     })
   },
   async created () {
+    events.bus.$on(events.Alert, this.updateAlert)
     await this.$store.dispatch('loadInspectionsOuvertes')
+  },
+  destroyed () {
+    events.bus.$off(events.Alert, this.updateAlert)
   },
   methods: {
     async logout () {
       await this.$store.dispatch('logout')
       this.$router.push('/login?redirect=/')
+    },
+    updateAlert (messageType, message) {
+      this.snackbar.color = snackbarColor[messageType]
+      this.snackbar.message = message
+      this.showSnackbar = true
     }
   }
 }

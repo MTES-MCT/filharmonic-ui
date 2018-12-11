@@ -1,3 +1,5 @@
+import { ApplicationError } from '@/errors'
+
 /*
 BaseAPI est la classe dont héritent les API.
 Elle permet aux services d'accéder au store pour connaitre l'utilisateur authentifié,
@@ -14,17 +16,17 @@ export default class BaseAPI {
   // helpers
   requireAuthentication () {
     if (!this.api.store.state.authentication.valid) {
-      throw new Error('user not authenticated')
+      throw new ApplicationError('Il faut être authentifié')
     }
   }
   requireInspecteur () {
     if (!this.api.store.getters.isInspecteur) {
-      throw new Error('Il faut être inspecteur')
+      throw new ApplicationError('Il faut être inspecteur')
     }
   }
   requireApprobateur () {
     if (!this.api.store.getters.isApprobateur) {
-      throw new Error('Il faut être approbateur')
+      throw new ApplicationError('Il faut être approbateur')
     }
   }
 }
