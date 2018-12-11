@@ -113,9 +113,6 @@ v-container.pa-0(:class="containerClass")
 </template>
 
 <script>
-import { listInspecteurs } from '@/api/users'
-import { listThemes } from '@/api/themes'
-
 export default {
   name: 'FhDetailInspection',
   props: {
@@ -194,7 +191,7 @@ export default {
     }
   },
   async created () {
-    [this.inspecteurs, this.themes] = [await listInspecteurs(), await listThemes()]
+    [this.inspecteurs, this.themes] = await Promise.all([this.$api.users.listInspecteurs(), await this.$api.themes.list()])
   },
   methods: {
     removeTheme (theme) {

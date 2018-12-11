@@ -13,8 +13,6 @@ v-container.grid-list-lg.inspection-form
 </template>
 
 <script>
-import InspectionAPI from '@/api/inspections'
-import { getEtablissement } from '@/api/etablissements'
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 import FhDetailInspection from '@/components/FhDetailInspection.vue'
 
@@ -42,7 +40,7 @@ export default {
     }
   },
   async created () {
-    this.inspection.etablissement = await getEtablissement(this.$route.params.id)
+    this.inspection.etablissement = await this.$api.etablissements.get(this.$route.params.id)
     if (!this.inspection.etablissement) {
       this.error = true
     }
@@ -50,7 +48,7 @@ export default {
   methods: {
     async createInspection () {
       if (this.$refs.form.validate()) {
-        const inspectionId = await InspectionAPI.create(this.inspection)
+        const inspectionId = await this.$api.inspections.create(this.inspection)
         await this.$store.dispatch('loadInspectionsOuvertes')
         this.$router.push(`/inspections/${inspectionId}`)
       }

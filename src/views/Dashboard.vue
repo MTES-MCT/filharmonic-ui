@@ -90,12 +90,12 @@ export default {
   },
   async created () {
     if (this.$permissions.isApprobateur) {
-      this.inspections = await InspectionsAPI.list({
+      this.inspections = await this.$api.inspections.list({
         etablissement: true,
         messagesNonLus: true
       })
     } else {
-      this.inspections = await InspectionsAPI.listAssigned(this.$store.state.authentication.user.id, {
+      this.inspections = await this.$api.inspections.listAssigned(this.$store.state.authentication.user.id, {
         etablissement: true,
         messagesNonLus: true
       })

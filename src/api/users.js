@@ -1,4 +1,4 @@
-import * as util from '@/util'
+import BaseAPI from './base'
 
 const users = [
   {
@@ -31,14 +31,15 @@ const users = [
   }
 ]
 
-export const listUsers = util.slow(() => {
-  return users
-})
-
-export const listInspecteurs = util.slow(() => {
-  return users.filter(u => u.type === 'inspecteur')
-})
-
-export const getUser = util.slow((id) => {
-  return users.find(user => user.id === id)
-})
+export default class UsersAPI extends BaseAPI {
+  async list () {
+    // non authentifié car utilisateurs listés en page de login
+    return users
+  }
+  async listInspecteurs () {
+    return users.filter(u => u.type === 'inspecteur')
+  }
+  async get (userId) {
+    return users.find(user => user.id === userId)
+  }
+}

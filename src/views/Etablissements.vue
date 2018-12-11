@@ -32,8 +32,6 @@
 </template>
 
 <script>
-import { listAllEtablissements } from '@/api/etablissements'
-
 export default {
   data () {
     return {
@@ -45,7 +43,7 @@ export default {
     }
   },
   async created () {
-    this.etablissements = await listAllEtablissements()
+    this.etablissements = await this.$api.etablissements.list()
     if (!this.etablissement) {
       this.errorNotFound = true
     }

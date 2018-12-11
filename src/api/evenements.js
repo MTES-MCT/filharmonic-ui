@@ -1,4 +1,4 @@
-import { getUser } from '@/api/users'
+import BaseAPI from './base'
 import * as _ from '@/util'
 
 const evenements = [
@@ -123,14 +123,14 @@ Pour l'instant, les types d'événements sont :
 - message
 - commentaire
 */
-class EvenementsAPI {
+export default class EvenementsAPI extends BaseAPI {
   async list () {
     return Promise.all(
       _.cloneDeep(evenements)
         // tri car les éléments mockés ne sont pas ordonnés
         .sort((a, b) => a.created_at < b.created_at ? -1 : 1)
         .map(async evenement => {
-          evenement.auteur = await getUser(evenement.auteurId)
+          evenement.auteur = await this.api.users.get(evenement.auteurId)
           return evenement
         })
     )
@@ -142,5 +142,3 @@ class EvenementsAPI {
     evenements.push(_.cloneDeep(evenement))
   }
 }
-
-export default new EvenementsAPI()

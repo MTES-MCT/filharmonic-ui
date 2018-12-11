@@ -15,7 +15,6 @@
 
 <script>
 import FhAttachment from '@/components/FhAttachment.vue'
-import { getUser } from '@/api/users'
 
 export default {
   name: 'FhComment',
@@ -34,7 +33,7 @@ export default {
     }
   },
   async created () {
-    this.author = await getUser(this.comment.authorId)
+    this.author = await this.$api.users.get(this.comment.authorId)
   }
 }
 </script>

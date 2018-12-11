@@ -1,21 +1,7 @@
-import { getUser } from '@/api/users'
+import BaseAPI from './base'
 
-async function loginAsMockedUser (idStr) {
-  const user = await getUser(parseInt(idStr, 10))
-  if (!user) {
-    return {
-      valid: false
-    }
-  }
-  return {
-    valid: true,
-    sessionToken: `valid-token-${user.id}`,
-    user: user
-  }
-}
-
-class UserAPI {
-  authenticate (sessionToken) {
+export default class AuthenticationAPI extends BaseAPI {
+  async authenticate (sessionToken) {
     if (!sessionToken) {
       return {
         valid: false
@@ -23,13 +9,25 @@ class UserAPI {
     }
 
     // TODO validation auprès de l'API
-    return loginAsMockedUser(sessionToken.substring('valid-token-'.length))
+    return this.loginAsMockedUser(sessionToken.substring('valid-token-'.length))
   }
 
-  login (user, password) {
+  async login (user, password) {
     // TODO validation auprès de l'API
-    return loginAsMockedUser(user)
+    return this.loginAsMockedUser(user)
+  }
+
+  async loginAsMockedUser (idStr) {
+    const user = await this.api.users.get(parseInt(idStr, 10))
+    if (!user) {
+      return {
+        valid: false
+      }
+    }
+    return {
+      valid: true,
+      sessionToken: `valid-token-${user.id}`,
+      user: user
+    }
   }
 }
-
-export default new UserAPI()

@@ -20,7 +20,6 @@
 
 <script>
 import FhAttachment from '@/components/FhAttachment.vue'
-import { getUser } from '@/api/users'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -66,7 +65,7 @@ export default {
     }
   },
   async created () {
-    this.author = await getUser(this.message.authorId)
+    this.author = await this.$api.users.get(this.message.authorId)
   }
 }
 </script>

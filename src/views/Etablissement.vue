@@ -19,8 +19,6 @@
 </template>
 
 <script>
-import { getEtablissement } from '@/api/etablissements'
-import InspectionAPI from '@/api/inspections'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 export default {
@@ -41,11 +39,11 @@ export default {
     if (!this.id) {
       this.error = true
     }
-    this.etablissement = await getEtablissement(this.id)
+    this.etablissement = await this.$api.etablissements.get(this.id)
     if (!this.etablissement) {
       this.error = true
     }
-    this.inspections = await InspectionAPI.listByEtablissement(this.id)
+    this.inspections = await this.$api.inspections.listByEtablissement(this.id)
     if (!this.inspections) {
       this.error = true
     }

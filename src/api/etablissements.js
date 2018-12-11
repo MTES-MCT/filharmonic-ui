@@ -1,6 +1,4 @@
-/** Mock api server side */
-
-import * as util from '@/util'
+import BaseAPI from './base'
 
 const etablissements = [{
   id: '0999.00001',
@@ -57,10 +55,11 @@ const etablissements = [{
   iedmtd: false
 }]
 
-export const listAllEtablissements = util.slow(() => {
-  return etablissements
-})
-
-export const getEtablissement = util.slow((id) => {
-  return etablissements.find(etablissement => etablissement.id === id)
-})
+export default class EtablissementsAPI extends BaseAPI {
+  async list () {
+    return etablissements
+  }
+  async get (etablissementId) {
+    return etablissements.find(etablissement => etablissement.id === etablissementId)
+  }
+}

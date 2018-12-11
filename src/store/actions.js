@@ -1,5 +1,3 @@
-import AuthenticationAPI from '@/api/authentication'
-import InspectionsAPI from '@/api/inspections'
 import sessionStorage from '@/store/sessionStorage'
 import { createInitialStoreState } from '@/store/state'
 
@@ -10,7 +8,7 @@ import { createInitialStoreState } from '@/store/state'
 
 export default {
   async loadInspectionsOuvertes ({ commit, state }) {
-    const inspectionsOuvertes = await InspectionsAPI.listAssignedOuvertes(state.authentication.user.id, {
+    const inspectionsOuvertes = await this.$api.inspections.listAssignedOuvertes(state.authentication.user.id, {
       etablissement: true
     })
     commit('loadInspectionsOuvertes', inspectionsOuvertes)
@@ -20,7 +18,7 @@ export default {
     if (typeof inspectionId !== 'number') {
       throw new TypeError(`expected number, got: \`${typeof inspectionId}\``)
     }
-    commit('loadInspection', await InspectionsAPI.get(inspectionId, {
+    commit('loadInspection', await this.$api.inspections.get(inspectionId, {
       etablissement: true,
       activite: true,
       detailMessagesNonLus: true
@@ -30,7 +28,7 @@ export default {
     if (typeof updatedInspection !== 'object') {
       throw new TypeError(`expected object, got: \`${typeof updatedInspection}\``)
     }
-    await InspectionsAPI.save(updatedInspection)
+    await this.$api.inspections.save(updatedInspection)
     await dispatch('loadInspection', updatedInspection.id)
   },
   async validerInspection ({ commit, dispatch }, { inspectionId, approbateurId }) {
@@ -40,12 +38,12 @@ export default {
     if (typeof approbateurId !== 'number') {
       throw new TypeError(`expected number, got: \`${typeof approbateurId}\``)
     }
-    await InspectionsAPI.valider(inspectionId, approbateurId)
+    await this.$api.inspections.valider(inspectionId, approbateurId)
     await dispatch('loadInspection', inspectionId)
   },
 
   async login ({ commit }, { user, password }) {
-    const authenticationInfos = await AuthenticationAPI.login(user, password)
+    const authenticationInfos = await this.$api.authentication.login(user, password)
     if (authenticationInfos.valid) {
       sessionStorage.save(authenticationInfos.sessionToken)
       commit('login', authenticationInfos)

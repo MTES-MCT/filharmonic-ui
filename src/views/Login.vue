@@ -38,8 +38,6 @@ v-app
 </template>
 
 <script>
-import { listUsers } from '@/api/users'
-
 export default {
   data () {
     return {
@@ -53,7 +51,7 @@ export default {
     }
   },
   async created () {
-    this.users = await listUsers()
+    this.users = await this.$api.users.list()
   },
   methods: {
     async login (id, password) {

@@ -1,5 +1,4 @@
-import { getEtablissement } from '@/api/etablissements'
-import EvenementsAPI from '@/api/evenements'
+import BaseAPI from './base'
 import * as _ from '@/util'
 
 const inspections = [
@@ -327,7 +326,7 @@ export const typesSuite = {
   }
 }
 
-class InspectionsAPI {
+export default class InspectionsAPI extends BaseAPI {
   /*
   options = {
     filter: function : utilisé pour filtrer les résultats
@@ -344,10 +343,10 @@ class InspectionsAPI {
     return Promise.all(
       filteredInspections.map(async inspection => {
         if (options.etablissement) {
-          inspection.etablissement = await getEtablissement(inspection.etablissementId)
+          inspection.etablissement = await this.api.etablissements.get(inspection.etablissementId)
         }
         if (options.activite) {
-          inspection.activite = (await EvenementsAPI.list()).filter(event => event.inspectionId === inspection.id)
+          inspection.activite = (await this.api.evenements.list()).filter(event => event.inspectionId === inspection.id)
         }
         if (options.messagesNonLus) {
           inspection.messagesNonLus = inspection.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
@@ -380,12 +379,13 @@ class InspectionsAPI {
   }
 
   async create (inspection) {
+    this.requireInspecteur()
     inspection.id = new Date().getTime() % 1000
     inspection.etat = 'en_cours'
     inspection.echanges = []
     inspection.comments = []
     inspections.push(_.cloneDeep(inspection))
-    EvenementsAPI.create({
+    this.api.evenements.create({
       type: 'create_inspection',
       auteurId: 1, // TODO récupérer l'utilisateur authentifié
       inspectionId: inspection.id
@@ -394,19 +394,21 @@ class InspectionsAPI {
   }
 
   async save (updatedInspection) {
+    this.requireInspecteur()
     const inspection = inspections.find(i => i.id === updatedInspection.id)
     // on devrait nettoyer l'objet pour ne garder que les champs autorisés
     Object.assign(inspection, _.cloneDeep(updatedInspection))
   }
 
   async valider (inspectionId, approbateurId) {
+    this.requireValideur()
     const inspection = inspections.find(i => i.id === inspectionId)
     inspection.etat = 'valide'
     inspection.approbation = {
       auteur: approbateurId,
       date: new Date()
     }
-    EvenementsAPI.create({
+    this.api.evenements.create({
       type: 'validation_inspection',
       auteurId: approbateurId,
       inspectionId: inspection.id
@@ -434,5 +436,3 @@ class InspectionsAPI {
     })
   }
 }
-
-export default new InspectionsAPI()
