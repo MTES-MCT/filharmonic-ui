@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container(v-if="!isExploitant")
+v-container(v-if="!$permissions.isExploitant")
   p Les commentaires sont internes et ne sont seulement visibles que par les inspecteurs.
   v-card
     v-card-text
@@ -15,7 +15,6 @@ v-container(v-if="!isExploitant")
 
 <script>
 import FhComment from '@/components/FhComment.vue'
-import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -31,11 +30,6 @@ export default {
     return {
       newComment: ''
     }
-  },
-  computed: {
-    ...mapGetters({
-      isExploitant: 'isExploitant'
-    })
   },
   methods: {
     addComment () {
