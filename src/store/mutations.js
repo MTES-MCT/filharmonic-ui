@@ -7,5 +7,8 @@ export default {
   },
   login (state, authenticationInfos) {
     state.authentication = authenticationInfos
+  },
+  updateEchangeBrouillon (state, payload) {
+    state.inspectionOuverte.echanges.find(echange => echange.id === payload.echangeId).brouillon = payload.brouillon
   }
 }

@@ -34,7 +34,11 @@ v-expansion-panel(expand v-if="showEchange")
 
     v-card.px-3
       v-card-text.subheading Fil de discussion
-        v-switch(v-model="echange.brouillon" :label="`${echange.brouillon ? 'Brouillon' : 'Public'}`")
+        v-checkbox(v-model="brouillon" :color="`${brouillon ? 'primary' : 'success'}`")
+          div(slot="label" v-if="brouillon")
+            strong(class="primary--text") Brouillon
+          div(slot="label" v-else)
+            strong(class="success--text") Publié
         v-timeline
           fh-message(v-for="message in echange.reponses" :key="message.id" :message="message")
         v-layout.pl-2.mt-2.align-end(v-if="showNewMessageForm")
@@ -148,6 +152,14 @@ export default {
     },
     showEchange () {
       return !this.$permissions.isExploitant || !this.echange.brouillon
+    },
+    brouillon: {
+      get () {
+        return this.$store.state.inspectionOuverte.echanges.find(echange => echange.id === this.echange.id).brouillon
+      },
+      set (value) {
+        this.$store.commit('updateEchangeBrouillon', { echangeId: this.echange.id, brouillon: value })
+      }
     }
   },
   methods: {
