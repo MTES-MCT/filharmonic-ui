@@ -34,7 +34,7 @@ v-expansion-panel(expand v-if="showEchange")
 
     v-card.px-3
       v-card-text.subheading Fil de discussion
-        v-checkbox(v-model="brouillon" :color="colorBrouillon")
+        v-checkbox(v-model="brouillon" :color="colorBrouillon" v-if="$permissions.isInspecteur")
           div(slot="label" v-if="brouillon")
             strong(class="primary--text") Brouillon
           div(slot="label" v-else)
@@ -110,6 +110,7 @@ import Vue from 'vue'
 import { typesConstats, allowedStates } from '@/api/inspections'
 import FhMessage from '@/components/FhMessage.vue'
 import FhComment from '@/components/FhComment.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'FhEchange',
@@ -144,6 +145,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'user'
+    ]),
     typeConstatEchange () {
       return this.echange.constat ? typesConstats[this.echange.constat.type] : {}
     },
@@ -168,15 +172,16 @@ export default {
   methods: {
     addMessage (echange, message) {
       echange.reponses.push({
-        authorId: 1,
+        authorId: this.user.id,
         date: new Date(),
         text: message,
+        lu: false,
         attachments: []
       })
     },
     addComment (echange, comment) {
       echange.comments.push({
-        authorId: 1,
+        authorId: this.user.id,
         text: comment,
         date: new Date(),
         attachments: []

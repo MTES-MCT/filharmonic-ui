@@ -24,7 +24,7 @@ const inspections = [
     echanges: [
       {
         id: 1,
-        brouillon: false,
+        brouillon: true,
         sujet: 'Mesure des émissions atmosphériques canalisées par un organisme extérieur',
         referencesReglementaires: [
           "Articles 3.2.3., 3.2.8. et 8.2.1.2. de l'arrêté préfectoral du 28 juin 2017"
@@ -35,7 +35,7 @@ const inspections = [
             authorId: 1,
             text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
             date: new Date('2018-09-16T14:00:00'),
-            lu: false,
+            lu: true,
             attachments: []
           }
         ],
