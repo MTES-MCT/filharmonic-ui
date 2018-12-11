@@ -14,7 +14,7 @@
       span Le {{ message.date.toLocaleString() }}
       v-card-actions
         v-spacer
-        v-switch(v-if="inspecteur" v-model="message.lu" :label="label")
+        v-switch(v-if="inspecteur" v-model="lu" :label="label")
 </template>
 
 <script>
@@ -49,6 +49,14 @@ export default {
     },
     inspecteur () {
       return this.author && this.author.type === 'exploitant' && this.$permissions.isInspecteur
+    },
+    lu: {
+      get () {
+        return this.$store.state.inspectionOuverte.echanges.find(echange => echange.reponses.filter(reponse => reponse.id === this.message.id).length > 0).reponses.find(reponse => reponse.id === this.message.id).lu
+      },
+      set (value) {
+        this.$store.commit('updateMessageLu', { messageId: this.message.id, lu: value })
+      }
     }
   },
   async created () {
