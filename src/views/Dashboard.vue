@@ -43,7 +43,7 @@ v-container
 </template>
 
 <script>
-import InspectionsAPI, { nomsEtatsEnCours } from '@/api/inspections'
+import { nomsEtatsEnCours } from '@/api/inspections'
 import FhInspectionItem from '@/components/FhInspectionItem.vue'
 import * as _ from '@/util'
 

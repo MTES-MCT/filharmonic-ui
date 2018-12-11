@@ -31,10 +31,10 @@ export async function createStore (options = {}) {
     plugins: [createLogger()]
   })
 
-  // expose the api in the store
+  // expose the API to the store
   store.$api = api
 
-  // expose the store in the api
+  // expose the store to the API
   api.store = store
 
   return store

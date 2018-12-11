@@ -5,13 +5,9 @@ et d'accéder aux autres services.
 */
 export default class BaseAPI {
   constructor (options = {}) {
-    // if (!options.store) {
-    //   throw new Error('Missing `store` option')
-    // }
     if (!options.api) {
       throw new Error('Missing `api` option')
     }
-    // this.store = options.store
     this.api = options.api
   }
 
