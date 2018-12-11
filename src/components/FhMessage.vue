@@ -1,20 +1,21 @@
 <template lang="pug">
-  v-timeline-item(fill-dot :icon="icon" :color="color")
-    v-card(dark :color="color")
-      v-card-title(primary-title v-if="author" class="title")
-        div
-          div(class="headline")
-            span {{ message.text }}
+  v-timeline-item(fill-dot :color="color" icon="message")
+    span(v-if="author" slot="opposite" v-text="`${author.name} le ${message.date.toLocaleString()}`" :class="`${color}--text`")
+    v-card(dark :color="color" class="white--text")
+      v-container.fluid.grid-list(class="pa-0 ma-auto text-xs-left")
+        v-layout.row.wrap
+          v-flex.xs-12
+            v-card-actions(class="pa-0 ma-auto")
+              v-spacer
+              v-tooltip.bottom
+                v-btn(v-if="inspecteur" @click="lu =! lu" :label="label" icon flat slot="activator")
+                  v-icon(v-if="lu") drafts
+                  v-icon(v-else) markunread
+                span {{ label }}
+            v-card-text(:color="color")
+              p {{ message.text }}
             fh-attachment(flat
               v-for="attachment in message.attachments" :key="attachment.id" :attachment="attachment")
-      v-chip(:color="color" small text-color="white" v-if="author")
-        v-avatar
-          img(:src="author.photoURL" :alt="author.name")
-        | {{ author.name }}
-      span Le {{ message.date.toLocaleString() }}
-      v-card-actions
-        v-spacer
-        v-switch(v-if="inspecteur" v-model="lu" :label="label")
 </template>
 
 <script>
@@ -30,6 +31,10 @@ export default {
     message: {
       type: Object,
       required: true
+    },
+    colorBrouillon: {
+      type: String,
+      required: true
     }
   },
   data () {
@@ -39,10 +44,7 @@ export default {
   },
   computed: {
     color () {
-      return this.message.lu ? 'grey' : 'blue'
-    },
-    icon () {
-      return this.message.lu ? 'drafts' : 'markunread'
+      return this.message.lu ? this.colorBrouillon : 'red'
     },
     label () {
       return this.message.lu ? 'Lu' : 'Non lu'
