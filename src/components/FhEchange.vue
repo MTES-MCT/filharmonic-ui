@@ -168,7 +168,7 @@ export default {
   methods: {
     addMessage (echange, message) {
       echange.reponses.push({
-        author: 'Alain Champion',
+        authorId: 1,
         date: new Date(),
         text: message,
         attachments: []
@@ -176,7 +176,7 @@ export default {
     },
     addComment (echange, comment) {
       echange.comments.push({
-        author: 'Alain Champion',
+        authorId: 1,
         text: comment,
         date: new Date(),
         attachments: []
