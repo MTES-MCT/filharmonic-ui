@@ -95,7 +95,7 @@ export default {
       })
     },
     publier () {
-      if (this.$permissions.isInspecteur && this.brouillon) this.brouillon = !this.brouillon
+      if (this.$permissions.isInspecteur) this.brouillon = !this.brouillon
     }
   }
 }
