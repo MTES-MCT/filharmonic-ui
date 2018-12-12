@@ -34,7 +34,7 @@ v-expansion-panel(expand v-if="showEchange")
 
     v-card.px-3
       v-card-text.subheading Fil de discussion
-        v-checkbox(v-model="brouillon" :color="colorBrouillon" v-if="$permissions.isInspecteur")
+        v-checkbox(v-model="brouillon" :color="colorBrouillon" :disabled="!$permissions.isInspecteur")
           div(slot="label" v-if="brouillon")
             strong(class="primary--text") Brouillon
           div(slot="label" v-else)

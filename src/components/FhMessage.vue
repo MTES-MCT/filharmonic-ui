@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-timeline-item(v-if="author" fill-dot :color="color" icon="message" :left="author.type === 'inspecteur'" :right="author.type === 'exploitant'")
+  v-timeline-item(v-if="author" fill-dot :color="color" :icon="icon" :left="author.type === 'inspecteur'" :right="author.type === 'exploitant'")
     span(v-if="author" slot="opposite" v-text="`${author.name} le ${message.date.toLocaleString()}`" :class="`${color}--text`")
     v-card(dark :color="color" class="white--text")
       v-container.fluid.grid-list(class="pa-0 ma-0 text-xs-left")
@@ -8,7 +8,7 @@
             v-card-actions
               v-spacer
               v-tooltip.bottom
-                v-btn(v-if="author && user.type !== author.type" @click="lu =! lu" :label="label" icon flat slot="activator")
+                v-btn(v-if="author && user.type !== author.type && !$permissions.isApprobateur" @click="lu =! lu" :label="label" icon flat slot="activator")
                   v-icon(v-if="lu") drafts
                   v-icon(v-else) markunread
                 span {{ label }}
@@ -46,6 +46,9 @@ export default {
   computed: {
     color () {
       return this.message.lu ? this.colorBrouillon : 'red'
+    },
+    icon () {
+      return this.message.lu ? 'drafts' : 'markunread'
     },
     label () {
       return this.message.lu ? 'Lu' : 'Non lu'
