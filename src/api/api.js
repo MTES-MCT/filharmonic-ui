@@ -2,6 +2,7 @@ import AuthenticationAPI from './authentication'
 import EtablissementsAPI from './etablissements'
 import EvenementsAPI from './evenements'
 import InspectionsAPI from './inspections'
+import LettresAPI from './lettres'
 import ThemesAPI from './themes'
 import UsersAPI from './users'
 
@@ -17,6 +18,9 @@ export default class API {
       api: this
     })
     this.inspections = new InspectionsAPI({
+      api: this
+    })
+    this.lettres = new LettresAPI({
       api: this
     })
     this.themes = new ThemesAPI({
