@@ -22,7 +22,7 @@ v-card
           v-spacer
           v-btn(icon title="Pièce jointe")
             v-icon attach_file
-          v-btn(icon @click="addMessage(newMessage, confidential); newMessage = ''" :disabled="!newMessage" color="primary" title="Envoyer")
+          v-btn(icon @click="addMessage(newMessage, confidential)" :disabled="!newMessage" color="primary" title="Envoyer")
             v-icon send
 
   v-card-text
@@ -84,15 +84,20 @@ export default {
     }
   },
   methods: {
-    addMessage (message, confidential) {
-      this.messages.push({
-        authorId: this.user.id,
-        date: new Date(),
-        text: message,
-        lu: false,
-        confidential: confidential,
-        attachments: []
+    addMessage (messageText, confidential) {
+      this.$store.commit('addMessage', {
+        echangeId: this.echangeId,
+        message: {
+          authorId: this.user.id,
+          date: new Date(),
+          text: messageText,
+          lu: false,
+          confidential: confidential,
+          attachments: []
+        }
       })
+      this.newMessage = ''
+      this.dialogNewMessage = false
     },
     publier () {
       if (this.$permissions.isInspecteur) this.brouillon = !this.brouillon
