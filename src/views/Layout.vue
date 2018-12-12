@@ -59,7 +59,7 @@ v-app
     v-menu(
       :close-on-content-click="false"
       :nudge-width="200"
-      offset-x)
+      offset-x offset-y)
       v-btn(icon slot="activator")
         v-icon person
       v-card
