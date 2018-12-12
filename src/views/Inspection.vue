@@ -16,7 +16,17 @@ fh-page(:wait="wait")
                             )
             v-icon(left) done
             | Valider
-          fh-lettre-annonce(:inspection="inspection" v-if="$permissions.isInspecteur && inspection.etat == 'en_cours'")
+          v-menu(offset-y)
+            v-btn(slot="activator" icon large title="Générer des documents")
+              v-icon local_printshop
+            //- un peu compliqué car les v-dialog ne s'intègrent pas facilement avec les v-list-tile
+            v-list.py-0
+              v-list-tile(@click="showLettreAnnonce = true")
+                v-list-tile-title Générer la lettre d'annonce
+                fh-lettre-annonce(:inspection="inspection" :show-dialog="showLettreAnnonce" @close="showLettreAnnonce = false")
+              v-list-tile(@click="showLettreSuites = true")
+                v-list-tile-title Générer la lettre de suites
+                fh-lettre-suites(:inspection="inspection" :show-dialog="showLettreSuites" @close="showLettreSuites = false")
 
           v-toolbar-items(slot="extension")
             v-btn(flat :to="`/inspections/${inspection.id}`" exact)
@@ -43,12 +53,14 @@ fh-page(:wait="wait")
 import { mapState } from 'vuex'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhLettreAnnonce from '@/components/FhLettreAnnonce.vue'
+import FhLettreSuites from '@/components/FhLettreSuites.vue'
 import BasePage from '@/views/mixins/BasePage.js'
 
 export default {
   components: {
     FhEtatInspection,
-    FhLettreAnnonce
+    FhLettreAnnonce,
+    FhLettreSuites
   },
   mixins: [BasePage],
   props: {
@@ -59,7 +71,9 @@ export default {
   },
   data () {
     return {
-      workflowActionLoading: false
+      workflowActionLoading: false,
+      showLettreAnnonce: false,
+      showLettreSuites: false
     }
   },
   computed: {

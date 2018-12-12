@@ -2,7 +2,7 @@
 v-dialog.d-block(:value="showDialog" @input="$emit('close')" scrollable width="800px")
   v-card
     v-toolbar(color="primary" dark)
-      v-toolbar-title.headline Lettre d'annonce
+      v-toolbar-title.headline Lettre de suites
       v-spacer
       v-toolbar-items
         v-btn(flat dark @click="$emit('close')")
@@ -11,9 +11,9 @@ v-dialog.d-block(:value="showDialog" @input="$emit('close')" scrollable width="8
 </template>
 
 <script>
-// quasiment à l'identique avec FhLettreSuites... pourrait probablement être amélioré
+// quasiment à l'identique avec FhLettreAnnonce... pourrait probablement être amélioré
 export default {
-  name: 'FhLettreAnnonce',
+  name: 'FhLettreSuite',
   props: {
     inspection: {
       type: Object,
@@ -26,7 +26,7 @@ export default {
   },
   computed: {
     lettre () {
-      return this.showDialog && this.$api.lettres.genererLettreAnnonce(this.inspection)
+      return this.showDialog && this.$api.lettres.genererLettreSuites(this.inspection)
     }
   }
 }
