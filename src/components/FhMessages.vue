@@ -2,7 +2,7 @@
 v-card
   v-toolbar(flat dense)
     v-toolbar-title.subheading Messages {{ echangeId > 0 ? 'visibles' : 'invisibles' }} pour l'exploitant
-    v-btn(small icon v-if="echangeId > 0 && showNewMessageForm" @click="brouillon = !brouillon" :color="colorBrouillon" :disabled="!$permissions.isInspecteur" :title="`${brouillon ? 'Brouillon' : 'Publié'}`")
+    v-btn(small icon v-if="echangeId > 0" @click="publier" :color="colorBrouillon" :title="`${brouillon ? 'Brouillon' : 'Publié'}`")
       v-icon {{ brouillon ? 'visibility_off' : 'visibility' }}
     v-dialog(v-model="dialogNewMessage" v-if="showNewMessageForm" width="500")
       v-btn(small icon slot="activator" title="Nouveau message" :color="colorBrouillon")
@@ -93,6 +93,9 @@ export default {
         confidential: confidential,
         attachments: []
       })
+    },
+    publier () {
+      if (this.$permissions.isInspecteur && this.brouillon) this.brouillon = !this.brouillon
     }
   }
 }

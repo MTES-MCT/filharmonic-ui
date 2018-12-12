@@ -94,7 +94,7 @@ const inspections = [
     echanges: [
       {
         id: 2,
-        brouillon: true,
+        brouillon: false,
         sujet: 'Mesure des émissions atmosphériques canalisées par un organisme extérieur',
         referencesReglementaires: [
           "Article 3.2.3. de l'arrêté préfectoral du 28 juin 2017",
