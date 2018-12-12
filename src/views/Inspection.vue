@@ -16,7 +16,7 @@ fh-page(:wait="wait")
                             )
             v-icon(left) done
             | Valider
-          v-menu(offset-y)
+          v-menu(offset-y v-if="!$permissions.isExploitant")
             v-btn(slot="activator" icon large title="Générer des documents")
               v-icon local_printshop
             //- un peu compliqué car les v-dialog ne s'intègrent pas facilement avec les v-list-tile
