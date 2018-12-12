@@ -1,56 +1,60 @@
 <template lang="pug">
-v-container
-  h1.display-1.font-weight-bold.mb-4 Tableau de bord
+fh-page(:wait="wait")
+  template(slot-scope="_")
+    v-container
+      h1.display-1.font-weight-bold.mb-4 Tableau de bord
 
-  v-layout.row.align-center
-    h2 Inspections
-    v-flex.text-xs-right
-      v-text-field.d-inline-flex(v-model="$filter" label="Filtre établissement" clearable) Filtre
-  v-tabs.elevation-1.mt-4(grow)
-    v-tab.fh-tab(v-if="$permissions.isInspecteur")
-      | En cours&nbsp;
-      .fh-badge {{ inspectionsOuvertes.length }}
-    v-tab.fh-tab
-      | En attente de validation&nbsp;
-      .fh-badge {{ inspectionsAttenteValidation.length }}
-    v-tab.fh-tab(v-if="$permissions.isApprobateur")
-      | En cours&nbsp;
-      .fh-badge {{ inspectionsOuvertes.length }}
-    v-tab.fh-tab
-      | Clos&nbsp;
-      .fh-badge {{ inspectionsTerminees.length }}
-    v-tab-item(v-if="$permissions.isInspecteur")
-      v-list(v-if="inspectionsOuvertes.length == 0")
-        v-list-tile Aucune inspection
-      v-list.py-0(v-else two-line)
-        fh-inspection-item(v-for="inspection in inspectionsOuvertes" :key="inspection.id" :inspection="inspection")
-    v-tab-item
-      v-list(v-if="inspectionsAttenteValidation.length == 0")
-        v-list-tile Aucune inspection
-      v-list.py-0(v-else two-line)
-        fh-inspection-item(v-for="inspection in inspectionsAttenteValidation" :key="inspection.id" :inspection="inspection")
-    v-tab-item(v-if="$permissions.isApprobateur")
-      v-list(v-if="inspectionsOuvertes.length == 0")
-        v-list-tile Aucune inspection
-      v-list.py-0(v-else two-line)
-        fh-inspection-item(v-for="inspection in inspectionsOuvertes" :key="inspection.id" :inspection="inspection")
-    v-tab-item
-      v-list(v-if="inspectionsTerminees.length == 0")
-        v-list-tile Aucune inspection
-      v-list.py-0(v-else two-line)
-        fh-inspection-item(v-for="inspection in inspectionsTerminees" :key="inspection.id" :inspection="inspection")
+      v-layout.row.align-center
+        h2 Inspections
+        v-flex.text-xs-right
+          v-text-field.d-inline-flex(v-model="$filter" label="Filtre établissement" clearable) Filtre
+      v-tabs.elevation-1.mt-4(grow)
+        v-tab.fh-tab(v-if="$permissions.isInspecteur")
+          | En cours&nbsp;
+          .fh-badge {{ inspectionsOuvertes.length }}
+        v-tab.fh-tab
+          | En attente de validation&nbsp;
+          .fh-badge {{ inspectionsAttenteValidation.length }}
+        v-tab.fh-tab(v-if="$permissions.isApprobateur")
+          | En cours&nbsp;
+          .fh-badge {{ inspectionsOuvertes.length }}
+        v-tab.fh-tab
+          | Clos&nbsp;
+          .fh-badge {{ inspectionsTerminees.length }}
+        v-tab-item(v-if="$permissions.isInspecteur")
+          v-list(v-if="inspectionsOuvertes.length == 0")
+            v-list-tile Aucune inspection
+          v-list.py-0(v-else two-line)
+            fh-inspection-item(v-for="inspection in inspectionsOuvertes" :key="inspection.id" :inspection="inspection")
+        v-tab-item
+          v-list(v-if="inspectionsAttenteValidation.length == 0")
+            v-list-tile Aucune inspection
+          v-list.py-0(v-else two-line)
+            fh-inspection-item(v-for="inspection in inspectionsAttenteValidation" :key="inspection.id" :inspection="inspection")
+        v-tab-item(v-if="$permissions.isApprobateur")
+          v-list(v-if="inspectionsOuvertes.length == 0")
+            v-list-tile Aucune inspection
+          v-list.py-0(v-else two-line)
+            fh-inspection-item(v-for="inspection in inspectionsOuvertes" :key="inspection.id" :inspection="inspection")
+        v-tab-item
+          v-list(v-if="inspectionsTerminees.length == 0")
+            v-list-tile Aucune inspection
+          v-list.py-0(v-else two-line)
+            fh-inspection-item(v-for="inspection in inspectionsTerminees" :key="inspection.id" :inspection="inspection")
 
 </template>
 
 <script>
 import { nomsEtatsEnCours } from '@/api/inspections'
 import FhInspectionItem from '@/components/FhInspectionItem.vue'
+import BasePage from '@/views/mixins/BasePage'
 import * as _ from '@/util'
 
 export default {
   components: {
     FhInspectionItem
   },
+  mixins: [BasePage],
   data () {
     return {
       inspections: [],
@@ -90,16 +94,17 @@ export default {
   },
   async created () {
     if (this.$permissions.isApprobateur) {
-      this.inspections = await this.$api.inspections.list({
+      this.wait = this.$api.inspections.list({
         etablissement: true,
         messagesNonLus: true
       })
     } else {
-      this.inspections = await this.$api.inspections.listAssigned(this.$store.state.authentication.user.id, {
+      this.wait = this.$api.inspections.listAssigned(this.$store.state.authentication.user.id, {
         etablissement: true,
         messagesNonLus: true
       })
     }
+    this.inspections = await this.wait
   }
 }
 </script>

@@ -1,3 +1,4 @@
+import { ApplicationError } from '@/errors'
 import BaseAPI from './base'
 import * as _ from '@/util'
 
@@ -373,7 +374,7 @@ export default class InspectionsAPI extends BaseAPI {
       filter: inspection => inspection.id === inspectionId
     }))[0]
     if (!inspection) {
-      throw new Error(`Inspection ${inspectionId} non trouvée`)
+      throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
     }
     return inspection
   }

@@ -8,3 +8,10 @@ export class ApplicationError extends Error {
     this.name = 'ApplicationError'
   }
 }
+
+export class ForbiddenError extends ApplicationError {
+  constructor (message) {
+    super(message)
+    this.name = 'ForbiddenError'
+  }
+}

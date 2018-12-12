@@ -1,29 +1,37 @@
 <template lang="pug">
-v-container.grid-list-lg.inspection-form
-  v-alert.text-xs-center(type="error" :value="error") L'établissement '#[strong {{ this.$route.params.id }}]' ne semble pas exister. Mauvaise URL ?
-  div(v-if="inspection.etablissement")
-    h1.display-2 Nouvelle inspection
-    fh-detail-etablissement(:etablissement="inspection.etablissement")
+fh-page(:wait="wait")
+  template(slot-scope="_")
+    v-container.grid-list-lg.inspection-form
+      div(v-if="inspection.etablissement")
+        h1.display-2 Nouvelle inspection
+        fh-detail-etablissement(:etablissement="inspection.etablissement")
 
-    h4.display-1.mt-4 Détails de l'inspection
+        h4.display-1.mt-4 Détails de l'inspection
 
-    v-form(ref="form" v-model="validForm" lazy-validation)
-      fh-detail-inspection(:inspection="inspection")
-      v-btn(block @click="createInspection" :disabled="!validForm" color="primary") Créer l'inspection
+        v-form(ref="form" v-model="validForm" lazy-validation)
+          fh-detail-inspection(:inspection="inspection")
+          v-btn(block @click="createInspection" :disabled="!validForm" color="primary") Créer l'inspection
 </template>
 
 <script>
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 import FhDetailInspection from '@/components/FhDetailInspection.vue'
+import BasePage from '@/views/mixins/BasePage'
 
 export default {
   components: {
     FhDetailInspection,
     FhDetailEtablissement
   },
+  mixins: [BasePage],
+  props: {
+    etablissementId: {
+      type: String,
+      required: true
+    }
+  },
   data () {
     return {
-      error: false,
       inspection: {
         date: '',
         type: 'courant',
@@ -33,17 +41,17 @@ export default {
         detailCirconstances: '',
         inspecteurs: [],
         themes: [],
-        etablissementId: this.$route.params.id,
+        etablissementId: this.etablissementId,
         etablissement: null // fetched on init
       },
       validForm: false
     }
   },
   async created () {
-    this.inspection.etablissement = await this.$api.etablissements.get(this.$route.params.id)
-    if (!this.inspection.etablissement) {
-      this.error = true
-    }
+    this.wait = this.$api.etablissements.get(this.etablissementId, {
+      inspections: true
+    })
+    this.inspection.etablissement = await this.wait
   },
   methods: {
     async createInspection () {

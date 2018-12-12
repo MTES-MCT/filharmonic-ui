@@ -21,7 +21,7 @@ import './styles/main.styl'
 Vue.config.productionTip = false
 function errorHandler (error) {
   if (!(error instanceof ApplicationError)) {
-    console.error(error.stack)
+    console.error(error.stack) // eslint-disable-line no-console
   }
   events.bus.$emit(events.Alert, 'error', error.message)
 }

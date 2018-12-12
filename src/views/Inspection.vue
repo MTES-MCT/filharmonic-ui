@@ -1,8 +1,6 @@
 <template lang="pug">
-div
-  p.display-1.mt-4.text-xs-center(v-if="error") {{ error }}
-  .app-loading(v-if="loading")
-  div(v-if="!loading && inspection")
+fh-page(:wait="wait")
+  template(slot-scope="_")
     .grey.lighten-4.elevation-2(:style="toolbarStyles")
       v-container.pa-0
         v-toolbar(flat dense)
@@ -42,25 +40,25 @@ div
 </template>
 
 <script>
-import FhEtatInspection from '@/components/FhEtatInspection'
-import FhLettreAnnonce from '@/components/FhLettreAnnonce'
 import { mapState } from 'vuex'
+import FhEtatInspection from '@/components/FhEtatInspection.vue'
+import FhLettreAnnonce from '@/components/FhLettreAnnonce.vue'
+import BasePage from '@/views/mixins/BasePage.js'
 
 export default {
   components: {
     FhEtatInspection,
     FhLettreAnnonce
   },
+  mixins: [BasePage],
   props: {
     inspectionId: {
       type: String,
-      default: null
+      required: true
     }
   },
   data () {
     return {
-      error: '',
-      loading: false,
       workflowActionLoading: false
     }
   },
@@ -96,14 +94,8 @@ export default {
     }
   },
   methods: {
-    async loadInspection () {
-      this.loading = true
-      try {
-        await this.$store.dispatch('loadInspection', parseInt(this.inspectionId, 10))
-      } catch (err) {
-        this.error = err.message
-      }
-      this.loading = false
+    loadInspection () {
+      this.wait = this.$store.dispatch('loadInspection', parseInt(this.inspectionId, 10))
     },
     async validerInspection () {
       this.workflowActionLoading = true
@@ -112,10 +104,9 @@ export default {
           inspectionId: this.inspection.id,
           approbateurId: this.$store.state.authentication.user.id
         })
-      } catch (err) {
-        this.error = err.message
+      } finally {
+        this.workflowActionLoading = false
       }
-      this.workflowActionLoading = false
     }
   }
 }

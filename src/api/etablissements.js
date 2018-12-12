@@ -1,4 +1,6 @@
+import { ApplicationError } from '@/errors'
 import BaseAPI from './base'
+import * as _ from '@/util'
 
 const etablissements = [{
   id: '0999.00001',
@@ -56,10 +58,28 @@ const etablissements = [{
 }]
 
 export default class EtablissementsAPI extends BaseAPI {
-  async list () {
-    return etablissements
+  async list (options = {}) {
+    let filteredEtablissements = _.cloneDeep(etablissements)
+    if (options.filter) {
+      filteredEtablissements = filteredEtablissements.filter(options.filter)
+    }
+    return Promise.all(
+      filteredEtablissements.map(async etablissement => {
+        if (options.inspections) {
+          etablissement.inspections = await this.api.inspections.listByEtablissement(etablissement.id)
+        }
+        return etablissement
+      })
+    )
   }
-  async get (etablissementId) {
-    return etablissements.find(etablissement => etablissement.id === etablissementId)
+  async get (etablissementId, options) {
+    const etablissement = (await this.list({
+      ...options,
+      filter: etablissement => etablissement.id === etablissementId
+    }))[0]
+    if (!etablissement) {
+      throw new ApplicationError(`Etablissement ${etablissementId} non trouvé`)
+    }
+    return etablissement
   }
 }

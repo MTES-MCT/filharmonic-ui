@@ -65,15 +65,16 @@ export function createRouter (store) {
             component: Etablissements
           },
           {
-            path: '/etablissements/:id',
+            path: '/etablissements/:etablissementId',
             name: 'etablissement',
             component: Etablissement,
             props: true
           },
           {
-            path: '/etablissements/:id/inspections/new',
+            path: '/etablissements/:etablissementId/inspections/new',
             name: 'nouvelle-inspection',
-            component: NouvelleInspection
+            component: NouvelleInspection,
+            props: true
           },
           {
             path: '/inspections',
