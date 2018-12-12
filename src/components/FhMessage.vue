@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-timeline-item(v-if="author" fill-dot :color="color" :icon="icon" :left="author.type === 'inspecteur'" :right="author.type === 'exploitant'")
+  v-timeline-item(v-if="author" fill-dot :color="color" :icon="icon" :left="author.type !== 'exploitant'" :right="author.type === 'exploitant'")
     span(v-if="author" slot="opposite" v-text="`${author.name} le ${message.date.toLocaleString()}`" :class="`${color}--text`")
     v-card(dark :color="color" class="white--text")
       v-container.fluid.grid-list(class="pa-0 ma-0 text-xs-left")
@@ -7,11 +7,9 @@
           v-flex.xs-12
             v-card-actions
               v-spacer
-              v-tooltip.bottom
-                v-btn(v-if="author && user.type !== author.type && !$permissions.isApprobateur" @click="lu =! lu" :label="label" icon flat slot="activator")
-                  v-icon(v-if="lu") drafts
-                  v-icon(v-else) markunread
-                span {{ label }}
+              v-btn(v-if="author && user.type !== author.type && !$permissions.isApprobateur" @click="lu =! lu" :label="label" icon flat slot="activator" :title="label")
+                v-icon(v-if="lu") drafts
+                v-icon(v-else) markunread
             v-card-text(:color="color")
               p {{ message.text }}
             fh-attachment(flat
@@ -44,10 +42,10 @@ export default {
   },
   computed: {
     color () {
-      return this.message.lu ? this.colorBrouillon : 'red'
+      return this.message.confidential ? 'grey' : (this.message.lu ? this.colorBrouillon : 'red')
     },
     icon () {
-      return this.message.lu ? 'drafts' : 'markunread'
+      return this.message.confidential ? 'message' : (this.message.lu ? 'drafts' : 'markunread')
     },
     label () {
       return this.message.lu ? 'Lu' : 'Non lu'
@@ -57,7 +55,7 @@ export default {
     ]),
     lu: {
       get () {
-        return this.$store.state.inspectionOuverte.echanges.find(echange => echange.reponses.filter(reponse => reponse.id === this.message.id).length > 0).reponses.find(reponse => reponse.id === this.message.id).lu
+        return this.$store.state.inspectionOuverte.echanges.find(echange => echange.messages.filter(message => message.id === this.message.id).length > 0).messages.find(message => message.id === this.message.id).lu
       },
       set (value) {
         this.$store.commit('updateMessageLu', { messageId: this.message.id, lu: value })

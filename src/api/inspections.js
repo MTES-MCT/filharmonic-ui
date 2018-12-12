@@ -29,7 +29,7 @@ const inspections = [
         referencesReglementaires: [
           "Articles 3.2.3., 3.2.8. et 8.2.1.2. de l'arrêté préfectoral du 28 juin 2017"
         ],
-        reponses: [
+        messages: [
           {
             id: 1,
             authorId: 1,
@@ -38,8 +38,7 @@ const inspections = [
             lu: true,
             attachments: []
           }
-        ],
-        comments: []
+        ]
       },
       {
         id: 6,
@@ -48,8 +47,7 @@ const inspections = [
         referencesReglementaires: [
           "Article 8.2.1.1. de l'arrêté préfectoral du 28 juin 2017"
         ],
-        reponses: [],
-        comments: []
+        messages: []
       }
     ]
   },
@@ -103,7 +101,7 @@ const inspections = [
           "Article 3.2.8. de l'arrêté préfectoral du 28 juin 2017",
           "Article 8.2.1.2. de l'arrêté préfectoral du 28 juin 2017"
         ],
-        reponses: [
+        messages: [
           {
             id: 4,
             authorId: 1,
@@ -136,9 +134,7 @@ const inspections = [
             lu: true,
             confidential: false,
             attachments: []
-          }
-        ],
-        comments: [
+          },
           {
             id: 7,
             authorId: 2,
@@ -169,8 +165,7 @@ const inspections = [
         referencesReglementaires: [
           "Article 3.1 de l'arrêté préfectoral du 9 juin 1999"
         ],
-        reponses: [],
-        comments: [],
+        messages: [],
         constat: {
           type: 'observation',
           remarques: 'Les rejets X2 sont contrôlés semestriellement pour les MES, la DBO5, la DCO, le pH, les hydrocarbures totaux. Les HAP ont été contrôlés dans le cadre de la campagne RSDE.'
@@ -183,8 +178,7 @@ const inspections = [
         referencesReglementaires: [
           "Article 1 de l'Arrêté ministériel du 28 avril 2014"
         ],
-        reponses: [],
-        comments: [],
+        messages: [],
         constat: {
           type: 'non_conforme',
           remarques: 'Au jour de l\'inspection, les données 2018 n\'ont pas été télétransmises par l\'exploitant pour les données des rejets en eau + légionnelle. L\'inspection rappelle l\'obligation réglementaire faite à l\'exploitant de produire toute pièce ou documents mentionnés dans les différents arrêtés dans les délais prescrits. Les moyens humains et matériels correspondants doivent être mis en place pour que ces données puissent être disponibles pour l\'IIC.',
@@ -198,7 +192,7 @@ const inspections = [
         referencesReglementaires: [
           "Article 8.2.1.1. de l'arrêté préfectoral du 28 juin 2017"
         ],
-        reponses: [
+        messages: [
           {
             id: 9,
             authorId: 1,
@@ -224,7 +218,6 @@ const inspections = [
             ]
           }
         ],
-        comments: [],
         constat: {
           type: 'proposition_mise_en_demeure',
           remarques: 'Il faut réparer la fissure de la cuve.',
@@ -353,14 +346,12 @@ export default class InspectionsAPI extends BaseAPI {
           inspection.messagesNonLus = inspection.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
             inspection.echanges.reduce((acc, echange) => (
               acc +
-              echange.reponses.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
-              echange.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
+              echange.messages.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
             ), 0)
         }
         if (options.detailMessagesNonLus) {
           inspection.echanges.forEach(echange => {
-            echange.messagesNonLus = echange.reponses.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
-                                    echange.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
+            echange.messagesNonLus = echange.messages.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
           })
         }
         return _.cloneDeep(inspection)

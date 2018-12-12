@@ -33,30 +33,8 @@ v-expansion-panel(expand v-if="showEchange")
             time(:datetime="echange.constat.echeance") {{ echange.constat.echeance }}
 
     v-card.px-3
-      v-card-text.subheading Fil de discussion
-        v-checkbox(v-model="brouillon" :color="colorBrouillon" :disabled="!$permissions.isInspecteur")
-          div(slot="label" v-if="brouillon")
-            strong(class="primary--text") Brouillon
-          div(slot="label" v-else)
-            strong(class="success--text") Publié
-        v-timeline
-          fh-message(v-for="message in echange.reponses" :key="message.id" :message="message" :colorBrouillon="colorBrouillon")
-        v-layout.pl-2.mt-2.align-end(v-if="showNewMessageForm")
-          v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1" clearable)
-          v-btn.mb-0
-            v-icon attach_file
-          v-btn.mb-0(@click="addMessage(echange, newMessage); newMessage = ''" :disabled="!newMessage" color="primary" title="Envoyer")
-            v-icon send
-
-    v-card.px-3(v-if="!$permissions.isExploitant")
-      v-card-text.subheading Commentaires (visibles que des inspecteurs)
-        fh-comment(v-for="comment in echange.comments" :key="comment.id" :comment="comment")
-        v-layout.pl-2.mt-2.align-end
-          v-textarea(box label="Commentaire" v-model="newComment" auto-grow hideDetails rows="1" clearable)
-          v-btn.mb-0
-            v-icon attach_file
-          v-btn.mb-0(@click="addComment(echange, newComment); newComment = ''" :disabled="!newComment" color="primary" title="Envoyer")
-            v-icon send
+      v-card-text
+        fh-messages(:echangeId="echange.id" :etatInspection="etatInspection" :messages="echange.messages")
 
         div(v-if="!echange.constat")
           v-slide-y-transition(hide-on-leave)
@@ -107,16 +85,13 @@ v-expansion-panel(expand v-if="showEchange")
 
 <script>
 import Vue from 'vue'
-import { typesConstats, allowedStates } from '@/api/inspections'
-import FhMessage from '@/components/FhMessage.vue'
-import FhComment from '@/components/FhComment.vue'
-import { mapGetters } from 'vuex'
+import { typesConstats } from '@/api/inspections'
+import FhMessages from '@/components/FhMessages.vue'
 
 export default {
   name: 'FhEchange',
   components: {
-    FhMessage,
-    FhComment
+    FhMessages
   },
   props: {
     echange: {
@@ -137,56 +112,20 @@ export default {
         type: 'conforme'
       },
       showNewConstatEcheancePicker: false,
-      newMessage: '',
       notEmpty: [
         v => !!v || 'Il faut renseigner une valeur'
-      ],
-      newComment: ''
+      ]
     }
   },
   computed: {
-    ...mapGetters([
-      'user'
-    ]),
     typeConstatEchange () {
       return this.echange.constat ? typesConstats[this.echange.constat.type] : {}
     },
-    showNewMessageForm () {
-      return allowedStates[this.etatInspection].order < 4
-    },
     showEchange () {
       return !this.$permissions.isExploitant || !this.echange.brouillon
-    },
-    brouillon: {
-      get () {
-        return this.$store.state.inspectionOuverte.echanges.find(echange => echange.id === this.echange.id).brouillon
-      },
-      set (value) {
-        this.$store.commit('updateEchangeBrouillon', { echangeId: this.echange.id, brouillon: value })
-      }
-    },
-    colorBrouillon () {
-      return this.brouillon ? 'primary' : 'success'
     }
   },
   methods: {
-    addMessage (echange, message) {
-      echange.reponses.push({
-        authorId: this.user.id,
-        date: new Date(),
-        text: message,
-        lu: false,
-        attachments: []
-      })
-    },
-    addComment (echange, comment) {
-      echange.comments.push({
-        authorId: this.user.id,
-        text: comment,
-        date: new Date(),
-        attachments: []
-      })
-    },
     resetNewConstat () {
       this.newConstat = {
         type: 'conforme'
