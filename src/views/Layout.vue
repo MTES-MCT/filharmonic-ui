@@ -20,9 +20,9 @@ v-app
           v-list-tile-content
             v-list-tile-title Inspections favorites
         v-list.py-0.grey.lighten-2(dense)
-          v-list-tile(v-for="inspection in inspectionsOuvertes" :key="inspection.id"
+          v-list-tile(v-for="inspection in inspectionsFavorites" :key="inspection.id"
                       :to="`/inspections/${inspection.id}`"
-                      :title="`${inspection.date} - ${inspection.etablissement.nom}`"
+                      :title="`${inspection.date} - ${inspection.etablissement.nom}, ${inspection.etablissement.adresse}`"
                       )
             v-list-tile-content
               v-list-tile-title
@@ -106,12 +106,12 @@ export default {
   computed: {
     ...mapState({
       user: state => state.authentication.user,
-      inspectionsOuvertes: 'inspectionsOuvertes'
+      inspectionsFavorites: 'inspectionsFavorites'
     })
   },
   async created () {
     events.bus.$on(events.Alert, this.updateAlert)
-    await this.$store.dispatch('loadInspectionsOuvertes')
+    await this.$store.dispatch('loadInspectionsFavorites')
   },
   destroyed () {
     events.bus.$off(events.Alert, this.updateAlert)

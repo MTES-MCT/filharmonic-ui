@@ -9,7 +9,6 @@ const inspections = [
     type: 'approfondi',
     annonce: true,
     origine: 'plan_de_controle',
-    favorite: false,
     etat: 'en_cours',
     contexte: 'Emissions de NOx dépassant les seuils le 2/04/2005',
     themes: [
@@ -57,7 +56,6 @@ const inspections = [
     type: 'approfondi',
     annonce: true,
     origine: 'plan_de_controle',
-    favorite: true,
     etat: 'attente_validation',
     contexte: 'Incident cuve gaz le 30/12/2017',
     themes: [
@@ -327,12 +325,18 @@ export default class InspectionsAPI extends BaseAPI {
     etablissement: bool : récupère l'établissement
     activite: bool : récupère l'activité
     messagesNonLus: bool : calcule le nombre de messages non lus
+    favoris: bool : ajoute le champ 'favoris' en fonction des inspections favorites de l'utilisateur
   }
   */
   async list (options = {}) {
     let filteredInspections = _.cloneDeep(inspections)
     if (options.filter) {
       filteredInspections = filteredInspections.filter(options.filter)
+    }
+
+    let inspectionsFavorites = []
+    if (options.favoris) {
+      inspectionsFavorites = (await this.api.users.get(this.api.store.state.authentication.user.id)).inspectionsFavorites
     }
     return Promise.all(
       filteredInspections.map(async inspection => {
@@ -353,6 +357,9 @@ export default class InspectionsAPI extends BaseAPI {
           inspection.echanges.forEach(echange => {
             echange.messagesNonLus = echange.messages.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
           })
+        }
+        if (options.favoris) {
+          inspection.favoris = inspectionsFavorites.includes(inspection.id)
         }
         return _.cloneDeep(inspection)
       })
@@ -392,6 +399,12 @@ export default class InspectionsAPI extends BaseAPI {
     Object.assign(inspection, _.cloneDeep(updatedInspection))
   }
 
+  async toggleFavoris (inspectionId, favoris) {
+    const inspection = inspections.find(i => i.id === inspectionId)
+    inspection.favoris = favoris
+    await this.api.users.toggleInspectionFavorite(inspectionId, favoris)
+  }
+
   async valider (inspectionId, approbateurId) {
     this.requireApprobateur()
     const inspection = inspections.find(i => i.id === inspectionId)
@@ -425,6 +438,13 @@ export default class InspectionsAPI extends BaseAPI {
     return this.list({
       ...options,
       filter: inspection => inspection.inspecteurs.includes(userId) && nomsEtatsEnCours.includes(inspection.etat)
+    })
+  }
+  async listInspectionsFavorites (options) {
+    const user = await this.api.users.get(this.api.store.state.authentication.user.id)
+    return this.list({
+      ...options,
+      filter: inspection => user.inspectionsFavorites.includes(inspection.id)
     })
   }
 }

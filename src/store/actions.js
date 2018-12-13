@@ -7,11 +7,11 @@ import { createInitialStoreState } from '@/store/state'
 // }
 
 export default {
-  async loadInspectionsOuvertes ({ commit, state }) {
-    const inspectionsOuvertes = await this.$api.inspections.listAssignedOuvertes(state.authentication.user.id, {
+  async loadInspectionsFavorites ({ commit, state }) {
+    const inspectionsFavorites = await this.$api.inspections.listInspectionsFavorites({
       etablissement: true
     })
-    commit('loadInspectionsOuvertes', inspectionsOuvertes)
+    commit('loadInspectionsFavorites', inspectionsFavorites)
   },
 
   async loadInspection ({ commit, state }, inspectionId) {
@@ -21,7 +21,8 @@ export default {
     commit('loadInspection', await this.$api.inspections.get(inspectionId, {
       etablissement: true,
       activite: true,
-      detailMessagesNonLus: true
+      detailMessagesNonLus: true,
+      favoris: true
     }))
   },
   async saveInspection ({ commit, dispatch }, updatedInspection) {
@@ -30,6 +31,11 @@ export default {
     }
     await this.$api.inspections.save(updatedInspection)
     await dispatch('loadInspection', updatedInspection.id)
+  },
+  async toggleInspectionFavoris ({ commit, dispatch }, { inspectionId, favoris }) {
+    await this.$api.inspections.toggleFavoris(inspectionId, favoris)
+    await dispatch('loadInspection', inspectionId)
+    await dispatch('loadInspectionsFavorites')
   },
   async validerInspection ({ commit, dispatch }, { inspectionId, approbateurId }) {
     if (typeof inspectionId !== 'number') {

@@ -8,6 +8,8 @@ fh-page(:wait="wait")
           fh-etat-inspection(:etat="inspection.etat" small)
           v-spacer
 
+          v-btn(icon large @click="toggleFavoris()" :title="inspection.favoris ? 'Retirer des favoris' : 'Mettre en favoris'" )
+            v-icon {{ inspection.favoris ? 'star' : 'star_border' }}
           v-btn.white--text(v-if="$permissions.isApprobateur && inspection.etat == 'attente_validation'"
                             :loading="workflowActionLoading"
                             :disabled="workflowActionLoading"
@@ -121,6 +123,12 @@ export default {
       } finally {
         this.workflowActionLoading = false
       }
+    },
+    async toggleFavoris () {
+      await this.$store.dispatch('toggleInspectionFavoris', {
+        inspectionId: this.inspection.id,
+        favoris: !this.inspection.favoris
+      })
     }
   }
 }
