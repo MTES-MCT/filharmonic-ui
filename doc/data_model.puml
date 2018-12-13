@@ -15,6 +15,7 @@ class User {
   password : string
   avatar: string
   type : string 'inspecteur' | 'exploitant' | 'valideur'
+  inspectionsFavorites : [@Inspection]
 }
 
 class Etablissement {
