@@ -1,42 +1,37 @@
 import { Authentication } from '@/models/authentication'
-import AuthenticationAPI from '@/api/authentication'
 
 const localStorageSessionTokenKey = 'fh-token'
 
 const actions = {
   async login ({ commit }, { user, password }) {
-    const authenticationInfos = await AuthenticationAPI.login(user, password)
-    if (authenticationInfos.valid) {
-      sessionStorage.save(authenticationInfos.sessionToken)
-      commit('login', authenticationInfos)
+    const authentication = await this.$api.authentication.login(user, password)
+    if (authentication.valid) {
+      localStorage.setItem(localStorageSessionTokenKey, authentication.token)
+      commit('login', authentication)
     }
-    return authenticationInfos
+    return authentication
   },
   async logout ({ commit }) {
-    this.delete()
-    this.replaceState(new Authentication())
+    localStorage.removeItem(localStorageSessionTokenKey)
+    commit('logout')
   },
-  async authenticate ({ commit }, { sessionToken }) {
-    const authenticationInfos = await AuthenticationAPI.authenticate(sessionToken)
-    if (!authenticationInfos.valid) {
-      sessionStorage.delete()
+  async authenticate ({ commit }, { token }) {
+    const authentication = await this.$api.authentication.authenticate(token)
+    if (!authentication.valid) {
+      localStorage.delete()
     }
-    return authenticationInfos
+    return authentication
   }
 }
 
 const mutations = {
-  login (state, authenticationInfos) {
-    state = authenticationInfos
+  login (state, authentication) {
+    state.token = authentication.token
+    state.user = authentication.user
+    state.valid = authentication.valid
   },
-  save (sessionToken) {
-    sessionStorage.setItem(localStorageSessionTokenKey, sessionToken)
-  },
-  load () {
-    return sessionStorage.getItem(localStorageSessionTokenKey)
-  },
-  delete () {
-    return sessionStorage.removeItem(localStorageSessionTokenKey)
+  logout (state) {
+    state = new Authentication()
   }
 }
 
@@ -52,11 +47,7 @@ const getters = {
   }
 }
 
-const state = () => ({
-  token: sessionStorage.getItem(localStorageSessionTokenKey),
-  valid: false,
-  user: null
-})
+const state = () => new Authentication()
 
 export const authentication = {
   namespaced: true,

@@ -38,6 +38,8 @@ v-app
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
+const { mapActions } = createNamespacedHelpers('authentication')
 export default {
   data () {
     return {
@@ -54,9 +56,10 @@ export default {
     this.users = await this.$api.users.list()
   },
   methods: {
+    ...mapActions({ authLogin: 'login' }),
     async login (id, password) {
       this.authenticationError = ''
-      const authenticationInfos = await this.$store.dispatch('login', {
+      const authenticationInfos = await this.authLogin({
         user: id,
         password: password
       })

@@ -1,4 +1,5 @@
 import BaseAPI from './base'
+import { createAuthentication } from '@/models/authentication'
 
 export default class AuthenticationAPI extends BaseAPI {
   async authenticate (sessionToken) {
@@ -24,10 +25,10 @@ export default class AuthenticationAPI extends BaseAPI {
         valid: false
       }
     }
-    return {
+    return createAuthentication({
       valid: true,
-      sessionToken: `valid-token-${user.id}`,
+      token: `valid-token-${user.id}`,
       user: user
-    }
+    })
   }
 }
