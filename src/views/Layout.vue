@@ -41,6 +41,11 @@ v-app
           v-icon location_city
         v-list-tile-content
           v-list-tile-title Etablissements
+      v-list-tile(to="/themes" title="Thèmes" v-if="$permissions.isApprobateur")
+        v-list-tile-action
+          v-icon bookmarks
+        v-list-tile-content
+          v-list-tile-title Thèmes
 
   v-toolbar(:clipped-left="$vuetify.breakpoint.lgAndUp" color="blue darken-3" dark app fixed)
     v-toolbar-side-icon(@click.stop="drawer = !drawer")

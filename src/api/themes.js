@@ -1,4 +1,5 @@
 import BaseAPI from './base'
+import * as _ from '@/util'
 
 const themes = [
   {
@@ -29,17 +30,23 @@ const themes = [
 
 export default class ThemesAPI extends BaseAPI {
   async list () {
+    return _.cloneDeep(themes)
+  }
+  async listNames () {
     return themes.map(theme => theme.name) // ids are not referenced in models but copied
   }
-  async create (theme) {
-    theme.id = new Date().getTime() % 1000
+  async create (nomTheme) {
+    const theme = {
+      id: new Date().getTime() % 1000,
+      name: nomTheme
+    }
     themes.push(theme)
     return theme
   }
-  async delete (theme) {
-    const index = themes.indexOf(theme)
+  async delete (themeId) {
+    const index = themes.map(theme => theme.id).indexOf(themeId)
     if (index !== -1) {
-      this.themes.splice(index, 1)
+      themes.splice(index, 1)
     }
   }
 }

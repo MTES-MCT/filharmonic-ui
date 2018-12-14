@@ -191,7 +191,7 @@ export default {
     }
   },
   async created () {
-    [this.inspecteurs, this.themes] = await Promise.all([this.$api.users.listInspecteurs(), await this.$api.themes.list()])
+    [this.inspecteurs, this.themes] = await Promise.all([this.$api.users.listInspecteurs(), await this.$api.themes.listNames()])
   },
   methods: {
     removeTheme (theme) {

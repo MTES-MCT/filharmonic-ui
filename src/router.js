@@ -15,6 +15,7 @@ import EditDetailInspection from '@/views/EditDetailInspection.vue'
 import CommentairesInspection from '@/views/CommentairesInspection.vue'
 import RecapitulatifInspection from '@/views/RecapitulatifInspection.vue'
 import ActiviteInspection from '@/views/ActiviteInspection.vue'
+import Themes from '@/views/Themes.vue'
 
 Vue.use(Router)
 
@@ -80,6 +81,11 @@ export function createRouter (store) {
             path: '/inspections',
             name: 'inspections',
             component: Inspections
+          },
+          {
+            path: '/themes',
+            name: 'themes',
+            component: Themes
           },
           {
             path: '/inspections/:inspectionId',
