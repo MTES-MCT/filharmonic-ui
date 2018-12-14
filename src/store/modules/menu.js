@@ -5,11 +5,9 @@ import { ERROR, SUCCESS } from '@/store/mutation-types'
 const actions = {
   async favoris ({ commit, state }, userId) {
     try {
-      console.log('userId=' + userId)
       const favoris = await this.$api.inspections.listAssignedOuvertes(userId, {
         etablissement: true
       })
-      // const inspectionsData = data.map(x => createInspection(x))
 
       commit(SUCCESS, favoris)
     } catch (error) {
@@ -32,7 +30,7 @@ const mutations = {
     // eslint-disable-next-line no-param-reassign
     state.success = true
     // eslint-disable-next-line no-param-reassign
-    state.rows = favoris
+    state.favoris = favoris
   }
 }
 
@@ -41,7 +39,7 @@ const getters = {
 }
 
 const state = () => ({
-  rows: [],
+  favoris: [],
   error: false,
   success: false
 })

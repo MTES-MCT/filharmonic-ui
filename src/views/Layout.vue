@@ -106,7 +106,7 @@ export default {
   computed: {
     ...mapState({
       user: state => state.authentication.user,
-      inspectionsOuvertes: state => state.menu.rows
+      inspectionsOuvertes: state => state.menu.favoris
     })
   },
   async created () {
