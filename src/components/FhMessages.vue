@@ -17,11 +17,15 @@ v-card
         v-card-text
           v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1" clearable)
           v-checkbox(v-model="confidential" label="Confidentiel" :disabled="echangeId < 0")
+
+        fh-attachment(v-for="(attachment, index) in attachments" :key="index" :attachment="attachment")
+
         v-divider
         v-card-actions
           v-spacer
-          v-btn(icon title="Pièce jointe")
+          v-btn(icon title="Ajouter une pièce jointe" @click="openAttachmentPopup")
             v-icon attach_file
+          input(ref="file" type="file" @change="onFilesChange" multiple hidden)
           v-btn(icon @click="addMessage(newMessage, confidential)" :disabled="!newMessage" color="primary" title="Envoyer")
             v-icon send
 
@@ -31,6 +35,7 @@ v-card
 </template>
 
 <script>
+import FhAttachment from '@/components/FhAttachment.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import { allowedStates } from '@/api/inspections'
 import { mapGetters } from 'vuex'
@@ -38,6 +43,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'FhMessages',
   components: {
+    FhAttachment,
     FhMessage
   },
   props: {
@@ -60,6 +66,7 @@ export default {
     return {
       newMessage: '',
       confidential: true,
+      attachments: [],
       dialogNewMessage: false
     }
   },
@@ -84,6 +91,9 @@ export default {
     }
   },
   methods: {
+    openAttachmentPopup () {
+      this.$refs.file.click()
+    },
     addMessage (messageText, confidential) {
       this.$store.commit('addMessage', {
         echangeId: this.echangeId,
@@ -93,14 +103,43 @@ export default {
           text: messageText,
           lu: false,
           confidential: confidential,
-          attachments: []
+          attachments: this.attachments
         }
       })
       this.newMessage = ''
+      this.attachments = []
       this.dialogNewMessage = false
     },
     publier () {
       if (this.$permissions.isInspecteur) this.brouillon = !this.brouillon
+    },
+    /*
+    Exemple attachment = {
+      lastModified: 1544625348298
+      lastModifiedDate: Wed Dec 12 2018 15:35:48 GMT+0100 (heure normale d’Europe centrale) {}
+      name: "20180921-LettreAnnonceAMFQSE.odt"
+      size: 66194
+      type: "application/vnd.oasis.opendocument.text"
+      webkitRelativePath: ""
+    }
+    */
+    addAttachment (...files) {
+      files.forEach(file => {
+        this.attachments.push({
+          id: new Date(),
+          filename: file.name,
+          type: file.type,
+          url: URL.createObjectURL(file)
+        })
+      })
+    },
+    onFilesChange (e) {
+      const files = e.target.files || e.dataTransfer.files
+      if (!files.length) {
+        return
+      }
+      this.addAttachment(...files)
+      e.target.value = ''
     }
   }
 }

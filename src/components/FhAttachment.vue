@@ -1,37 +1,66 @@
 <template lang="pug">
-  v-dialog(v-model="show" scrollable width="800px" v-if="attachment")
-    v-btn(flat slot="activator")
-      v-icon(v-if="attachment.type == 'pdf'") picture_as_pdf
-      v-icon(v-if="attachment.type == 'image'") photo
-      span.ml-2 {{ attachment.filename }}
-    v-card
-        v-toolbar(color="primary" dark)
-          v-toolbar-title.headline Visualisation : {{ attachment.filename }}
-          v-spacer
-          v-toolbar-items
-            v-btn(flat dark @click="show = false")
-              v-icon close
-        v-card-text
-          pdf(v-if="attachment.type == 'pdf'" src="/test/lorem-ipsum.pdf")
-          v-img(v-if="attachment.type == 'image'" :src="`https://picsum.photos/800/600?image=${attachment.id}`")
+v-dialog(v-if="previewer" v-model="showDialog" scrollable width="800px")
+  v-btn(flat slot="activator")
+    v-icon(left) {{ fileIcon }}
+    span {{ attachment.filename }}
+  v-card
+    v-toolbar(color="primary" dark)
+      v-toolbar-title.headline Visualisation : {{ attachment.filename }}
+      v-spacer
+      v-toolbar-items
+        v-btn(flat dark @click="showDialog = false")
+          v-icon close
+    v-card-text.pa-0(style="overflow: hidden")
+      v-img(v-if="previewer == 'image'" :src="attachment.url")
+      iframe(v-if="previewer == 'iframe'" :src="attachment.url" style="width: 100%; height: 80vh")
+v-btn(v-else flat :href="attachment.url" :download="attachment.filename")
+  v-icon(left) {{ fileIcon }}
+  span {{ attachment.filename }}
 </template>
 
 <script>
-import pdf from 'vue-pdf'
 export default {
   name: 'FhAttachment',
-  components: {
-    pdf
-  },
   props: {
     attachment: {
       type: Object,
-      default: null
+      required: true
     }
   },
   data () {
     return {
-      show: false
+      showDialog: false
+    }
+  },
+  computed: {
+    previewer () {
+      switch (this.attachment.type) {
+        case 'image/jpeg':
+        case 'image/png':
+          return 'image'
+        case 'application/pdf':
+          return 'iframe'
+        default:
+          return null
+      }
+    },
+    fileIcon () {
+      // return previewerIcon[this.previewer]
+      switch (this.attachment.type) {
+        case 'image':
+        case 'image/png':
+          return 'photo_library'
+        case 'application/pdf':
+          return 'picture_as_pdf'
+        default:
+          return 'library_books'
+          // return null
+          // 'file_copy'
+          // 'assignment'
+          // 'description'
+          // 'library_books'
+          // 'note'
+      }
     }
   }
 }
