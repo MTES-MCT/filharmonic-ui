@@ -79,8 +79,11 @@ v-app
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import events from '@/events'
+import { createNamespacedHelpers } from 'vuex'
+import { LIST } from '@/store/action-types'
+
+const { mapState, mapActions } = createNamespacedHelpers('menu')
 
 const snackbarColor = {
   error: 'red',
@@ -106,17 +109,18 @@ export default {
   computed: {
     ...mapState({
       user: state => state.authentication.user,
-      inspectionsOuvertes: 'inspectionsOuvertes'
+      inspectionsOuvertes: 'menu'
     })
   },
   async created () {
     events.bus.$on(events.Alert, this.updateAlert)
-    await this.$store.dispatch('loadInspectionsOuvertes')
+    await this.LIST
   },
   destroyed () {
     events.bus.$off(events.Alert, this.updateAlert)
   },
   methods: {
+    ...mapActions([LIST]),
     async logout () {
       await this.$store.dispatch('logout')
       this.$router.push('/login?redirect=/')
