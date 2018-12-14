@@ -8,12 +8,12 @@ export default {
     const permissions = {}
     ;['isInspecteur', 'isApprobateur', 'isExploitant']
       .forEach(getter => {
-        if (typeof store.getters[getter] === 'undefined') {
-          throw new Error(`Getter '${getter}' not found in the store`)
+        if (typeof store.getters['authentication/' + getter] === 'undefined') {
+          throw new Error(`Getter '${'authentication/' + getter}' not found in the store`)
         }
         Object.defineProperty(permissions, getter, {
           get () {
-            return store.getters[getter]
+            return store.getters['authentication/' + getter]
           }
         })
       })

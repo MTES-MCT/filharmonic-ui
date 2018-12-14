@@ -1,4 +1,3 @@
-import { createEtablissement } from '@/models/etablissement'
 import { createTheme } from '@/models/theme'
 import { createUser } from '@/models/user'
 import { createMessage } from '@/models/message'
@@ -10,7 +9,7 @@ export class Inspection {
     id = 0, date = null, type = '',
     annonce = true, origine = '', favorite = false,
     etat = null, contexte = '', themes = [],
-    inspecteurs = [], etablissement = null,
+    inspecteurs = [], etablissementId = -1,
     comments = [], echanges = [] } = {}) {
     this.id = id
     this.date = date
@@ -22,14 +21,13 @@ export class Inspection {
     this.contexte = contexte
     this.themes = themes
     this.inspecteurs = inspecteurs
-    this.etablissement = etablissement
+    this.etablissementId = etablissementId
     this.comments = comments
     this.echanges = echanges
   }
 }
 
 export function createInspection (data) {
-  const etablissement = createEtablissement(data.etablissement)
   const etat = createEtat(data.etat)
   const themes = data.themes.map(x => createTheme(x))
   const inspecteurs = data.inspecteurs.map(x => createUser(x))
@@ -45,7 +43,7 @@ export function createInspection (data) {
     etat,
     themes,
     inspecteurs,
-    etablissement,
+    etablissementId: data.etablissementId,
     comments,
     echanges }))
 }

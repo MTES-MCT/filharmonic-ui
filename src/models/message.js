@@ -1,9 +1,8 @@
-import { createUser } from '@/models/user'
 import { createAttachment } from '@/models/attachment'
 export class Message {
-  constructor ({ id = 0, author = null, text = '', date = new Date(), lu = false, attachments = [] } = {}) {
+  constructor ({ id = 0, authorId = -1, text = '', date = new Date(), lu = false, attachments = [] } = {}) {
     this.id = id
-    this.author = author
+    this.authorId = authorId
     this.text = text
     this.date = date
     this.lu = lu
@@ -12,11 +11,10 @@ export class Message {
 }
 
 export function createMessage (data) {
-  const author = createUser(data.author)
   const attachments = data.attachments.map(x => createAttachment(x))
   return Object.freeze(new Message({
     id: data.id,
-    author,
+    authorId: data.authorId,
     text: data.text,
     attachments }))
 }
