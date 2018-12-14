@@ -124,9 +124,9 @@ export default {
     }
     */
     addAttachment (...files) {
-      files.forEach(file => {
+      files.forEach((file, index) => {
         this.attachments.push({
-          id: new Date(),
+          id: new Date().getTime() + index,
           filename: file.name,
           type: file.type,
           url: URL.createObjectURL(file)
