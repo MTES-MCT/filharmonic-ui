@@ -18,7 +18,8 @@
 
 <script>
 import FhAttachment from '@/components/FhAttachment.vue'
-import { mapGetters } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
+const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
 
 export default {
   name: 'FhMessage',
@@ -50,12 +51,12 @@ export default {
     label () {
       return this.message.lu ? 'Lu' : 'Non lu'
     },
-    ...mapGetters([
-      'user'
-    ]),
+    ...mapAuthenticationState({
+      user: state => state.user
+    }),
     lu: {
       get () {
-        return this.$store.state.inspectionOuverte.echanges.find(echange => echange.messages.filter(message => message.id === this.message.id).length > 0).messages.find(message => message.id === this.message.id).lu
+        return this.$store.state.inspection.echanges.find(echange => echange.messages.filter(message => message.id === this.message.id).length > 0).messages.find(message => message.id === this.message.id).lu
       },
       set (value) {
         this.$store.commit('updateMessageLu', { messageId: this.message.id, lu: value })

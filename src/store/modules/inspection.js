@@ -1,22 +1,21 @@
-import { createInspection } from '@/models/inspection'
-import InspectionsAPI from '@/api/inspections'
-import { SUBMIT } from '@/store/action-types'
-import { ERROR, SUCCESS } from '@/store/mutation-types'
+import { ERROR, SUCCESS, ADD_ROW } from '@/store/mutation-types'
 import etablissement from '@/store/modules/etablissement'
 import echange from '@/store/modules/echange'
 import { createHelpers } from 'vuex-map-fields'
 
 const actions = {
-  async [SUBMIT] ({ commit, state }) {
+  async load ({ commit, state }, id) {
     try {
-      const inspectionData = createInspection({
-        echanges: state.echange.rows,
-        etablissement: state.etablissement.rows[0]
+      if (typeof id !== 'number') {
+        throw new TypeError(`expected number, got: \`${typeof id}\``)
+      }
+      const inspection = await this.$api.inspections.get(id, {
+        etablissement: true,
+        activite: true,
+        detailMessagesNonLus: true
       })
 
-      await InspectionsAPI.save(inspectionData)
-
-      commit(SUCCESS)
+      commit(ADD_ROW, inspection)
     } catch (error) {
       commit(ERROR, error.message)
     }
@@ -36,12 +35,18 @@ const mutations = {
     // eslint-disable-next-line no-param-reassign
     state.success = true
   },
-  favorites (state, favorites) {
-    state.favorites = favorites
+  [ADD_ROW] (state, inspection) {
+    // eslint-disable-next-line no-param-reassign
+    state.error = false
+    // eslint-disable-next-line no-param-reassign
+    state.success = true
+    // eslint-disable-next-line no-param-reassign
+    state.rows.push(inspection)
   }
 }
 
 const state = () => ({
+  rows: [],
   error: false,
   success: false
 })

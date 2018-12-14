@@ -50,11 +50,15 @@ fh-page(:wait="wait")
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
+import { store } from '@/store'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhLettreAnnonce from '@/components/FhLettreAnnonce.vue'
 import FhLettreSuites from '@/components/FhLettreSuites.vue'
 import BasePage from '@/views/mixins/BasePage.js'
+import { inspection } from '@/store/modules/inspection'
+
+if (!store.state.inspection) store.registerModule('inspection', inspection)
 
 export default {
   components: {
@@ -78,7 +82,7 @@ export default {
   },
   computed: {
     ...mapState({
-      inspection: state => state.inspectionOuverte
+      inspection: state => state.menu.favoris[0]
     }),
     breadcrumbs () {
       return this.inspection ? [
@@ -108,8 +112,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions({ load: 'inspection/load' }),
     loadInspection () {
-      this.wait = this.$store.dispatch('loadInspection', parseInt(this.inspectionId, 10))
+      this.wait = this.load(parseInt(this.inspectionId, 10))
     },
     async validerInspection () {
       this.workflowActionLoading = true

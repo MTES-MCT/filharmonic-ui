@@ -33,7 +33,15 @@ v-card
 <script>
 import FhMessage from '@/components/FhMessage.vue'
 import { allowedStates } from '@/api/inspections'
-import { mapGetters } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
+import { inspection, mapEchangeFields } from '@/store/modules/inspection'
+import { store } from '@/store'
+import { ADD_ROW } from '@/store/mutation-types'
+
+if (!store.state.inspection) store.registerModule('inspection', inspection)
+
+const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
+const { mapMutations: mapEchangeMutations } = createNamespacedHelpers('inspection/echange')
 
 export default {
   name: 'FhMessages',
@@ -64,28 +72,23 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'user'
-    ]),
+    ...mapAuthenticationState({
+      user: state => state.user
+    }),
+    ...mapEchangeFields({ brouillon: 'rows[0].brouillon' }),
     showNewMessageForm () {
       return allowedStates[this.etatInspection].order < 4
-    },
-    brouillon: {
-      get () {
-        const echange = this.$store.state.inspectionOuverte.echanges.find(echange => echange.id === this.echangeId)
-        return echange === undefined ? true : echange.brouillon
-      },
-      set (value) {
-        this.$store.commit('updateEchangeBrouillon', { echangeId: this.echangeId, brouillon: value })
-      }
     },
     colorBrouillon () {
       return this.brouillon ? 'primary' : 'success'
     }
   },
   methods: {
+    ...mapEchangeMutations({
+      addEchangeMessage: ADD_ROW
+    }),
     addMessage (messageText, confidential) {
-      this.$store.commit('addMessage', {
+      this.addEchangeMessage('addMessage', {
         echangeId: this.echangeId,
         message: {
           authorId: this.user.id,

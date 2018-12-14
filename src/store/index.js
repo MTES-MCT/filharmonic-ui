@@ -6,20 +6,20 @@ import { authentication } from '@/store/modules/authentication'
 
 Vue.use(Vuex)
 
+export const store = new Vuex.Store({
+  strict: process.env.NODE_ENV !== 'production',
+  modules: {
+    authentication: authentication,
+    menu: menu
+  },
+  plugins: [createLogger()]
+})
+
 export async function createStore (options = {}) {
   const api = options.api
   if (!api) {
     throw new Error('Missing `api` option')
   }
-
-  const store = new Vuex.Store({
-    strict: process.env.NODE_ENV !== 'production',
-    modules: {
-      authentication: authentication,
-      menu: menu
-    },
-    plugins: [createLogger()]
-  })
 
   // expose the API to the store
   store.$api = api
