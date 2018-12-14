@@ -386,7 +386,7 @@ export default class InspectionsAPI extends BaseAPI {
     inspections.push(_.cloneDeep(inspection))
     this.api.evenements.create({
       type: 'create_inspection',
-      auteurId: 1, // TODO récupérer l'utilisateur authentifié
+      auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
     })
     return inspection.id
