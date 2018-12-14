@@ -1,17 +1,17 @@
 import { getField, updateField } from 'vuex-map-fields'
-import { LIST } from '@/store/action-types'
 import { ERROR, SUCCESS } from '@/store/mutation-types'
-import InspectionsAPI from '@/api/inspections'
-import { createInspection } from '@/models/inspection'
+// import { createInspection } from '@/models/inspection'
 
 const actions = {
-  async [LIST] ({ commit, state }) {
+  async favoris ({ commit, state }, userId) {
     try {
-      state.rows = await InspectionsAPI.listAssignedOuvertes(state.authentication.user.id, {
+      console.log('userId=' + userId)
+      const favoris = await this.$api.inspections.listAssignedOuvertes(userId, {
         etablissement: true
-      }).map(x => createInspection(x))
+      })
+      // const inspectionsData = data.map(x => createInspection(x))
 
-      commit(SUCCESS)
+      commit(SUCCESS, favoris)
     } catch (error) {
       commit(ERROR, error.message)
     }
@@ -26,11 +26,13 @@ const mutations = {
     // eslint-disable-next-line no-param-reassign
     state.success = false
   },
-  [SUCCESS] (state) {
+  [SUCCESS] (state, favoris) {
     // eslint-disable-next-line no-param-reassign
     state.error = false
     // eslint-disable-next-line no-param-reassign
     state.success = true
+    // eslint-disable-next-line no-param-reassign
+    state.rows = favoris
   }
 }
 
@@ -38,7 +40,7 @@ const getters = {
   getField
 }
 
-const state = (data) => ({
+const state = () => ({
   rows: [],
   error: false,
   success: false
@@ -46,6 +48,7 @@ const state = (data) => ({
 
 export const menu = {
   namespaced: true,
+  root: true,
   mutations,
   actions,
   getters,
