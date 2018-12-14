@@ -57,7 +57,6 @@ export default {
     async createInspection () {
       if (this.$refs.form.validate()) {
         const inspectionId = await this.$api.inspections.create(this.inspection)
-        await this.$store.dispatch('loadInspectionsOuvertes')
         this.$router.push(`/inspections/${inspectionId}`)
       }
     }
