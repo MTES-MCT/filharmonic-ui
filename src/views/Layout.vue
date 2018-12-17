@@ -13,12 +13,25 @@ v-app
         v-list-tile-content
           v-list-tile-title Tableau de bord
 
+      v-list-tile(to="/etablissements" title="Etablissements")
+        v-list-tile-action
+          v-icon location_city
+        v-list-tile-content
+          v-list-tile-title Etablissements
+      v-list-tile(to="/themes" title="Thèmes" v-if="$permissions.isApprobateur")
+        v-list-tile-action
+          v-icon bookmarks
+        v-list-tile-content
+          v-list-tile-title Thèmes
+
       v-list-group(value="true")
         v-list-tile(slot="activator" title="Inspections favoris")
           v-list-tile-action
             v-icon star
           v-list-tile-content
-            v-list-tile-title Inspections favorites
+            v-list-tile-title
+              | Inspections favorites
+              span.grey--text.ml-1 ({{ inspectionsFavorites.length }})
         v-list.py-0.grey.lighten-2(dense)
           v-list-tile(v-for="inspection in inspectionsFavorites" :key="inspection.id"
                       :to="`/inspections/${inspection.id}`"
@@ -30,17 +43,6 @@ v-app
                 strong.ml-2 {{ inspection.etablissement.nom }}
                 | ,&nbsp;
                 i {{ inspection.etablissement.adresse }}
-
-      v-list-tile(to="/etablissements" title="Etablissements")
-        v-list-tile-action
-          v-icon location_city
-        v-list-tile-content
-          v-list-tile-title Etablissements
-      v-list-tile(to="/themes" title="Thèmes" v-if="$permissions.isApprobateur")
-        v-list-tile-action
-          v-icon bookmarks
-        v-list-tile-content
-          v-list-tile-title Thèmes
 
   v-toolbar(:clipped-left="$vuetify.breakpoint.lgAndUp" color="blue darken-3" dark app fixed)
     v-toolbar-side-icon(@click.stop="drawer = !drawer")
