@@ -6,7 +6,6 @@ import Etablissements from '@/views/Etablissements.vue'
 import Etablissement from '@/views/Etablissement.vue'
 import Login from '@/views/Login.vue'
 import Page404 from '@/views/Page404.vue'
-import Inspections from '@/views/Inspections.vue'
 import Inspection from '@/views/Inspection.vue'
 import NouvelleInspection from '@/views/NouvelleInspection.vue'
 import DashboardInspection from '@/views/DashboardInspection.vue'
@@ -76,11 +75,6 @@ export function createRouter (store) {
             name: 'nouvelle-inspection',
             component: NouvelleInspection,
             props: true
-          },
-          {
-            path: '/inspections',
-            name: 'inspections',
-            component: Inspections
           },
           {
             path: '/themes',

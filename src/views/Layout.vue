@@ -31,11 +31,6 @@ v-app
                 | ,&nbsp;
                 i {{ inspection.etablissement.adresse }}
 
-      v-list-tile(to="/inspections" exact title="Inspections")
-        v-list-tile-action
-          v-icon search
-        v-list-tile-content
-          v-list-tile-title Inspections
       v-list-tile(to="/etablissements" title="Etablissements")
         v-list-tile-action
           v-icon location_city
