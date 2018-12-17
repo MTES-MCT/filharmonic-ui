@@ -6,7 +6,7 @@ fh-page(:wait="wait")
       v-list(two-line subheader)
         v-subheader
           v-flex Inspections
-          v-btn(:to="`/etablissements/${etablissementId}/inspections/new`" round color="primary" small title="Démarrer une inspection")
+          v-btn(:to="`/etablissements/${etablissementId}/inspections/new`" round color="primary" small title="Démarrer une inspection" v-if="!$permissions.isExploitant")
             v-icon(left) add
             | Nouvelle inspection
         v-list-tile(:to="`/inspections/${inspection.id}`" v-for="inspection in etablissement.inspections" :key="inspection.id")

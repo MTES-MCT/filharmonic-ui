@@ -17,6 +17,7 @@ fh-page(:wait="wait")
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 import FhDetailInspection from '@/components/FhDetailInspection.vue'
 import BasePage from '@/views/mixins/BasePage'
+import { ForbiddenError } from '@/errors.js'
 
 export default {
   components: {
@@ -48,6 +49,10 @@ export default {
     }
   },
   async created () {
+    if (this.$permissions.isExploitant) {
+      this.wait = Promise.reject(new ForbiddenError('Il faut être inspecteur'))
+      return
+    }
     this.wait = this.$api.etablissements.get(this.etablissementId, {
       inspections: true
     })

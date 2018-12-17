@@ -13,7 +13,7 @@ v-app
         v-list-tile-content
           v-list-tile-title Tableau de bord
 
-      v-list-tile(to="/etablissements" title="Etablissements")
+      v-list-tile(to="/etablissements" title="Etablissements" v-if="!$permissions.isExploitant")
         v-list-tile-action
           v-icon location_city
         v-list-tile-content
@@ -24,7 +24,7 @@ v-app
         v-list-tile-content
           v-list-tile-title Thèmes
 
-      v-list-group(value="true")
+      v-list-group(value="true" v-if="!$permissions.isExploitant")
         v-list-tile(slot="activator" title="Inspections favoris")
           v-list-tile-action
             v-icon star

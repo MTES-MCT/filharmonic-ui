@@ -34,6 +34,14 @@ const users = [
     photoURL: 'https://randomuser.me/api/portraits/men/87.jpg',
     type: 'exploitant',
     inspectionsFavorites: []
+  },
+  {
+    id: 5,
+    name: 'Bernard Exploitant2',
+    email: 'bernard@exploitant2.fr',
+    photoURL: 'https://randomuser.me/api/portraits/men/88.jpg',
+    type: 'exploitant',
+    inspectionsFavorites: []
   }
 ]
 

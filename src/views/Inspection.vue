@@ -8,7 +8,7 @@ fh-page(:wait="wait")
           fh-etat-inspection(:etat="inspection.etat" small)
           v-spacer
 
-          v-btn(icon large @click="toggleFavoris()" :title="inspection.favoris ? 'Retirer des favoris' : 'Mettre en favoris'" )
+          v-btn(icon large @click="toggleFavoris()" :title="inspection.favoris ? 'Retirer des favoris' : 'Mettre en favoris'" v-if="!$permissions.isExploitant")
             v-icon {{ inspection.favoris ? 'star' : 'star_border' }}
           v-btn.white--text(v-if="$permissions.isApprobateur && inspection.etat == 'attente_validation'"
                             :loading="workflowActionLoading"

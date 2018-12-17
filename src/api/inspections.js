@@ -330,6 +330,10 @@ export default class InspectionsAPI extends BaseAPI {
   */
   async list (options = {}) {
     let filteredInspections = _.cloneDeep(inspections)
+    if (options.etablissement) {
+      const etablissementsAutorises = (await this.api.etablissements.list()).map(etablissement => etablissement.id)
+      filteredInspections = filteredInspections.filter(inspection => etablissementsAutorises.includes(inspection.etablissementId))
+    }
     if (options.filter) {
       filteredInspections = filteredInspections.filter(options.filter)
     }
@@ -428,16 +432,10 @@ export default class InspectionsAPI extends BaseAPI {
       filter: inspection => inspection.etablissementId === etablissementId
     })
   }
-  async listAssigned (userId, options) {
+  async listAssigned (options) {
     return this.list({
       ...options,
-      filter: inspection => inspection.inspecteurs.includes(userId)
-    })
-  }
-  async listAssignedOuvertes (userId, options) {
-    return this.list({
-      ...options,
-      filter: inspection => inspection.inspecteurs.includes(userId) && nomsEtatsEnCours.includes(inspection.etat)
+      filter: inspection => inspection.inspecteurs.includes(this.api.store.state.authentication.user.id)
     })
   }
   async listInspectionsFavorites (options) {

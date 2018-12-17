@@ -6,6 +6,7 @@ const etablissements = [{
   id: '0999.00001',
   nom: 'EtablissementA',
   raison: 'EtablissementA SARL',
+  responsables: [4],
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -15,6 +16,7 @@ const etablissements = [{
   id: '0999.00002',
   nom: 'EtablissementB',
   raison: 'EtablissementB SARL',
+  responsables: [5],
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -24,6 +26,7 @@ const etablissements = [{
   id: '0999.00003',
   nom: 'EtablissementC',
   raison: 'EtablissementC SARL',
+  responsables: [5],
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -33,6 +36,7 @@ const etablissements = [{
   id: '0999.00004',
   nom: 'EtablissementD',
   raison: 'EtablissementD SARL',
+  responsables: [5],
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -42,6 +46,7 @@ const etablissements = [{
   id: '0999.00005',
   nom: 'EtablissementE',
   raison: 'EtablissementE SARL',
+  responsables: [5],
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -51,6 +56,7 @@ const etablissements = [{
   id: '0999.00006',
   nom: 'EtablissementF',
   raison: 'EtablissementF SARL',
+  responsables: [5],
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -60,6 +66,9 @@ const etablissements = [{
 export default class EtablissementsAPI extends BaseAPI {
   async list (options = {}) {
     let filteredEtablissements = _.cloneDeep(etablissements)
+    if (this.api.store.getters.isExploitant) {
+      filteredEtablissements = filteredEtablissements.filter(etablissement => etablissement.responsables.includes(this.api.store.state.authentication.user.id))
+    }
     if (options.filter) {
       filteredEtablissements = filteredEtablissements.filter(options.filter)
     }
