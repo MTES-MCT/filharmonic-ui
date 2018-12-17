@@ -345,7 +345,9 @@ export default class InspectionsAPI extends BaseAPI {
     return Promise.all(
       filteredInspections.map(async inspection => {
         if (options.etablissement) {
-          inspection.etablissement = await this.api.etablissements.get(inspection.etablissementId)
+          inspection.etablissement = await this.api.etablissements.get(inspection.etablissementId, {
+            responsables: !!options.responsablesEtablissement
+          })
         }
         if (options.activite) {
           inspection.activite = (await this.api.evenements.list()).filter(event => event.inspectionId === inspection.id)

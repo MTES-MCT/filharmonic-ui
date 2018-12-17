@@ -6,7 +6,7 @@ const etablissements = [{
   id: '0999.00001',
   nom: 'EtablissementA',
   raison: 'EtablissementA SARL',
-  responsables: [4],
+  responsablesIds: [4],
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -16,7 +16,7 @@ const etablissements = [{
   id: '0999.00002',
   nom: 'EtablissementB',
   raison: 'EtablissementB SARL',
-  responsables: [5],
+  responsablesIds: [5],
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -26,7 +26,7 @@ const etablissements = [{
   id: '0999.00003',
   nom: 'EtablissementC',
   raison: 'EtablissementC SARL',
-  responsables: [5],
+  responsablesIds: [5],
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -36,7 +36,7 @@ const etablissements = [{
   id: '0999.00004',
   nom: 'EtablissementD',
   raison: 'EtablissementD SARL',
-  responsables: [5],
+  responsablesIds: [5],
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -46,7 +46,7 @@ const etablissements = [{
   id: '0999.00005',
   nom: 'EtablissementE',
   raison: 'EtablissementE SARL',
-  responsables: [5],
+  responsablesIds: [5],
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -56,7 +56,7 @@ const etablissements = [{
   id: '0999.00006',
   nom: 'EtablissementF',
   raison: 'EtablissementF SARL',
-  responsables: [5],
+  responsablesIds: [5],
   activite: 'Fabrication de matrices composites',
   adresse: '123 rue de Paris',
   seveso: 'haut',
@@ -67,7 +67,7 @@ export default class EtablissementsAPI extends BaseAPI {
   async list (options = {}) {
     let filteredEtablissements = _.cloneDeep(etablissements)
     if (this.api.store.getters.isExploitant) {
-      filteredEtablissements = filteredEtablissements.filter(etablissement => etablissement.responsables.includes(this.api.store.state.authentication.user.id))
+      filteredEtablissements = filteredEtablissements.filter(etablissement => etablissement.responsablesIds.includes(this.api.store.state.authentication.user.id))
     }
     if (options.filter) {
       filteredEtablissements = filteredEtablissements.filter(options.filter)
@@ -76,6 +76,9 @@ export default class EtablissementsAPI extends BaseAPI {
       filteredEtablissements.map(async etablissement => {
         if (options.inspections) {
           etablissement.inspections = await this.api.inspections.listByEtablissement(etablissement.id)
+        }
+        if (options.responsables) {
+          etablissement.responsables = await Promise.all(etablissement.responsablesIds.map(responsableId => this.api.users.get(responsableId)))
         }
         return etablissement
       })

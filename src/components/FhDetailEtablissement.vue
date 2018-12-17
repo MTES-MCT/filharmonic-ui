@@ -28,6 +28,13 @@
             v-layout
               v-flex Régime Seveso
               v-flex.text-xs-right {{ etablissement.seveso | capitalize }}
+            v-layout.align-center(v-if="etablissement.responsables")
+              v-flex Responsables
+              v-flex.text-xs-right
+                v-chip(v-for="responsable in etablissement.responsables" small)
+                  v-avatar
+                    img(:src="responsable.photoURL")
+                  | {{ responsable.name }}
 </template>
 
 <script>

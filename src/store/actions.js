@@ -22,7 +22,8 @@ export default {
       etablissement: true,
       activite: true,
       detailMessagesNonLus: true,
-      favoris: true
+      favoris: true,
+      responsablesEtablissement: true
     }))
   },
   async saveInspection ({ commit, dispatch }, updatedInspection) {
