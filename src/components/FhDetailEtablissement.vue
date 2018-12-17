@@ -31,7 +31,7 @@
             v-layout.align-center(v-if="etablissement.responsables")
               v-flex Responsables
               v-flex.text-xs-right
-                v-chip(v-for="responsable in etablissement.responsables" small)
+                v-chip(v-for="responsable in etablissement.responsables" :key="responsable.id" small)
                   v-avatar
                     img(:src="responsable.photoURL")
                   | {{ responsable.name }}
