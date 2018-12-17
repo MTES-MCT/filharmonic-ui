@@ -1,2 +1,5 @@
-export const SUBMIT = 'SUBMIT'
 export const LIST = 'LIST'
+export const SAVE = 'SAVE'
+export const DELETE = 'DELETE'
+export const GET = 'GET'
+export const VALIDATE = 'VALIDATE'

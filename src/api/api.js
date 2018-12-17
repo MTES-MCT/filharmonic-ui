@@ -1,10 +1,11 @@
-import AuthenticationAPI from './authentication'
-import EtablissementsAPI from './etablissements'
-import EvenementsAPI from './evenements'
-import InspectionsAPI from './inspections'
-import LettresAPI from './lettres'
-import ThemesAPI from './themes'
-import UsersAPI from './users'
+import AuthenticationAPI from '@/api/authentication'
+import EtablissementsAPI from '@/api/etablissements'
+import EvenementsAPI from '@/api/evenements'
+import InspectionsAPI from '@/api/inspections'
+import EchangesAPI from '@/api/echanges'
+import LettresAPI from '@/api/lettres'
+import ThemesAPI from '@/api/themes'
+import UsersAPI from '@/api/users'
 
 export default class API {
   constructor (options = {}) {
@@ -18,6 +19,9 @@ export default class API {
       api: this
     })
     this.inspections = new InspectionsAPI({
+      api: this
+    })
+    this.echanges = new EchangesAPI({
       api: this
     })
     this.lettres = new LettresAPI({

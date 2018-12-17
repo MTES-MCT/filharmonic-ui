@@ -1,10 +1,11 @@
 import { ERROR, SUCCESS, ADD_ROW } from '@/store/mutation-types'
+import { GET, SAVE, VALIDATE } from '@/store/action-types'
 import etablissement from '@/store/modules/etablissement'
-import echange from '@/store/modules/echange'
-import { createHelpers } from 'vuex-map-fields'
+import { echange } from '@/store/modules/echange'
+import { getField, updateField, createHelpers } from 'vuex-map-fields'
 
 const actions = {
-  async load ({ commit, state }, id) {
+  async [GET] ({ commit }, id) {
     try {
       if (typeof id !== 'number') {
         throw new TypeError(`expected number, got: \`${typeof id}\``)
@@ -14,15 +15,38 @@ const actions = {
         activite: true,
         detailMessagesNonLus: true
       })
-
       commit(ADD_ROW, inspection)
     } catch (error) {
       commit(ERROR, error.message)
     }
+  },
+  async [SAVE] ({ commit }, updatedInspection) {
+    if (typeof updatedInspection !== 'object') {
+      const message = `expected object, got: \`${typeof updatedInspection}\``
+      commit(ERROR, message)
+      throw new TypeError(message)
+    }
+    await this.$api.inspections.save(updatedInspection)
+    commit(SUCCESS)
+  },
+  async [VALIDATE] ({ commit }, { inspectionId, approbateurId }) {
+    if (typeof inspectionId !== 'number') {
+      const message = `expected number, got: \`${typeof inspectionId}\``
+      commit(ERROR, message)
+      throw new TypeError(message)
+    }
+    if (typeof approbateurId !== 'number') {
+      const message = `expected number, got: \`${typeof approbateurId}\``
+      commit(ERROR, message)
+      throw new TypeError(message)
+    }
+    await this.$api.inspections.valider(inspectionId, approbateurId)
+    commit(SUCCESS)
   }
 }
 
 const mutations = {
+  updateField,
   [ERROR] (state, error) {
     // eslint-disable-next-line no-param-reassign
     state.error = error
@@ -40,7 +64,6 @@ const mutations = {
     state.error = false
     // eslint-disable-next-line no-param-reassign
     state.success = true
-    // eslint-disable-next-line no-param-reassign
     state.rows.push(inspection)
   }
 }
@@ -56,7 +79,11 @@ const modules = {
   etablissement
 }
 
-export const { mapFields: mapEchangeFields } = createHelpers({
+const getters = {
+  getField
+}
+
+export const { mapMultiRowFields: mapEchangesMultiRowFields } = createHelpers({
   getterType: 'inspection/echange/getField',
   mutationType: 'inspection/echange/updateField'
 })
@@ -70,6 +97,7 @@ export const inspection = {
   namespaced: true,
   actions,
   mutations,
+  getters,
   state,
   modules
 }

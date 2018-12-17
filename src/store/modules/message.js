@@ -1,11 +1,10 @@
 import { getField, updateField } from 'vuex-map-fields'
 import { ADD_ROW } from '@/store/mutation-types'
-import { Message } from '@/models/message'
 
 const mutations = {
   updateField,
-  [ADD_ROW] (state) {
-    state.rows.push(new Message())
+  [ADD_ROW] (state, message) {
+    state.rows.push(message)
   }
 }
 
@@ -14,10 +13,10 @@ const getters = {
 }
 
 const state = () => ({
-  rows: [new Message()]
+  rows: []
 })
 
-export default {
+export const message = {
   namespaced: true,
   mutations,
   getters,

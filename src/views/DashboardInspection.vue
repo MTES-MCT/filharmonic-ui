@@ -1,6 +1,6 @@
 <template lang="pug">
 v-container
-  fh-echange(v-for="echange in inspection.echanges" :key="echange.id" :echange="echange" :etatInspection="inspection.etat")
+  fh-echange(v-for="echange in echanges" :key="echange.id" :echange="echange" :etatInspection="inspection.etat")
 
   v-slide-y-transition(hide-on-leave)
     v-card.my-3.elevation-4(v-if="showNewEchange && showNewEchangeForm")
@@ -97,11 +97,19 @@ v-container
 </template>
 
 <script>
+import { store } from '@/store'
 import { typesSuite, allowedStates } from '@/api/inspections'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhEchange from '@/components/FhEchange.vue'
 import * as _ from '@/util'
+import { inspection, mapEchangesMultiRowFields } from '@/store/modules/inspection'
+import { ERROR, SUCCESS } from '@/store/mutation-types'
+import { createNamespacedHelpers } from 'vuex'
+
+if (!store.state.inspection) store.registerModule('inspection', inspection)
+
+const { mapState: mapInspectionState } = createNamespacedHelpers('inspection')
 
 export default {
   components: {
@@ -138,6 +146,8 @@ export default {
     }
   },
   computed: {
+    ...mapEchangesMultiRowFields({ echanges: 'rows' }),
+    ...mapInspectionState([ERROR, SUCCESS]),
     typeSuiteInspection () {
       return this.inspection.suite ? typesSuite[this.inspection.suite.type] : {}
     },
@@ -158,7 +168,7 @@ export default {
     },
     saveNewEchange () {
       if (this.$refs.newEchangeForm.validate()) {
-        this.inspection.echanges.push(_.cloneDeep(this.newEchange))
+        this.echanges.push(_.cloneDeep(this.newEchange))
         this.resetNewEchange()
       }
     },

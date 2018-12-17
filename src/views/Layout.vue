@@ -80,7 +80,10 @@ v-app
 
 <script>
 import events from '@/events'
-import { mapState, mapActions } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
+import { LIST } from '@/store/action-types'
+const { mapState: mapMenuState, mapActions: mapMenuActions } = createNamespacedHelpers('menu')
+const { mapState: mapAuthenticationState, mapActions: mapAuthenticationActions } = createNamespacedHelpers('authentication')
 
 const snackbarColor = {
   error: 'red',
@@ -104,9 +107,11 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      user: state => state.authentication.user,
-      inspectionsOuvertes: state => state.menu.favoris
+    ...mapMenuState({
+      inspectionsOuvertes: state => state.favoris
+    }),
+    ...mapAuthenticationState({
+      user: state => state.user
     })
   },
   async created () {
@@ -117,9 +122,11 @@ export default {
     events.bus.$off(events.Alert, this.updateAlert)
   },
   methods: {
-    ...mapActions({
-      listFavoris: 'menu/favoris',
-      authLogout: 'authentication/logout'
+    ...mapMenuActions({
+      listFavoris: LIST
+    }),
+    ...mapAuthenticationActions({
+      authLogout: 'logout'
     }),
     async logout () {
       await this.authLogout()

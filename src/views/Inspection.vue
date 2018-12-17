@@ -50,15 +50,19 @@ fh-page(:wait="wait")
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
 import { store } from '@/store'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhLettreAnnonce from '@/components/FhLettreAnnonce.vue'
 import FhLettreSuites from '@/components/FhLettreSuites.vue'
 import BasePage from '@/views/mixins/BasePage.js'
 import { inspection } from '@/store/modules/inspection'
+import { createNamespacedHelpers } from 'vuex'
+import { GET, VALIDATE } from '@/store/action-types'
 
 if (!store.state.inspection) store.registerModule('inspection', inspection)
+const { mapActions: mapInspectionActions } = createNamespacedHelpers('inspection')
+const { mapState: mapMenuState } = createNamespacedHelpers('menu')
+const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
 
 export default {
   components: {
@@ -81,9 +85,8 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      inspection: state => state.menu.favoris[0]
-    }),
+    ...mapMenuState({ inspection: state => state.favoris[0] }),
+    ...mapAuthenticationState({ user: state => state.user }),
     breadcrumbs () {
       return this.inspection ? [
         {
@@ -112,16 +115,18 @@ export default {
     }
   },
   methods: {
-    ...mapActions({ load: 'inspection/load' }),
+    ...mapInspectionActions({ load: GET, valider: VALIDATE }),
     loadInspection () {
-      this.wait = this.load(parseInt(this.inspectionId, 10))
+      const id = parseInt(this.inspectionId, 10)
+      console.log('id=' + id)
+      this.wait = this.load(id)
     },
     async validerInspection () {
       this.workflowActionLoading = true
       try {
-        await this.$store.dispatch('validerInspection', {
+        await this.valider({
           inspectionId: this.inspection.id,
-          approbateurId: this.$store.state.authentication.user.id
+          approbateurId: this.user.id
         })
       } finally {
         this.workflowActionLoading = false
@@ -130,6 +135,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus">
-</style>

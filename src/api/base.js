@@ -1,4 +1,5 @@
 import { ForbiddenError } from '@/errors'
+import { store } from '@/store'
 
 /*
 BaseAPI est la classe dont héritent les API.
@@ -15,17 +16,17 @@ export default class BaseAPI {
 
   // helpers
   requireAuthentication () {
-    if (!this.api.store.state.authentication.valid) {
+    if (!store.state.authentication.valid) {
       throw new ForbiddenError('Il faut être authentifié')
     }
   }
   requireInspecteur () {
-    if (!this.api.store.getters.isInspecteur) {
+    if (!store.getters['authentication/isInspecteur']) {
       throw new ForbiddenError('Il faut être inspecteur')
     }
   }
   requireApprobateur () {
-    if (!this.api.store.getters.isApprobateur) {
+    if (!store.getters['authentication/isApprobateur']) {
       throw new ForbiddenError('Il faut être approbateur')
     }
   }

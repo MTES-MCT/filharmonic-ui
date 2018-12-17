@@ -1,16 +1,18 @@
 <template lang="pug">
 v-card
+  v-toolbar(flat dense)
+    v-toolbar-title.subheading Messages invisibles pour l'exploitant
   v-card-text
-    fh-messages(:etatInspection="inspection.etat" :messages="inspection.comments")
+    fh-message(:etatInspection="inspection.etat" v-for="comment in inspection.comments" :message="comment" :key="comment.id")
 
 </template>
 
 <script>
-import FhMessages from '@/components/FhMessages.vue'
+import FhMessage from '@/components/FhMessage.vue'
 
 export default {
   components: {
-    FhMessages
+    FhMessage
   },
   props: {
     inspection: {

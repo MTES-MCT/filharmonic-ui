@@ -34,7 +34,35 @@ v-expansion-panel(expand v-if="showEchange")
 
     v-card.px-3
       v-card-text
-        fh-messages(:echangeId="echange.id" :etatInspection="etatInspection" :messages="echange.messages")
+        v-card
+          v-toolbar(flat dense)
+            v-toolbar-title.subheading Messages {{ echange.id > 0 ? 'visibles' : 'invisibles' }} pour l'exploitant
+            v-btn(small icon v-if="echange.id > 0" @click="publier" :color="colorBrouillon" :title="`${echange.brouillon ? 'Brouillon' : 'Publié'}`")
+              v-icon {{ echange.brouillon ? 'visibility_off' : 'visibility' }}
+            v-dialog(v-model="dialogNewMessage" v-if="showNewMessageForm" width="500")
+              v-btn(small icon slot="activator" title="Nouveau message" :color="colorBrouillon")
+                v-icon add
+              v-card
+                v-toolbar(dark color="primary")
+                  v-toolbar-title(class="white--text") Nouveau message
+                  v-spacer
+                  v-btn(icon @click="dialogNewMessage = false" title="Fermer")
+                    v-icon close
+                v-divider
+                v-card-text
+                  v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1" clearable)
+                  v-checkbox(v-model="confidential" label="Confidentiel" :disabled="echange.id < 0")
+                v-divider
+                v-card-actions
+                  v-spacer
+                  v-btn(icon title="Pièce jointe")
+                    v-icon attach_file
+                  v-btn(icon @click="addMessage(newMessage, confidential)" :disabled="!newMessage" color="primary" title="Envoyer")
+                    v-icon send
+
+          v-card-text
+            v-timeline
+              fh-message(v-for="message in messages" :key="message.id" :message="message" :colorBrouillon="colorBrouillon")
 
         div(v-if="!echange.constat")
           v-slide-y-transition(hide-on-leave)
@@ -85,23 +113,30 @@ v-expansion-panel(expand v-if="showEchange")
 
 <script>
 import Vue from 'vue'
-import { typesConstats } from '@/api/inspections'
-import FhMessages from '@/components/FhMessages.vue'
+import { typesConstats, allowedStates } from '@/api/inspections'
+import FhMessage from '@/components/FhMessage.vue'
+import { SAVE, GET } from '@/store/action-types'
+import { ADD_ROW, SUCCESS, ERROR } from '@/store/mutation-types'
+import { createNamespacedHelpers } from 'vuex'
+import { mapMessagesMultiRowFields } from '@/store/modules/echange'
+
+const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
+const { mapState: mapEchangeState, mapActions: mapEchangeActions, mapMutations: mapEchangeMutations } = createNamespacedHelpers('inspection/echange')
 
 export default {
   name: 'FhEchange',
   components: {
-    FhMessages
+    FhMessage
   },
   props: {
-    echange: {
-      type: Object,
-      required: true
-    },
     etatInspection: {
       type: String,
       required: true,
       default: 'en_cours'
+    },
+    echange: {
+      type: Object,
+      required: true
     }
   },
   data () {
@@ -114,7 +149,10 @@ export default {
       showNewConstatEcheancePicker: false,
       notEmpty: [
         v => !!v || 'Il faut renseigner une valeur'
-      ]
+      ],
+      newMessage: '',
+      confidential: true,
+      dialogNewMessage: false
     }
   },
   computed: {
@@ -123,6 +161,17 @@ export default {
     },
     showEchange () {
       return !this.$permissions.isExploitant || !this.echange.brouillon
+    },
+    ...mapEchangeState([ ERROR, SUCCESS ]),
+    ...mapAuthenticationState({
+      user: state => state.user
+    }),
+    ...mapMessagesMultiRowFields({ messages: 'rows' }),
+    showNewMessageForm () {
+      return allowedStates[this.etatInspection].order < 4
+    },
+    colorBrouillon () {
+      return this.echange.brouillon ? 'primary' : 'success'
     }
   },
   methods: {
@@ -135,6 +184,33 @@ export default {
     saveConstat () {
       Vue.set(this.echange, 'constat', this.newConstat)
       this.resetNewConstat()
+    },
+    ...mapEchangeMutations({
+      addEchangeMessage: ADD_ROW
+    }),
+    ...mapEchangeActions({
+      save: SAVE,
+      load: GET
+    }),
+    addMessage (messageText, confidential) {
+      this.addEchangeMessage('addMessage', {
+        echange: this.echange,
+        message: {
+          authorId: this.user.id,
+          date: new Date(),
+          text: messageText,
+          lu: false,
+          confidential: confidential,
+          attachments: []
+        }
+      })
+      this.newMessage = ''
+      this.dialogNewMessage = false
+      this.save(this.echange)
+    },
+    publier () {
+      if (this.$permissions.isInspecteur) this.echange.brouillon = !this.echange.brouillon
+      this.save(this.echange)
     }
   }
 }

@@ -1,9 +1,9 @@
 import { getField, updateField } from 'vuex-map-fields'
 import { ERROR, SUCCESS } from '@/store/mutation-types'
-// import { createInspection } from '@/models/inspection'
+import { LIST } from '@/store/action-types'
 
 const actions = {
-  async favoris ({ commit, state }, userId) {
+  async [LIST] ({ commit, state }, userId) {
     try {
       const favoris = await this.$api.inspections.listAssignedOuvertes(userId, {
         etablissement: true
