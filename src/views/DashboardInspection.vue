@@ -93,7 +93,7 @@ v-container
               v-icon(left) gavel
               | Ajouter
 
-      v-btn(color="secondary" v-if="peutAjouterSuites" :disabled="nombreConstatsRestants > 0" @click="prepareAndShowNewSuiteForm()")
+      v-btn(color="secondary" v-if="peutAjouterSuites" :disabled="inspection.echanges.length === 0 || nombreConstatsRestants > 0" @click="prepareAndShowNewSuiteForm()")
         v-icon(left) gavel
         | Ajouter une suite
 </template>
