@@ -433,6 +433,9 @@ export default class InspectionsAPI extends BaseAPI {
 
   async toggleFavoris (inspectionId, favoris) {
     const inspection = inspections.find(i => i.id === inspectionId)
+    if (!inspection) {
+      throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
+    }
     inspection.favoris = favoris
     await this.api.users.toggleInspectionFavorite(inspectionId, favoris)
 
@@ -440,6 +443,29 @@ export default class InspectionsAPI extends BaseAPI {
       this.loadInspection(inspectionId),
       this.loadInspectionsFavorites()
     ])
+  }
+
+  async ajouterPointDeControle (inspectionId, pointDeControle) {
+    const inspection = inspections.find(i => i.id === inspectionId)
+    if (!inspection) {
+      throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
+    }
+    inspection.echanges.push(_.cloneDeep(pointDeControle))
+
+    await this.loadInspection(inspectionId)
+  }
+
+  async ajouterSuite (inspectionId, suite) {
+    const inspection = inspections.find(i => i.id === inspectionId)
+    if (!inspection) {
+      throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
+    }
+    if (inspection.suite) {
+      throw new ApplicationError(`L'inspection possède déjà une suite`)
+    }
+    inspection.suite = _.cloneDeep(suite)
+
+    await this.loadInspection(inspectionId)
   }
 
   // passage état preparation -> en_cours

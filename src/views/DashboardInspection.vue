@@ -3,43 +3,43 @@ v-container
   fh-echange(v-for="echange in inspection.echanges" :key="echange.id" :echange="echange" :etatInspection="inspection.etat")
 
   v-slide-y-transition(hide-on-leave)
-    v-card.my-3.elevation-4(v-if="showNewEchangeForm")
+    v-card.my-3.elevation-4(v-if="showNewPointDeControleForm")
       v-toolbar(flat color="secondary" dense dark)
         v-toolbar-title Nouveau point de contrôle
         v-spacer
         v-toolbar-items
-          v-btn(flat title="Supprimer le point de contrôle" @click="resetNewEchange()")
+          v-btn(flat title="Supprimer le point de contrôle" @click="resetNewPointDeControle()")
             v-icon(medium) delete
 
       v-card-text
         v-container.pa-0(grid-list-md)
-          v-form(ref="newEchangeForm" v-model="validNewEchangeForm")
+          v-form(ref="newPointDeControleForm" v-model="validNewPointDeControleForm")
             v-layout.column
               v-text-field(label="Sujet" hideDetails clearable
-                            v-model="newEchange.sujet"
+                            v-model="newPointDeControle.sujet"
                             required
                             :rules="notEmpty"
                           )
 
-              v-text-field(v-for="(referenceReglementaire, index) in newEchange.referencesReglementaires" :key="index"
+              v-text-field(v-for="(referenceReglementaire, index) in newPointDeControle.referencesReglementaires" :key="index"
                             label="Référence réglementaire" hideDetails clearable
-                            v-model="newEchange.referencesReglementaires[index]"
-                            :append-outer-icon="newEchange.referencesReglementaires.length > 1 ? 'delete' : null"
-                            @click:append-outer="newEchange.referencesReglementaires.splice(index, 1)"
+                            v-model="newPointDeControle.referencesReglementaires[index]"
+                            :append-outer-icon="newPointDeControle.referencesReglementaires.length > 1 ? 'delete' : null"
+                            @click:append-outer="newPointDeControle.referencesReglementaires.splice(index, 1)"
                             required
                             :rules="notEmpty"
                           )
               .d-block
-                v-btn(flat title="Ajouter une référence réglementaire" @click="newEchange.referencesReglementaires.push('')")
+                v-btn(flat title="Ajouter une référence réglementaire" @click="newPointDeControle.referencesReglementaires.push('')")
                   v-icon(medium left) add
                   | Nouvelle référence réglementaire
 
       v-card-actions.justify-center.pb-3
-        v-btn(color="primary" @click="saveNewEchange()" :disabled="!validNewEchangeForm")
+        v-btn(color="primary" @click="saveNewPointDeControle()" :disabled="!validNewPointDeControleForm")
           v-icon(left) done
           | Ajouter
 
-    v-btn.mt-4(v-if="peutAjouterPointDeControle" @click="showNewEchangeForm = true")
+    v-btn.mt-4(v-if="peutAjouterPointDeControle" @click="showNewPointDeControleForm = true")
       v-icon(left) add
       | Ajouter un point de contrôle
 
@@ -103,7 +103,6 @@ import { typesSuite } from '@/api/inspections'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhEchange from '@/components/FhEchange.vue'
-import * as _ from '@/util'
 
 export default {
   components: {
@@ -119,20 +118,21 @@ export default {
   },
   data () {
     return {
-      validNewEchangeForm: false,
-      showNewEchangeForm: false,
-      newEchange: {
+      validNewPointDeControleForm: false,
+      showNewPointDeControleForm: false,
+      newPointDeControle: {
         sujet: '',
         referencesReglementaires: [
           ''
         ],
         messages: []
       },
-      typesSuite,
+
       showNewSuiteForm: false,
       validNewSuiteForm: false,
       newSuite: {},
-      newComment: '',
+
+      typesSuite,
 
       notEmpty: [
         v => !!v || 'Il faut renseigner une valeur'
@@ -147,7 +147,7 @@ export default {
       return this.inspection.suite ? typesSuite[this.inspection.suite.type] : {}
     },
     peutAjouterPointDeControle () {
-      return !this.$permissions.isExploitant && this.inspectionModifiable && !this.showNewEchangeForm
+      return !this.$permissions.isExploitant && this.inspectionModifiable && !this.showNewPointDeControleForm
     },
     peutAjouterSuites () {
       return !this.$permissions.isExploitant && this.inspectionModifiable && !this.inspection.suite && !this.showNewSuiteForm
@@ -160,20 +160,20 @@ export default {
     }
   },
   methods: {
-    resetNewEchange () {
-      this.newEchange = {
+    resetNewPointDeControle () {
+      this.newPointDeControle = {
         sujet: '',
         referencesReglementaires: [
           ''
         ],
         messages: []
       }
-      this.showNewEchangeForm = false
+      this.showNewPointDeControleForm = false
     },
-    saveNewEchange () {
-      if (this.$refs.newEchangeForm.validate()) {
-        this.inspection.echanges.push(_.cloneDeep(this.newEchange))
-        this.resetNewEchange()
+    async saveNewPointDeControle () {
+      if (this.$refs.newPointDeControleForm.validate()) {
+        await this.$api.inspections.ajouterPointDeControle(this.inspection.id, this.newPointDeControle)
+        this.resetNewPointDeControle()
       }
     },
     prepareAndShowNewSuiteForm () {
@@ -187,9 +187,9 @@ export default {
       this.newSuite = {}
       this.showNewSuiteForm = false
     },
-    saveNewSuite () {
+    async saveNewSuite () {
       if (this.$refs.newSuiteForm.validate()) {
-        this.inspection.suite = this.newSuite
+        await this.$api.inspections.ajouterSuite(this.inspection.id, this.newSuite)
         this.resetNewSuite()
       }
     }
