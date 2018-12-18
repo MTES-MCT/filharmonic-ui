@@ -222,7 +222,11 @@ const inspections = [
           echeance: '2019-02-17'
         }
       }
-    ]
+    ],
+    suite: {
+      type: 'observation',
+      synthese: 'Cette visite à permis de relever des points faisant l’objet de non-conformités. L’exploitant devra fournir selon les délais mentionnés dans le présent rapport, les éléments permettant de justifier de la mise en œuvre des actions correctives nécessaires pour les lever.'
+    }
   },
   {
     id: 3,
