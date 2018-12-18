@@ -73,7 +73,7 @@ v-expansion-panel(expand v-if="showEchange")
                         v-date-picker(v-model="newConstat.echeance" @input="showNewConstatEcheancePicker = false" no-title)
 
               v-card-actions.justify-center.pb-3
-                v-btn(color="primary" @click="saveConstat()")
+                v-btn(color="primary" @click="ajouterConstat()")
                   v-icon(left) gavel
                   | Sauvegarder le constat
 
@@ -84,7 +84,6 @@ v-expansion-panel(expand v-if="showEchange")
 </template>
 
 <script>
-import Vue from 'vue'
 import { typesConstats } from '@/api/inspections'
 import FhMessages from '@/components/FhMessages.vue'
 
@@ -132,8 +131,8 @@ export default {
       }
       this.showNewConstatForm = false
     },
-    saveConstat () {
-      Vue.set(this.echange, 'constat', this.newConstat)
+    async ajouterConstat () {
+      await this.$api.inspections.ajouterConstat(this.echange.id, this.newConstat)
       this.resetNewConstat()
     }
   }

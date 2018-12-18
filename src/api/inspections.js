@@ -468,6 +468,17 @@ export default class InspectionsAPI extends BaseAPI {
     await this.loadInspection(inspectionId)
   }
 
+  async ajouterConstat (echangeId, constat) {
+    const inspection = inspections.find(inspection => inspection.echanges.some(echange => echange.id === echangeId))
+    if (!inspection) {
+      throw new ApplicationError(`Echange ${echangeId} non trouvé`)
+    }
+    const echange = inspection.echanges.find(echange => echange.id === echangeId)
+    echange.constat = _.cloneDeep(constat)
+
+    await this.loadInspection(inspection.id)
+  }
+
   // passage état preparation -> en_cours
   async publier (inspectionId) {
     this.requireInspecteur()
