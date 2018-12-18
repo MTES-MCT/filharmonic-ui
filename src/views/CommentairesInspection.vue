@@ -1,8 +1,6 @@
 <template lang="pug">
-v-card
-  v-card-text
-    fh-messages(:etatInspection="inspection.etat" :messages="inspection.comments")
-
+v-container
+  fh-messages(:etatInspection="inspection.etat" :messages="inspection.comments")
 </template>
 
 <script>
