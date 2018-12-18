@@ -147,10 +147,10 @@ export default {
       return this.inspection.suite ? typesSuite[this.inspection.suite.type] : {}
     },
     peutAjouterPointDeControle () {
-      return this.inspectionModifiable && !this.showNewEchangeForm
+      return !this.$permissions.isExploitant && this.inspectionModifiable && !this.showNewEchangeForm
     },
     peutAjouterSuites () {
-      return this.inspectionModifiable && !this.inspection.suite && !this.showNewSuiteForm
+      return !this.$permissions.isExploitant && this.inspectionModifiable && !this.inspection.suite && !this.showNewSuiteForm
     },
     showSuites () {
       return this.inspection.suite || !this.$permissions.isExploitant

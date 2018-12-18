@@ -44,13 +44,13 @@ fh-page(:wait="wait")
             v-btn(flat :to="`/inspections/${inspection.id}/details`")
               v-icon(left) info
               | Détails
-            v-btn(flat :to="`/inspections/${inspection.id}/commentaires`")
+            v-btn(flat :to="`/inspections/${inspection.id}/commentaires`" v-if="!$permissions.isExploitant")
               v-icon(left) message
               | Commentaires
             v-btn(flat :to="`/inspections/${inspection.id}/recapitulatif`")
               v-icon(left) wrap_text
               | Récapitulatif
-            v-btn(flat :to="`/inspections/${inspection.id}/activite`")
+            v-btn(flat :to="`/inspections/${inspection.id}/activite`" v-if="!$permissions.isExploitant")
               v-icon(left) event
               | Activité
 
