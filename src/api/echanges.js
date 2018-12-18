@@ -199,11 +199,8 @@ export default class EchangesAPI extends BaseAPI {
   }
   async save (newEchange) {
     this.requireInspecteur()
-    console.log('before save newEchange=' + JSON.stringify(newEchange))
     const oldEchange = echanges.find(e => e.id === newEchange.id)
-    console.log('before save oldEchange=' + JSON.stringify(oldEchange))
     // on devrait nettoyer l'objet pour ne garder que les champs autorisés
     Object.assign(oldEchange, _.cloneDeep(newEchange))
-    console.log('after save oldEchange=' + JSON.stringify(oldEchange))
   }
 }

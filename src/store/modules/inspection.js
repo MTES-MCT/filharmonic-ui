@@ -22,10 +22,8 @@ const actions = {
         e.messages.forEach(m => {
           commit('echange/message/' + ADD_ROW, { echangeId: e.id, message: m })
         })
-        e.messages = null
         commit('echange/' + ADD_ROW, e)
       })
-      inspection.echanges = null
       commit(ADD_ROW, inspection)
     } catch (error) {
       commit(ERROR, error.message)

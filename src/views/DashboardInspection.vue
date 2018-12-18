@@ -1,6 +1,6 @@
 <template lang="pug">
 v-container
-  fh-echange(v-for="echange in echanges" :key="echange.id" :echange="echange" :etatInspection="inspection.etat")
+  fh-echange(v-for="(echange, index) in echanges" :key="echange.id" :index="index" :echange="echange" :etatInspection="inspection.etat")
 
   v-slide-y-transition(hide-on-leave)
     v-card.my-3.elevation-4(v-if="showNewEchange && showNewEchangeForm")

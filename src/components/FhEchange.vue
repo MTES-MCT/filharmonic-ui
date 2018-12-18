@@ -119,7 +119,6 @@ import { SAVE } from '@/store/action-types'
 import { ADD_ROW } from '@/store/mutation-types'
 import { createNamespacedHelpers } from 'vuex'
 import { mapMessagesMultiRowFields } from '@/store/modules/echange'
-import { createEchange } from '@/models/echange'
 
 const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
 const { mapActions: mapEchangeActions, mapMutations: mapEchangeMutations } = createNamespacedHelpers('inspection/echange')
@@ -137,6 +136,10 @@ export default {
     },
     echange: {
       type: Object,
+      required: true
+    },
+    index: {
+      type: Number,
       required: true
     }
   },
@@ -205,13 +208,12 @@ export default {
       })
       this.newMessage = ''
       this.dialogNewMessage = false
-      this.save(createEchange({ id: this.echange.id, brouillon: this.echange.brouillon, constat: this.echange.constat, messages: [], referencesReglementaires: [] }))
+      this.save(this.echangeState)
     },
     publier () {
-      console.log('echange.brouillon=' + JSON.stringify(this.echange.brouillon))
       if (this.$permissions.isInspecteur) this.echange.brouillon = !this.echange.brouillon
-      console.log('echange=' + JSON.stringify(this.echange))
-      this.save(createEchange({ id: this.echange.id, brouillon: this.echange.brouillon, constat: this.echange.constat, messages: [], referencesReglementaires: [] }))
+      const echangeState = this.$store.state.inspection.echange.rows[this.index]
+      this.save(echangeState)
     }
   }
 }
