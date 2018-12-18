@@ -77,7 +77,7 @@ v-expansion-panel(expand v-if="showEchange")
                   v-icon(left) gavel
                   | Sauvegarder le constat
 
-          v-btn.mt-4(color="secondary" v-if="!echange.constat && !showNewConstatForm" @click="showNewConstatForm = true")
+          v-btn.mt-4(color="secondary" v-if="peutAjouterConstat" @click="showNewConstatForm = true")
             v-icon(left) gavel
             | Ajouter un constat
 
@@ -122,6 +122,9 @@ export default {
     },
     showEchange () {
       return !this.$permissions.isExploitant || !this.echange.brouillon
+    },
+    peutAjouterConstat () {
+      return !this.$permissions.isExploitant && !this.echange.constat && !this.showNewConstatForm
     }
   },
   methods: {
