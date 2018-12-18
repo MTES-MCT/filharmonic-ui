@@ -118,7 +118,6 @@ export default {
     ...mapInspectionActions({ load: GET, valider: VALIDATE }),
     loadInspection () {
       const id = parseInt(this.inspectionId, 10)
-      console.log('id=' + id)
       this.wait = this.load(id)
     },
     async validerInspection () {

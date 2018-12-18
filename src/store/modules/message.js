@@ -1,10 +1,13 @@
 import { getField, updateField } from 'vuex-map-fields'
-import { ADD_ROW } from '@/store/mutation-types'
+import { ADD_ROW, RESET } from '@/store/mutation-types'
 
 const mutations = {
   updateField,
   [ADD_ROW] (state, message) {
     state.rows.push(message)
+  },
+  [RESET] (state) {
+    state.rows = []
   }
 }
 

@@ -1,35 +1,6 @@
 import { getField, updateField, createHelpers } from 'vuex-map-fields'
-import { ADD_ROW, SUCCESS, ERROR } from '@/store/mutation-types'
-import { SAVE, GET } from '@/store/action-types'
-
-const actions = {
-  async [SAVE] ({ commit }, echange) {
-    try {
-      if (typeof echange !== 'object') {
-        const message = `expected object, got: \`${typeof echange}\``
-        commit(ERROR, message)
-        throw new TypeError(message)
-      }
-      await this.$api.echanges.save(echange)
-      commit(SUCCESS)
-    } catch (error) {
-      commit(ERROR, error.message)
-    }
-  },
-  async [GET] ({ commit, state }, id) {
-    try {
-      if (typeof id !== 'number') {
-        const message = `expected number, got: \`${typeof id}\``
-        commit(ERROR, message)
-        throw new TypeError(message)
-      }
-      const echange = await this.$api.echanges.get(id)
-      commit(ADD_ROW, echange)
-    } catch (error) {
-      commit(ERROR, error.message)
-    }
-  }
-}
+import { ADD_ROW, SUCCESS, ERROR, RESET } from '@/store/mutation-types'
+import { message } from '@/store/modules/message'
 
 const mutations = {
   updateField,
@@ -51,6 +22,9 @@ const mutations = {
     state.error = false
     // eslint-disable-next-line no-param-reassign
     state.success = true
+  },
+  [RESET] (state) {
+    state.rows = []
   }
 }
 
@@ -63,6 +37,10 @@ const state = () => ({
   error: false,
   success: false
 })
+
+const modules = {
+  message
+}
 
 export const { mapMultiRowFields: mapMessagesMultiRowFields } = createHelpers({
   getterType: 'inspection/echange/message/getField',
@@ -77,7 +55,7 @@ export const { mapFields: mapConstatFields } = createHelpers({
 export const echange = {
   namespaced: true,
   mutations,
-  actions,
   getters,
-  state
+  state,
+  modules
 }

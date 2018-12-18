@@ -7,8 +7,8 @@
           v-flex.xs-12
             v-card-actions
               v-spacer
-              v-btn(v-if="author && user.type !== author.type && !$permissions.isApprobateur" @click="lu =! lu" :label="label" icon flat slot="activator" :title="label")
-                v-icon(v-if="lu") drafts
+              v-btn(v-if="author && user.type !== author.type && !$permissions.isApprobateur" @click="lire(!message.lu)" :label="label" icon flat slot="activator" :title="label")
+                v-icon(v-if="message.lu") drafts
                 v-icon(v-else) markunread
             v-card-text(:color="color")
               p {{ message.text }}
@@ -34,6 +34,10 @@ export default {
     colorBrouillon: {
       type: String,
       required: true
+    },
+    index: {
+      type: Number,
+      required: true
     }
   },
   data () {
@@ -53,18 +57,15 @@ export default {
     },
     ...mapAuthenticationState({
       user: state => state.user
-    }),
-    lu: {
-      get () {
-        return this.$store.state.inspection.echanges.find(echange => echange.messages.filter(message => message.id === this.message.id).length > 0).messages.find(message => message.id === this.message.id).lu
-      },
-      set (value) {
-        this.$store.commit('updateMessageLu', { messageId: this.message.id, lu: value })
-      }
-    }
+    })
   },
   async created () {
     this.author = await this.$api.users.get(this.message.authorId)
+  },
+  methods: {
+    lire (value) {
+      this.$store.commit('inspection/echange/message/updateField', { path: 'rows[' + this.index + '].message.lu', value })
+    }
   }
 }
 </script>

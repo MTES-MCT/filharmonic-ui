@@ -1,4 +1,4 @@
-import { ERROR, SUCCESS, ADD_ROW } from '@/store/mutation-types'
+import { ERROR, SUCCESS, ADD_ROW, RESET } from '@/store/mutation-types'
 import { GET, SAVE, VALIDATE } from '@/store/action-types'
 import etablissement from '@/store/modules/etablissement'
 import { echange } from '@/store/modules/echange'
@@ -14,6 +14,15 @@ const actions = {
         etablissement: true,
         activite: true,
         detailMessagesNonLus: true
+      })
+      commit(RESET)
+      commit('echange/' + RESET)
+      commit('echange/message/' + RESET)
+      inspection.echanges.forEach(e => {
+        e.messages.forEach(m => {
+          commit('echange/message/' + ADD_ROW, { echangeId: e.id, message: m })
+        })
+        commit('echange/' + ADD_ROW, e)
       })
       commit(ADD_ROW, inspection)
     } catch (error) {
@@ -65,6 +74,9 @@ const mutations = {
     // eslint-disable-next-line no-param-reassign
     state.success = true
     state.rows.push(inspection)
+  },
+  [RESET] (state) {
+    state.rows = []
   }
 }
 

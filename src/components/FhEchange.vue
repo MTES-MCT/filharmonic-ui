@@ -62,7 +62,7 @@ v-expansion-panel(expand v-if="showEchange")
 
           v-card-text
             v-timeline
-              fh-message(v-for="message in messages" :key="message.id" :message="message" :colorBrouillon="colorBrouillon")
+              fh-message(v-for="(message, index) in messages" :key="message.message.id" :index="index" :message="message.message" :colorBrouillon="colorBrouillon" v-if="message.echangeId === echange.id")
 
         div(v-if="!echange.constat")
           v-slide-y-transition(hide-on-leave)
