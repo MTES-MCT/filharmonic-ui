@@ -22,35 +22,45 @@ const actions = {
         e.messages.forEach(m => {
           commit('echange/message/' + ADD_ROW, { echangeId: e.id, message: m })
         })
+        e.messages = null
         commit('echange/' + ADD_ROW, e)
       })
+      inspection.echanges = null
       commit(ADD_ROW, inspection)
     } catch (error) {
       commit(ERROR, error.message)
     }
   },
   async [SAVE] ({ commit }, updatedInspection) {
-    if (typeof updatedInspection !== 'object') {
-      const message = `expected object, got: \`${typeof updatedInspection}\``
-      commit(ERROR, message)
-      throw new TypeError(message)
+    try {
+      if (typeof updatedInspection !== 'object') {
+        const message = `expected object, got: \`${typeof updatedInspection}\``
+        commit(ERROR, message)
+        throw new TypeError(message)
+      }
+      await this.$api.inspections.save(updatedInspection)
+      commit(SUCCESS)
+    } catch (error) {
+      commit(ERROR, error.message)
     }
-    await this.$api.inspections.save(updatedInspection)
-    commit(SUCCESS)
   },
   async [VALIDATE] ({ commit }, { inspectionId, approbateurId }) {
-    if (typeof inspectionId !== 'number') {
-      const message = `expected number, got: \`${typeof inspectionId}\``
-      commit(ERROR, message)
-      throw new TypeError(message)
+    try {
+      if (typeof inspectionId !== 'number') {
+        const message = `expected number, got: \`${typeof inspectionId}\``
+        commit(ERROR, message)
+        throw new TypeError(message)
+      }
+      if (typeof approbateurId !== 'number') {
+        const message = `expected number, got: \`${typeof approbateurId}\``
+        commit(ERROR, message)
+        throw new TypeError(message)
+      }
+      await this.$api.inspections.valider(inspectionId, approbateurId)
+      commit(SUCCESS)
+    } catch (error) {
+      commit(ERROR, error.message)
     }
-    if (typeof approbateurId !== 'number') {
-      const message = `expected number, got: \`${typeof approbateurId}\``
-      commit(ERROR, message)
-      throw new TypeError(message)
-    }
-    await this.$api.inspections.valider(inspectionId, approbateurId)
-    commit(SUCCESS)
   }
 }
 
