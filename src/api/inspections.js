@@ -421,15 +421,25 @@ export default class InspectionsAPI extends BaseAPI {
 
   async save (updatedInspection) {
     this.requireInspecteur()
+    if (typeof updatedInspection !== 'object') {
+      throw new TypeError(`expected object, got: \`${typeof updatedInspection}\``)
+    }
     const inspection = inspections.find(i => i.id === updatedInspection.id)
     // on devrait nettoyer l'objet pour ne garder que les champs autorisés
     Object.assign(inspection, _.cloneDeep(updatedInspection))
+
+    await this.loadInspection(updatedInspection.id)
   }
 
   async toggleFavoris (inspectionId, favoris) {
     const inspection = inspections.find(i => i.id === inspectionId)
     inspection.favoris = favoris
     await this.api.users.toggleInspectionFavorite(inspectionId, favoris)
+
+    await Promise.all([
+      this.loadInspection(inspectionId),
+      this.loadInspectionsFavorites()
+    ])
   }
 
   // passage état preparation -> en_cours
@@ -507,5 +517,12 @@ export default class InspectionsAPI extends BaseAPI {
       favoris: true,
       responsablesEtablissement: true
     }))
+  }
+
+  async loadInspectionsFavorites () {
+    const inspectionsFavorites = await this.api.inspections.listInspectionsFavorites({
+      etablissement: true
+    })
+    this.api.store.commit('loadInspectionsFavorites', inspectionsFavorites)
   }
 }

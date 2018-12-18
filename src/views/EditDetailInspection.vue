@@ -30,7 +30,7 @@ export default {
   methods: {
     async saveInspection () {
       if (this.$refs.form.validate()) {
-        await this.$store.dispatch('saveInspection', this.updatedInspection)
+        await this.$api.inspections.save(this.updatedInspection)
         this.$router.push(`/inspections/${this.inspection.id}/details`)
       }
     }

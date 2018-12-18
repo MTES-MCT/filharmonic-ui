@@ -16,8 +16,6 @@ fh-page(:wait="wait")
             v-icon(left) public
             | Publier
           v-btn.white--text(v-if="peutValider"
-                            :loading="workflowActionLoading"
-                            :disabled="workflowActionLoading"
                             color="green"
                             @click="validerInspection()"
                             )
@@ -82,7 +80,6 @@ export default {
   },
   data () {
     return {
-      workflowActionLoading: false,
       showLettreAnnonce: false,
       showLettreSuites: false
     }
@@ -129,21 +126,13 @@ export default {
   },
   methods: {
     loadInspection () {
-      this.wait = this.$store.dispatch('loadInspection', parseInt(this.inspectionId, 10))
+      this.wait = this.$api.inspections.loadInspection(parseInt(this.inspectionId, 10))
     },
     async validerInspection () {
-      this.workflowActionLoading = true
-      try {
-        await this.$api.inspections.valider(this.inspection.id)
-      } finally {
-        this.workflowActionLoading = false
-      }
+      await this.$api.inspections.valider(this.inspection.id)
     },
     async toggleFavoris () {
-      await this.$store.dispatch('toggleInspectionFavoris', {
-        inspectionId: this.inspection.id,
-        favoris: !this.inspection.favoris
-      })
+      await this.$api.inspections.toggleFavoris(this.inspection.id, !this.inspection.favoris)
     },
     async publierInspection () {
       await this.$api.inspections.publier(this.inspection.id)

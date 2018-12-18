@@ -113,7 +113,7 @@ export default {
   },
   async created () {
     events.bus.$on(events.Alert, this.updateAlert)
-    await this.$store.dispatch('loadInspectionsFavorites')
+    await this.$api.inspections.loadInspectionsFavorites()
   },
   destroyed () {
     events.bus.$off(events.Alert, this.updateAlert)
