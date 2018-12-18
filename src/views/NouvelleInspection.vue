@@ -40,7 +40,9 @@ export default {
         origine: 'plan_de_controle',
         circonstances: '',
         detailCirconstances: '',
-        inspecteurs: [],
+        inspecteurs: [
+          this.$store.state.authentication.user.id
+        ],
         themes: [],
         etablissementId: this.etablissementId,
         etablissement: null // fetched on init
