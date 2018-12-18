@@ -272,12 +272,6 @@ export const allowedStates = {
     label: 'Validé',
     color: 'green',
     order: 4
-  },
-  // à définir
-  clos: {
-    label: 'Clos',
-    color: 'grey',
-    order: 5
   }
 }
 

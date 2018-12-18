@@ -98,7 +98,7 @@ export default {
     inspectionsOuvertes () {
       // il faudrait sans doute mieux gérer des états internes et externes
       if (this.$permissions.isExploitant) {
-        return this.inspectionsFiltrees.filter(inspection => inspection.etat !== 'termine')
+        return this.inspectionsFiltrees.filter(inspection => inspection.etat !== 'valide')
       } else {
         return this.inspectionsFiltrees.filter(inspection => nomsEtatsEnCours.includes(inspection.etat))
       }
@@ -107,7 +107,7 @@ export default {
       return this.inspectionsFiltrees.filter(inspection => inspection.etat === 'attente_validation')
     },
     inspectionsTerminees () {
-      return this.inspectionsFiltrees.filter(inspection => inspection.etat === 'termine')
+      return this.inspectionsFiltrees.filter(inspection => inspection.etat === 'valide')
     }
   },
   async created () {
