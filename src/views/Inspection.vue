@@ -11,13 +11,19 @@ fh-page(:wait="wait")
           v-btn(v-if="peutPublier"
                 title="Publier"
                 color="primary"
-                @click="publierInspection()"
+                @click="publier()"
                 )
             v-icon(left) public
             | Publier
+          v-btn.white--text(v-if="peutDemanderValidation"
+                            color="green"
+                            @click="demanderValidation()"
+                            )
+            v-icon(left) done
+            | Demander une validation
           v-btn.white--text(v-if="peutValider"
                             color="green"
-                            @click="validerInspection()"
+                            @click="valider()"
                             )
             v-icon(left) done
             | Valider
@@ -111,6 +117,9 @@ export default {
     peutPublier () {
       return !this.$permissions.isExploitant && this.inspection.etat === 'preparation'
     },
+    peutDemanderValidation () {
+      return !this.$permissions.isExploitant && this.inspection.etat === 'en_cours' && this.inspection.suite
+    },
     peutValider () {
       return this.$permissions.isApprobateur && this.inspection.etat === 'attente_validation'
     },
@@ -128,14 +137,17 @@ export default {
     loadInspection () {
       this.wait = this.$api.inspections.loadInspection(parseInt(this.inspectionId, 10))
     },
-    async validerInspection () {
-      await this.$api.inspections.valider(this.inspection.id)
-    },
     async toggleFavoris () {
       await this.$api.inspections.toggleFavoris(this.inspection.id, !this.inspection.favoris)
     },
-    async publierInspection () {
+    async publier () {
       await this.$api.inspections.publier(this.inspection.id)
+    },
+    async demanderValidation () {
+      await this.$api.inspections.demanderValidation(this.inspection.id)
+    },
+    async valider () {
+      await this.$api.inspections.valider(this.inspection.id)
     }
   }
 }
