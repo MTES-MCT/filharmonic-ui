@@ -20,36 +20,7 @@ const inspections = [
       1
     ],
     etablissementId: '0999.00002',
-    comments: [],
-    echanges: [
-      {
-        id: 1,
-        brouillon: true,
-        sujet: 'Mesure des émissions atmosphériques canalisées par un organisme extérieur',
-        referencesReglementaires: [
-          "Articles 3.2.3., 3.2.8. et 8.2.1.2. de l'arrêté préfectoral du 28 juin 2017"
-        ],
-        messages: [
-          {
-            id: 1,
-            authorId: 1,
-            text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
-            date: new Date('2018-09-16T14:00:00'),
-            lu: true,
-            attachments: []
-          }
-        ]
-      },
-      {
-        id: 6,
-        brouillon: false,
-        sujet: 'Autosurveillance des émissions canalisées de COV',
-        referencesReglementaires: [
-          "Article 8.2.1.1. de l'arrêté préfectoral du 28 juin 2017"
-        ],
-        messages: []
-      }
-    ]
+    comments: []
   },
   {
     id: 2,
@@ -89,140 +60,6 @@ const inspections = [
         confidential: true,
         lu: true,
         attachments: []
-      }
-    ],
-    echanges: [
-      {
-        id: 2,
-        brouillon: false,
-        sujet: 'Mesure des émissions atmosphériques canalisées par un organisme extérieur',
-        referencesReglementaires: [
-          "Article 3.2.3. de l'arrêté préfectoral du 28 juin 2017",
-          "Article 3.2.8. de l'arrêté préfectoral du 28 juin 2017",
-          "Article 8.2.1.2. de l'arrêté préfectoral du 28 juin 2017"
-        ],
-        messages: [
-          {
-            id: 4,
-            authorId: 1,
-            text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
-            date: new Date('2018-11-16T14:00:00'),
-            confidential: false,
-            lu: true,
-            attachments: []
-          },
-          {
-            id: 5,
-            authorId: 4,
-            text: 'Voici le document en question.',
-            date: new Date('2018-11-16T16:50:00'),
-            confidential: false,
-            lu: true,
-            attachments: [
-              {
-                id: 1,
-                filename: 'analyses_2018.pdf',
-                type: 'pdf'
-              }
-            ]
-          },
-          {
-            id: 6,
-            authorId: 1,
-            text: 'Merci.',
-            date: new Date('2018-11-17T12:55:00'),
-            lu: true,
-            confidential: false,
-            attachments: []
-          },
-          {
-            id: 7,
-            authorId: 2,
-            text: "Attention à l'article 243.",
-            date: new Date('2018-11-14T08:50:00'),
-            confidential: true,
-            lu: true,
-            attachments: []
-          },
-          {
-            id: 8,
-            authorId: 1,
-            text: "L'article 843 s'applique également.",
-            date: new Date('2018-11-16T16:50:00'),
-            confidential: true,
-            lu: true,
-            attachments: []
-          }
-        ],
-        constat: {
-          type: 'conforme'
-        }
-      },
-      {
-        id: 3,
-        brouillon: true,
-        sujet: 'Atelier de malaxage filage',
-        referencesReglementaires: [
-          "Article 3.1 de l'arrêté préfectoral du 9 juin 1999"
-        ],
-        messages: [],
-        constat: {
-          type: 'observation',
-          remarques: 'Les rejets X2 sont contrôlés semestriellement pour les MES, la DBO5, la DCO, le pH, les hydrocarbures totaux. Les HAP ont été contrôlés dans le cadre de la campagne RSDE.'
-        }
-      },
-      {
-        id: 4,
-        brouillon: true,
-        sujet: 'Eau - Air',
-        referencesReglementaires: [
-          "Article 1 de l'Arrêté ministériel du 28 avril 2014"
-        ],
-        messages: [],
-        constat: {
-          type: 'non_conforme',
-          remarques: 'Au jour de l\'inspection, les données 2018 n\'ont pas été télétransmises par l\'exploitant pour les données des rejets en eau + légionnelle. L\'inspection rappelle l\'obligation réglementaire faite à l\'exploitant de produire toute pièce ou documents mentionnés dans les différents arrêtés dans les délais prescrits. Les moyens humains et matériels correspondants doivent être mis en place pour que ces données puissent être disponibles pour l\'IIC.',
-          echeance: '2019-05-17'
-        }
-      },
-      {
-        id: 5,
-        brouillon: true,
-        sujet: 'Autosurveillance des émissions canalisées de COV',
-        referencesReglementaires: [
-          "Article 8.2.1.1. de l'arrêté préfectoral du 28 juin 2017"
-        ],
-        messages: [
-          {
-            id: 9,
-            authorId: 1,
-            text: "Auriez-vous l'obligeance de me fournir une photo de la cuve ?",
-            date: new Date('2018-11-16T14:10:00'),
-            confidential: false,
-            lu: true,
-            attachments: []
-          },
-          {
-            id: 10,
-            authorId: 4,
-            text: 'Voici une photo.',
-            date: new Date('2018-11-17T08:50:00'),
-            confidential: false,
-            lu: true,
-            attachments: [
-              {
-                id: 2,
-                filename: 'photo_cuve.jpg',
-                type: 'image'
-              }
-            ]
-          }
-        ],
-        constat: {
-          type: 'proposition_mise_en_demeure',
-          remarques: 'Il faut réparer la fissure de la cuve.',
-          echeance: '2019-02-17'
-        }
       }
     ]
   }
@@ -336,6 +173,7 @@ export default class InspectionsAPI extends BaseAPI {
     }
     return Promise.all(
       filteredInspections.map(async inspection => {
+        inspection.echanges = await this.api.echanges.listByInspection(inspection.id)
         if (options.etablissement) {
           inspection.etablissement = await this.api.etablissements.get(inspection.etablissementId)
         }

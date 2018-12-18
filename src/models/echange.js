@@ -1,7 +1,7 @@
 import { createConstat } from '@/models/constat'
 import { createMessage } from '@/models/message'
 export class Echange {
-  constructor ({ id = 0, sujet = '', brouillon = true, messages = [], referencesReglementaires = [], constat = null } = {}) {
+  constructor ({ id = 0, sujet = '', brouillon = true, messages = [], referencesReglementaires = [], constat = {} } = {}) {
     this.id = id
     this.sujet = sujet
     this.brouillon = brouillon

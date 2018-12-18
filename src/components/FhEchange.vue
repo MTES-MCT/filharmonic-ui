@@ -115,13 +115,14 @@ v-expansion-panel(expand v-if="showEchange")
 import Vue from 'vue'
 import { typesConstats, allowedStates } from '@/api/inspections'
 import FhMessage from '@/components/FhMessage.vue'
-import { SAVE, GET } from '@/store/action-types'
-import { ADD_ROW, SUCCESS, ERROR } from '@/store/mutation-types'
+import { SAVE } from '@/store/action-types'
+import { ADD_ROW } from '@/store/mutation-types'
 import { createNamespacedHelpers } from 'vuex'
 import { mapMessagesMultiRowFields } from '@/store/modules/echange'
+import { createEchange } from '@/models/echange'
 
 const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
-const { mapState: mapEchangeState, mapActions: mapEchangeActions, mapMutations: mapEchangeMutations } = createNamespacedHelpers('inspection/echange')
+const { mapActions: mapEchangeActions, mapMutations: mapEchangeMutations } = createNamespacedHelpers('inspection/echange')
 
 export default {
   name: 'FhEchange',
@@ -162,7 +163,6 @@ export default {
     showEchange () {
       return !this.$permissions.isExploitant || !this.echange.brouillon
     },
-    ...mapEchangeState([ ERROR, SUCCESS ]),
     ...mapAuthenticationState({
       user: state => state.user
     }),
@@ -189,8 +189,7 @@ export default {
       addEchangeMessage: ADD_ROW
     }),
     ...mapEchangeActions({
-      save: SAVE,
-      load: GET
+      save: SAVE
     }),
     addMessage (messageText, confidential) {
       this.addEchangeMessage('addMessage', {
@@ -206,11 +205,13 @@ export default {
       })
       this.newMessage = ''
       this.dialogNewMessage = false
-      this.save(this.echange)
+      this.save(createEchange({ id: this.echange.id, brouillon: this.echange.brouillon, constat: this.echange.constat, messages: [], referencesReglementaires: [] }))
     },
     publier () {
+      console.log('echange.brouillon=' + JSON.stringify(this.echange.brouillon))
       if (this.$permissions.isInspecteur) this.echange.brouillon = !this.echange.brouillon
-      this.save(this.echange)
+      console.log('echange=' + JSON.stringify(this.echange))
+      this.save(createEchange({ id: this.echange.id, brouillon: this.echange.brouillon, constat: this.echange.constat, messages: [], referencesReglementaires: [] }))
     }
   }
 }

@@ -5,6 +5,7 @@ import InspectionsAPI from '@/api/inspections'
 import LettresAPI from '@/api/lettres'
 import ThemesAPI from '@/api/themes'
 import UsersAPI from '@/api/users'
+import EchangesAPI from '@/api/echanges'
 
 export default class API {
   constructor (options = {}) {
@@ -18,6 +19,9 @@ export default class API {
       api: this
     })
     this.inspections = new InspectionsAPI({
+      api: this
+    })
+    this.echanges = new EchangesAPI({
       api: this
     })
     this.lettres = new LettresAPI({

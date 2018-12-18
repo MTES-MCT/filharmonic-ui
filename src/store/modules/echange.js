@@ -1,6 +1,17 @@
 import { getField, updateField, createHelpers } from 'vuex-map-fields'
 import { ADD_ROW, SUCCESS, ERROR, RESET } from '@/store/mutation-types'
 import { message } from '@/store/modules/message'
+import { SAVE } from '@/store/action-types'
+
+const actions = {
+  async [SAVE] ({ commit }, echange) {
+    if (typeof echange !== 'object') {
+      const message = `expected object, got: \`${typeof echange}\``
+      throw new TypeError(message)
+    }
+    await this.$api.echanges.save(echange)
+  }
+}
 
 const mutations = {
   updateField,
@@ -57,5 +68,6 @@ export const echange = {
   mutations,
   getters,
   state,
-  modules
+  modules,
+  actions
 }
