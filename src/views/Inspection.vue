@@ -8,9 +8,14 @@ fh-page(:wait="wait")
           fh-etat-inspection(:etat="inspection.etat" small)
           v-spacer
 
-          v-btn(icon large @click="toggleFavoris()" :title="inspection.favoris ? 'Retirer des favoris' : 'Mettre en favoris'" v-if="!$permissions.isExploitant")
-            v-icon {{ inspection.favoris ? 'star' : 'star_border' }}
-          v-btn.white--text(v-if="$permissions.isApprobateur && inspection.etat == 'attente_validation'"
+          v-btn(v-if="peutPublier"
+                title="Publier"
+                color="primary"
+                @click="publierInspection()"
+                )
+            v-icon(left) public
+            | Publier
+          v-btn.white--text(v-if="peutValider"
                             :loading="workflowActionLoading"
                             :disabled="workflowActionLoading"
                             color="green"
@@ -18,7 +23,11 @@ fh-page(:wait="wait")
                             )
             v-icon(left) done
             | Valider
-          v-menu(offset-y v-if="!$permissions.isExploitant")
+
+          v-btn(icon large @click="toggleFavoris()" :title="inspection.favoris ? 'Retirer des favoris' : 'Mettre en favoris'" v-if="!$permissions.isExploitant")
+            v-icon {{ inspection.favoris ? 'star' : 'star_border' }}
+
+          v-menu(offset-y v-if="peutGenererDocuments")
             v-btn(slot="activator" icon large title="Générer des documents")
               v-icon local_printshop
             //- un peu compliqué car les v-dialog ne s'intègrent pas facilement avec les v-list-tile
@@ -101,6 +110,15 @@ export default {
         top: `${this.$vuetify.application.top}px`,
         'z-index': 2
       }
+    },
+    peutPublier () {
+      return !this.$permissions.isExploitant && this.inspection.etat === 'preparation'
+    },
+    peutValider () {
+      return this.$permissions.isApprobateur && this.inspection.etat === 'attente_validation'
+    },
+    peutGenererDocuments () {
+      return !this.$permissions.isExploitant
     }
   },
   watch: {
@@ -116,10 +134,7 @@ export default {
     async validerInspection () {
       this.workflowActionLoading = true
       try {
-        await this.$store.dispatch('validerInspection', {
-          inspectionId: this.inspection.id,
-          approbateurId: this.$store.state.authentication.user.id
-        })
+        await this.$api.inspections.valider(this.inspection.id)
       } finally {
         this.workflowActionLoading = false
       }
@@ -129,6 +144,9 @@ export default {
         inspectionId: this.inspection.id,
         favoris: !this.inspection.favoris
       })
+    },
+    async publierInspection () {
+      await this.$api.inspections.publier(this.inspection.id)
     }
   }
 }

@@ -1,23 +1,22 @@
 <template lang="pug">
   v-stepper(v-if="stepper")
     v-stepper-header
-      v-stepper-step(step="1" :complete="stateInfos.order >= 1") Avant visite
+      v-stepper-step(step="1" :complete="stateInfos.order >= 1") Préparation
       v-divider
-      v-stepper-step(step="2" :complete="stateInfos.order >= 2") Visite sur site
+      v-stepper-step(step="2" :complete="stateInfos.order >= 2") En cours
       v-divider
-      v-stepper-step(step="3" :complete="stateInfos.order >= 3") Rédaction du rapport sur les suites
+      v-stepper-step(step="3" :complete="stateInfos.order >= 3") En attente de validation
       v-divider
-      v-stepper-step(step="4" :complete="stateInfos.order >= 4") En attente de validation
+      v-stepper-step(step="4" :complete="stateInfos.order >= 4") Validé
       v-divider
-      v-stepper-step(step="5" :complete="stateInfos.order >= 5") Validé
-      v-divider
-      v-stepper-step(step="6" :complete="stateInfos.order >= 6") Clos
+      v-stepper-step(step="5" :complete="stateInfos.order >= 5") Clos
   v-chip(:color="stateInfos.color" text-color="white" :small="small" v-else) {{ stateInfos.label }}
 
 </template>
 
 <script>
 import { allowedStates } from '@/api/inspections'
+
 export default {
   name: 'FhEtatInspection',
   props: {

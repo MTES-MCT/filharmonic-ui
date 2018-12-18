@@ -20,7 +20,8 @@ export default class BaseAPI {
     }
   }
   requireInspecteur () {
-    if (!this.api.store.getters.isInspecteur) {
+    // ok si inspecteur ou approbateur
+    if (this.api.store.getters.isExploitant) {
       throw new ForbiddenError('Il faut être inspecteur')
     }
   }

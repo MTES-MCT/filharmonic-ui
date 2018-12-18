@@ -223,39 +223,57 @@ const inspections = [
         }
       }
     ]
+  },
+  {
+    id: 3,
+    date: '2018-12-18',
+    type: 'courant',
+    annonce: true,
+    origine: 'circonstancielle',
+    etat: 'preparation',
+    contexte: 'Visite Suite à explosion',
+    themes: [
+      "Rejets dans l'air"
+    ],
+    inspecteurs: [
+      1
+    ],
+    etablissementId: '0999.00002',
+    comments: [],
+    echanges: []
   }
 ]
 
 export const allowedStates = {
-  en_cours: {
-    label: 'Avant visite',
-    color: 'indigo',
+  // avant notification de l'inspection à l'exploitant
+  preparation: {
+    label: 'Préparation',
+    color: 'blue-grey lighten-1',
     order: 1
   },
-  visite_site: {
-    label: 'Visite sur site',
+  // après notification de l'inspection à l'exploitant
+  en_cours: {
+    label: 'En cours',
     color: 'primary',
     order: 2
   },
-  rapport_suites: {
-    label: 'Rédaction du rapport sur les suites',
-    color: 'warning',
-    order: 3
-  },
+  // après demande de validation
   attente_validation: {
     label: 'En attente de validation',
     color: 'teal',
-    order: 4
+    order: 3
   },
+  // après acceptation de la demande de validation
   valide: {
     label: 'Validé',
     color: 'green',
-    order: 5
+    order: 4
   },
+  // à définir
   clos: {
     label: 'Clos',
     color: 'grey',
-    order: 6
+    order: 5
   }
 }
 
@@ -330,6 +348,9 @@ export default class InspectionsAPI extends BaseAPI {
   */
   async list (options = {}) {
     let filteredInspections = _.cloneDeep(inspections)
+    if (this.api.store.getters.isExploitant) {
+      filteredInspections = filteredInspections.filter(inspection => inspection.etat !== 'preparation')
+    }
     if (options.etablissement) {
       const etablissementsAutorises = (await this.api.etablissements.list()).map(etablissement => etablissement.id)
       filteredInspections = filteredInspections.filter(inspection => etablissementsAutorises.includes(inspection.etablissementId))
@@ -386,7 +407,7 @@ export default class InspectionsAPI extends BaseAPI {
   async create (inspection) {
     this.requireInspecteur()
     inspection.id = new Date().getTime() % 1000
-    inspection.etat = 'en_cours'
+    inspection.etat = 'preparation'
     inspection.echanges = []
     inspection.comments = []
     inspections.push(_.cloneDeep(inspection))
@@ -411,20 +432,46 @@ export default class InspectionsAPI extends BaseAPI {
     await this.api.users.toggleInspectionFavorite(inspectionId, favoris)
   }
 
-  async valider (inspectionId, approbateurId) {
+  // passage état preparation -> en_cours
+  async publier (inspectionId) {
+    this.requireInspecteur()
+    const inspection = inspections.find(i => i.id === inspectionId)
+    if (!inspection) {
+      throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
+    }
+    if (inspection.etat !== 'preparation') {
+      throw new ApplicationError(`L'inspection est à l'état "${inspection.etat}". Impossible de la passer à "en_cours"`)
+    }
+    inspection.etat = 'en_cours'
+    this.api.evenements.create({
+      type: 'publication_inspection',
+      auteurId: this.api.store.state.authentication.user.id,
+      inspectionId: inspection.id
+    })
+    await this.loadInspection(inspectionId)
+  }
+
+  // passage état attente_validation -> valide
+  async valider (inspectionId) {
     this.requireApprobateur()
     const inspection = inspections.find(i => i.id === inspectionId)
+    if (!inspection) {
+      throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
+    }
+    if (inspection.etat !== 'attente_validation') {
+      throw new ApplicationError(`L'inspection est à l'état "${inspection.etat}". Impossible de la passer à "valide"`)
+    }
     inspection.etat = 'valide'
     inspection.approbation = {
-      auteur: approbateurId,
+      auteur: this.api.store.state.authentication.user.id,
       date: new Date()
     }
     this.api.evenements.create({
       type: 'validation_inspection',
-      auteurId: approbateurId,
+      auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
     })
-    await _.sleep(1000)
+    await this.loadInspection(inspectionId)
   }
 
   // helpers
@@ -446,5 +493,19 @@ export default class InspectionsAPI extends BaseAPI {
       ...options,
       filter: inspection => user.inspectionsFavorites.includes(inspection.id)
     })
+  }
+
+  // interne
+  async loadInspection (inspectionId) {
+    if (typeof inspectionId !== 'number') {
+      throw new TypeError(`expected number, got: \`${typeof inspectionId}\``)
+    }
+    this.api.store.commit('loadInspection', await this.api.inspections.get(inspectionId, {
+      etablissement: true,
+      activite: true,
+      detailMessagesNonLus: true,
+      favoris: true,
+      responsablesEtablissement: true
+    }))
   }
 }

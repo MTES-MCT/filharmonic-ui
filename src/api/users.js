@@ -57,7 +57,7 @@ export default class UsersAPI extends BaseAPI {
   async listInspecteurs (options) {
     return this.list({
       ...options,
-      filter: user => user.type === 'inspecteur'
+      filter: user => user.type !== 'exploitant'
     })
   }
   async get (userId, options) {

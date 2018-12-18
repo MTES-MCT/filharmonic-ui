@@ -3,12 +3,12 @@ v-container
   fh-echange(v-for="echange in inspection.echanges" :key="echange.id" :echange="echange" :etatInspection="inspection.etat")
 
   v-slide-y-transition(hide-on-leave)
-    v-card.my-3.elevation-4(v-if="showNewEchange && showNewEchangeForm")
+    v-card.my-3.elevation-4(v-if="showNewEchangeForm")
       v-toolbar(flat color="secondary" dense dark)
-        v-toolbar-title Nouvel échange
+        v-toolbar-title Nouveau point de contrôle
         v-spacer
         v-toolbar-items
-          v-btn(flat title="Annuler l'échange" @click="resetNewEchange()")
+          v-btn(flat title="Supprimer le point de contrôle" @click="resetNewEchange()")
             v-icon(medium) delete
 
       v-card-text
@@ -37,16 +37,18 @@ v-container
       v-card-actions.justify-center.pb-3
         v-btn(color="primary" @click="saveNewEchange()" :disabled="!validNewEchangeForm")
           v-icon(left) done
-          | Sauvegarder l'échange
+          | Ajouter
 
-    v-btn.mt-4(v-if="!showNewEchangeForm && showNewEchange" @click="showNewEchangeForm = true")
-      v-icon(left) message
-      | Démarrer un nouvel échange
+    v-btn.mt-4(v-if="peutAjouterPointDeControle" @click="showNewEchangeForm = true")
+      v-icon(left) add
+      | Ajouter un point de contrôle
 
-  section(v-if="!$permissions.isExploitant")
+  section(v-if="showSuites")
     h4.display-1.my-4 Suites
-    p Les suites sont décidées lorsque tous les échanges sont soldés par des constats.
-
+    div(v-if="!$permissions.isExploitant")
+      p Les suites sont décidées lorsque tous les échanges sont soldés par des constats.
+      p(v-if="inspection.echanges.length === 0") Il faut ajouter au moins un point de contrôle avant de définir une suite.
+      p(v-if="nombreConstatsRestants > 0") Il reste {{ nombreConstatsRestants }} {{ nombreConstatsRestants | pluralize('constat') }} à établir avant de pouvoir ajouter une suite.
     .fh-inspection__suite.elevation-2.pa-3(v-if="inspection.suite")
       v-layout.align-center
         span.subheading.mr-2 Type de suite :
@@ -89,15 +91,15 @@ v-container
           v-card-actions.justify-center.pb-3
             v-btn(color="primary" @click="saveNewSuite()" :disabled="!validNewSuiteForm")
               v-icon(left) gavel
-              | Sauvegarder la suite
+              | Ajouter
 
-      v-btn(color="secondary" v-if="!inspection.suite && !showNewSuiteForm" @click="prepareAndShowNewSuiteForm()")
+      v-btn(color="secondary" v-if="peutAjouterSuites" :disabled="nombreConstatsRestants > 0" @click="prepareAndShowNewSuiteForm()")
         v-icon(left) gavel
         | Ajouter une suite
 </template>
 
 <script>
-import { typesSuite, allowedStates } from '@/api/inspections'
+import { typesSuite } from '@/api/inspections'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhEchange from '@/components/FhEchange.vue'
@@ -124,7 +126,7 @@ export default {
         referencesReglementaires: [
           ''
         ],
-        reponses: []
+        messages: []
       },
       typesSuite,
       showNewSuiteForm: false,
@@ -138,11 +140,23 @@ export default {
     }
   },
   computed: {
+    inspectionModifiable () {
+      return this.inspection.etat === 'preparation' || this.inspection.etat === 'en_cours'
+    },
     typeSuiteInspection () {
       return this.inspection.suite ? typesSuite[this.inspection.suite.type] : {}
     },
-    showNewEchange () {
-      return allowedStates[this.inspection.etat].order < 4
+    peutAjouterPointDeControle () {
+      return this.inspectionModifiable && !this.showNewEchangeForm
+    },
+    peutAjouterSuites () {
+      return this.inspectionModifiable && !this.inspection.suite && !this.showNewSuiteForm
+    },
+    showSuites () {
+      return this.inspection.suite || !this.$permissions.isExploitant
+    },
+    nombreConstatsRestants () {
+      return this.inspection.echanges.filter(e => e.constat !== null).length
     }
   },
   methods: {
@@ -152,7 +166,7 @@ export default {
         referencesReglementaires: [
           ''
         ],
-        reponses: []
+        messages: []
       }
       this.showNewEchangeForm = false
     },
@@ -170,13 +184,7 @@ export default {
       this.showNewSuiteForm = true
     },
     resetNewSuite () {
-      this.newSuite = {
-        sujet: '',
-        referencesReglementaires: [
-          ''
-        ],
-        reponses: []
-      }
+      this.newSuite = {}
       this.showNewSuiteForm = false
     },
     saveNewSuite () {
