@@ -51,13 +51,13 @@ v-container
       p(v-if="nombreConstatsRestants > 0") Il reste {{ nombreConstatsRestants }} {{ nombreConstatsRestants | pluralize('constat') }} à établir avant de pouvoir ajouter une suite.
     .fh-inspection__suite.elevation-2.pa-3(v-if="inspection.suite")
       v-layout.align-center
-        span.subheading.mr-2 Type de suite :
+        span.subheading.mr-2 Type de suite&nbsp;:
         v-chip(small :color="typeSuiteInspection.color" dark text-color="white")
           v-avatar
             v-icon() {{ typeSuiteInspection.icon }}
           | {{ typeSuiteInspection.label }}
       v-layout.align-center
-        span.subheading.mr-2 Synthèse :
+        span.subheading.mr-2 Synthèse&nbsp;:
         v-flex
           div {{ inspection.suite.synthese }}
 
