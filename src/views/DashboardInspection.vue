@@ -156,7 +156,7 @@ export default {
       return this.inspection.suite || !this.$permissions.isExploitant
     },
     nombreConstatsRestants () {
-      return this.inspection.echanges.filter(e => e.constat !== null).length
+      return this.inspection.echanges.filter(e => !e.constat).length
     }
   },
   methods: {
