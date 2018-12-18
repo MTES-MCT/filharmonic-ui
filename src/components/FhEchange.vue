@@ -175,6 +175,9 @@ export default {
     },
     colorBrouillon () {
       return this.echange.brouillon ? 'primary' : 'success'
+    },
+    echangeState () {
+      return this.$store.state.inspection.echange.rows[this.index]
     }
   },
   methods: {
@@ -196,7 +199,7 @@ export default {
     }),
     addMessage (messageText, confidential) {
       this.addEchangeMessage('addMessage', {
-        echange: this.echange,
+        echange: this.echangeState,
         message: {
           authorId: this.user.id,
           date: new Date(),
@@ -212,8 +215,7 @@ export default {
     },
     publier () {
       if (this.$permissions.isInspecteur) this.echange.brouillon = !this.echange.brouillon
-      const echangeState = this.$store.state.inspection.echange.rows[this.index]
-      this.save(echangeState)
+      this.save(this.echangeState)
     }
   }
 }
