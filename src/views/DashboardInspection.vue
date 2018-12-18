@@ -153,7 +153,7 @@ export default {
       return !this.$permissions.isExploitant && this.inspectionModifiable && !this.inspection.suite && !this.showNewSuiteForm
     },
     showSuites () {
-      return this.inspection.suite || !this.$permissions.isExploitant
+      return this.inspection.etat !== 'preparation' && (this.inspection.suite || !this.$permissions.isExploitant)
     },
     nombreConstatsRestants () {
       return this.inspection.echanges.filter(e => !e.constat).length
