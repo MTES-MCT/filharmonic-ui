@@ -454,7 +454,9 @@ export default class InspectionsAPI extends BaseAPI {
     if (!inspection) {
       throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
     }
-    inspection.echanges.push(_.cloneDeep(pointDeControle))
+    const pointDeControleEntity = _.cloneDeep(pointDeControle)
+    pointDeControleEntity.id = new Date().getTime()
+    inspection.echanges.push(pointDeControleEntity)
 
     await this.loadInspection(inspectionId)
   }
