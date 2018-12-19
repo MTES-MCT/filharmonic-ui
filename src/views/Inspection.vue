@@ -22,7 +22,15 @@ fh-page(:wait="wait")
             v-icon(left) done
             | Demander une validation
           v-btn.white--text(v-if="peutValider"
+                            color="red"
+                            title="Rejeter la demande de validation"
+                            @click="rejeter()"
+                            )
+            v-icon(left) cancel
+            | Rejeter
+          v-btn.white--text(v-if="peutValider"
                             color="green"
+                            title="Accepter la demande de validation"
                             @click="valider()"
                             )
             v-icon(left) done
@@ -145,6 +153,9 @@ export default {
     },
     async demanderValidation () {
       await this.$api.inspections.demanderValidation(this.inspection.id)
+    },
+    async rejeter () {
+      await this.$api.inspections.rejeter(this.inspection.id)
     },
     async valider () {
       await this.$api.inspections.valider(this.inspection.id)

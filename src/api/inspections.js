@@ -568,6 +568,25 @@ export default class InspectionsAPI extends BaseAPI {
     await this.loadInspection(inspectionId)
   }
 
+  // passage état attente_validation -> en_cours
+  async rejeter (inspectionId) {
+    this.requireApprobateur()
+    const inspection = inspections.find(i => i.id === inspectionId)
+    if (!inspection) {
+      throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
+    }
+    if (inspection.etat !== 'attente_validation') {
+      throw new ApplicationError(`L'inspection est à l'état "${inspection.etat}". Impossible de la passer à "en_cours"`)
+    }
+    inspection.etat = 'en_cours'
+    this.api.evenements.create({
+      type: 'rejet_validation_inspection',
+      auteurId: this.api.store.state.authentication.user.id,
+      inspectionId: inspection.id
+    })
+    await this.loadInspection(inspectionId)
+  }
+
   // passage état attente_validation -> valide
   async valider (inspectionId) {
     this.requireApprobateur()
