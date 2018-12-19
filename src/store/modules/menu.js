@@ -29,9 +29,7 @@ const getters = {
 }
 
 const state = () => ({
-  favoris: [],
-  error: false,
-  success: false
+  favoris: []
 })
 
 export const menu = {

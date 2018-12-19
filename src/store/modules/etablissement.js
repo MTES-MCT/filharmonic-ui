@@ -1,9 +1,14 @@
 import { getField, updateField } from 'vuex-map-fields'
-
-import { Etablissement } from '@/models/etablissement'
+import { RESET, ADD_ROW } from '@/store/mutation-types'
 
 const mutations = {
-  updateField
+  updateField,
+  [RESET] (state) {
+    state.rows = []
+  },
+  [ADD_ROW] (state, etablissement) {
+    state.rows.push(etablissement)
+  }
 }
 
 const getters = {
@@ -11,7 +16,7 @@ const getters = {
 }
 
 const state = () => ({
-  rows: [new Etablissement()]
+  rows: []
 })
 
 export default {

@@ -3,6 +3,7 @@ import { GET, SAVE, VALIDATE } from '@/store/action-types'
 import etablissement from '@/store/modules/etablissement'
 import { echange } from '@/store/modules/echange'
 import { getField, updateField, createHelpers } from 'vuex-map-fields'
+import { createEtablissement } from '@/models/etablissement'
 
 const actions = {
   async [GET] ({ commit }, id) {
@@ -17,13 +18,14 @@ const actions = {
     commit(RESET)
     commit('echange/' + RESET)
     commit('echange/message/' + RESET)
+    commit('etablissement/' + RESET)
     inspection.echanges.forEach(e => {
       e.messages.forEach(m => {
         commit('echange/message/' + ADD_ROW, { echangeId: e.id, message: m })
       })
       commit('echange/' + ADD_ROW, e)
     })
-    commit(ADD_ROW, inspection)
+    commit('etablissement/' + ADD_ROW, createEtablissement(inspection.etablissement))
   },
   async [SAVE] ({ commit }, updatedInspection) {
     if (typeof updatedInspection !== 'object') {
