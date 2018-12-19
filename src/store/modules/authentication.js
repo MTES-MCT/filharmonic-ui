@@ -1,4 +1,6 @@
 import { Authentication } from '@/models/authentication'
+import { DELETE } from '@/store/action-types'
+import { ADD_ROW } from '@/store/mutation-types'
 
 const localStorageSessionTokenKey = 'fh-token'
 
@@ -7,13 +9,13 @@ const actions = {
     const authentication = await this.$api.authentication.login(user, password)
     if (authentication.valid) {
       localStorage.setItem(localStorageSessionTokenKey, authentication.token)
-      commit('login', authentication)
+      commit(ADD_ROW, authentication)
     }
     return authentication
   },
   async logout ({ commit }) {
     localStorage.removeItem(localStorageSessionTokenKey)
-    commit('logout')
+    commit(DELETE)
   },
   async authenticate ({ commit }, { token }) {
     const authentication = await this.$api.authentication.authenticate(token)
@@ -25,13 +27,15 @@ const actions = {
 }
 
 const mutations = {
-  login (state, authentication) {
+  [ADD_ROW] (state, authentication) {
     state.token = authentication.token
     state.user = authentication.user
     state.valid = authentication.valid
   },
-  logout (state) {
-    state = new Authentication()
+  [DELETE] (state) {
+    state.token = ''
+    state.user = null
+    state.valid = false
   }
 }
 

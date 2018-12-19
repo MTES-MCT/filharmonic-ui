@@ -104,12 +104,8 @@ import FhMessage from '@/components/FhMessage.vue'
 import FhEchange from '@/components/FhEchange.vue'
 import * as _ from '@/util'
 import { inspection, mapEchangesMultiRowFields } from '@/store/modules/inspection'
-import { ERROR, SUCCESS } from '@/store/mutation-types'
-import { createNamespacedHelpers } from 'vuex'
 
 if (!store.state.inspection) store.registerModule('inspection', inspection)
-
-const { mapState: mapInspectionState } = createNamespacedHelpers('inspection')
 
 export default {
   components: {
@@ -147,7 +143,6 @@ export default {
   },
   computed: {
     ...mapEchangesMultiRowFields({ echanges: 'rows' }),
-    ...mapInspectionState([ERROR, SUCCESS]),
     typeSuiteInspection () {
       return this.inspection.suite ? typesSuite[this.inspection.suite.type] : {}
     },

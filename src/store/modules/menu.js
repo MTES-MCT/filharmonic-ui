@@ -1,36 +1,26 @@
 import { getField, updateField } from 'vuex-map-fields'
-import { ERROR, SUCCESS } from '@/store/mutation-types'
+import { RESET, ADD_ROW } from '@/store/mutation-types'
 import { LIST } from '@/store/action-types'
 
 const actions = {
-  async [LIST] ({ commit, state }, userId) {
-    try {
-      const favoris = await this.$api.inspections.listAssignedOuvertes(userId, {
-        etablissement: true
-      })
-
-      commit(SUCCESS, favoris)
-    } catch (error) {
-      commit(ERROR, error.message)
-    }
+  async [LIST] ({ commit }, userId) {
+    const favoris = await this.$api.inspections.listAssignedOuvertes(userId, {
+      etablissement: true
+    })
+    commit(RESET)
+    favoris.forEach(favori => {
+      commit(ADD_ROW, favori)
+    })
   }
 }
 
 const mutations = {
   updateField,
-  [ERROR] (state, error) {
-    // eslint-disable-next-line no-param-reassign
-    state.error = error
-    // eslint-disable-next-line no-param-reassign
-    state.success = false
+  [RESET] (state) {
+    state.favoris = []
   },
-  [SUCCESS] (state, favoris) {
-    // eslint-disable-next-line no-param-reassign
-    state.error = false
-    // eslint-disable-next-line no-param-reassign
-    state.success = true
-    // eslint-disable-next-line no-param-reassign
-    state.favoris = favoris
+  [ADD_ROW] (state, favoris) {
+    state.favoris.push(favoris)
   }
 }
 

@@ -128,8 +128,8 @@ export default {
     ...mapAuthenticationActions({
       authLogout: 'logout'
     }),
-    async logout () {
-      await this.authLogout()
+    logout () {
+      this.authLogout()
       this.$router.push('/login?redirect=/')
     },
     updateAlert (messageType, message) {
