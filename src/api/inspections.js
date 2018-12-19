@@ -245,6 +245,38 @@ const inspections = [
     etablissementId: '0999.00002',
     comments: [],
     echanges: []
+  },
+  {
+    id: 4,
+    date: '2018-12-18',
+    type: 'courant',
+    annonce: true,
+    origine: 'plan_de_controle',
+    etat: 'en_cours',
+    contexte: 'Visite annuelle',
+    themes: [
+      "Rejets dans l'air"
+    ],
+    inspecteurs: [
+      1
+    ],
+    etablissementId: '0999.00003',
+    comments: [],
+    echanges: [
+      {
+        id: 7,
+        brouillon: false,
+        sujet: 'Rejets Air',
+        referencesReglementaires: [
+          "Article 8.2.1.1. de l'arrêté préfectoral du 28 juin 2017"
+        ],
+        messages: [],
+        constat: {
+          type: 'conforme',
+          remarques: 'RAS'
+        }
+      }
+    ]
   }
 ]
 
@@ -455,16 +487,33 @@ export default class InspectionsAPI extends BaseAPI {
     await this.loadInspection(inspectionId)
   }
 
-  async ajouterSuite (inspectionId, suite) {
+  async modifierSuite (inspectionId, suite) {
     const inspection = inspections.find(i => i.id === inspectionId)
     if (!inspection) {
       throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
     }
-    if (inspection.suite) {
-      throw new ApplicationError(`L'inspection possède déjà une suite`)
-    }
     inspection.suite = _.cloneDeep(suite)
 
+    this.api.evenements.create({
+      type: 'modification_suite',
+      auteurId: this.api.store.state.authentication.user.id,
+      inspectionId: inspection.id
+    })
+    await this.loadInspection(inspectionId)
+  }
+
+  async supprimerSuite (inspectionId) {
+    const inspection = inspections.find(i => i.id === inspectionId)
+    if (!inspection) {
+      throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
+    }
+    delete inspection.suite
+
+    this.api.evenements.create({
+      type: 'suppression_suite',
+      auteurId: this.api.store.state.authentication.user.id,
+      inspectionId: inspection.id
+    })
     await this.loadInspection(inspectionId)
   }
 

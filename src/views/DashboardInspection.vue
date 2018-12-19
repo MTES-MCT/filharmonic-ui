@@ -45,70 +45,21 @@ v-container
 
   section(v-if="showSuites")
     h4.display-1.my-4 Suites
-    div(v-if="!$permissions.isExploitant")
-      p Les suites sont décidées lorsque tous les échanges sont soldés par des constats.
-      p(v-if="inspection.echanges.length === 0") Il faut ajouter au moins un point de contrôle avant de définir une suite.
-      p(v-if="nombreConstatsRestants > 0") Il reste {{ nombreConstatsRestants }} {{ nombreConstatsRestants | pluralize('constat') }} à établir avant de pouvoir ajouter une suite.
-    .fh-inspection__suite.elevation-2.pa-3(v-if="inspection.suite")
-      v-layout.align-center
-        span.subheading.mr-2 Type de suite&nbsp;:
-        v-chip(small :color="typeSuiteInspection.color" dark text-color="white")
-          v-avatar
-            v-icon() {{ typeSuiteInspection.icon }}
-          | {{ typeSuiteInspection.label }}
-      v-layout.align-center
-        span.subheading.mr-2 Synthèse&nbsp;:
-        v-flex
-          div {{ inspection.suite.synthese }}
-
-    div(v-else)
-      v-slide-y-transition(hide-on-leave)
-        v-card.my-3.elevation-4(v-if="showNewSuiteForm")
-          v-toolbar(flat color="secondary" dense dark)
-            v-toolbar-title Nouvelle suite
-            v-spacer
-            v-toolbar-items
-              v-btn(flat title="Annuler la suite" @click="resetNewSuite()")
-                v-icon(medium) delete
-
-          v-card-text
-            v-form(ref="newSuiteForm" v-model="validNewSuiteForm")
-              v-radio-group.mt-0(hide-details
-                                  v-model="newSuite.type"
-                                  required
-                                  :rules="notEmpty"
-                                )
-                v-radio(v-for="(typeSuite, key) in typesSuite" :key="key"
-                        :label="typeSuite.label" :value="key"
-                        )
-
-              v-textarea.mt-3(box label="Synthèse" auto-grow hideDetails rows="3" clearable
-                              v-model="newSuite.synthese"
-                              required
-                              :rules="notEmpty"
-                              )
-
-          v-card-actions.justify-center.pb-3
-            v-btn(color="primary" @click="saveNewSuite()" :disabled="!validNewSuiteForm")
-              v-icon(left) gavel
-              | Ajouter
-
-      v-btn(color="secondary" v-if="peutAjouterSuites" :disabled="inspection.echanges.length === 0 || nombreConstatsRestants > 0" @click="prepareAndShowNewSuiteForm()")
-        v-icon(left) gavel
-        | Ajouter une suite
+    fh-suite(:inspection="inspection" :modifiable="peutModifierSuites")
 </template>
 
 <script>
-import { typesSuite } from '@/api/inspections'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhEchange from '@/components/FhEchange.vue'
+import FhSuite from '@/components/FhSuite.vue'
 
 export default {
   components: {
     FhEtatInspection,
     FhMessage,
-    FhEchange
+    FhEchange,
+    FhSuite
   },
   props: {
     inspection: {
@@ -128,12 +79,6 @@ export default {
         messages: []
       },
 
-      showNewSuiteForm: false,
-      validNewSuiteForm: false,
-      newSuite: {},
-
-      typesSuite,
-
       notEmpty: [
         v => !!v || 'Il faut renseigner une valeur'
       ]
@@ -143,20 +88,14 @@ export default {
     inspectionModifiable () {
       return this.inspection.etat === 'preparation' || this.inspection.etat === 'en_cours'
     },
-    typeSuiteInspection () {
-      return this.inspection.suite ? typesSuite[this.inspection.suite.type] : {}
-    },
     peutAjouterPointDeControle () {
       return !this.$permissions.isExploitant && this.inspectionModifiable && !this.inspection.suite && !this.showNewPointDeControleForm
     },
-    peutAjouterSuites () {
-      return !this.$permissions.isExploitant && this.inspectionModifiable && !this.inspection.suite && !this.showNewSuiteForm
+    peutModifierSuites () {
+      return !this.$permissions.isExploitant && this.inspectionModifiable
     },
     showSuites () {
       return this.inspection.etat !== 'preparation' && (this.inspection.suite || !this.$permissions.isExploitant)
-    },
-    nombreConstatsRestants () {
-      return this.inspection.echanges.filter(e => !e.constat).length
     }
   },
   methods: {
@@ -175,32 +114,10 @@ export default {
         await this.$api.inspections.ajouterPointDeControle(this.inspection.id, this.newPointDeControle)
         this.resetNewPointDeControle()
       }
-    },
-    prepareAndShowNewSuiteForm () {
-      this.newSuite = {
-        type: 'observation',
-        synthese: 'Cette visite à permis de relever des points faisant l’objet d’observations. L’exploitant devra fournir selon les délais mentionnés dans le présent rapport, les éléments permettant de justifier de la mise en œuvre des actions correctives nécessaires pour les lever.'
-      }
-      this.showNewSuiteForm = true
-    },
-    resetNewSuite () {
-      this.newSuite = {}
-      this.showNewSuiteForm = false
-    },
-    async saveNewSuite () {
-      if (this.$refs.newSuiteForm.validate()) {
-        await this.$api.inspections.ajouterSuite(this.inspection.id, this.newSuite)
-        this.resetNewSuite()
-      }
     }
   }
 }
 </script>
 
 <style lang="stylus">
-.fh-inspection
-  &__suite
-    margin-top 1em
-    padding-left 1em
-    border-left 5px solid darken(#f0f0f0, 50%)
 </style>
