@@ -45,21 +45,14 @@ export default {
       }
     },
     fileIcon () {
-      // return previewerIcon[this.previewer]
       switch (this.attachment.type) {
-        case 'image':
+        case 'image/jpeg':
         case 'image/png':
           return 'photo_library'
         case 'application/pdf':
           return 'picture_as_pdf'
         default:
           return 'library_books'
-          // return null
-          // 'file_copy'
-          // 'assignment'
-          // 'description'
-          // 'library_books'
-          // 'note'
       }
     }
   }

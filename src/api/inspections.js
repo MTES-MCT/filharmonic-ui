@@ -120,7 +120,8 @@ const inspections = [
               {
                 id: 1,
                 filename: 'analyses_2018.pdf',
-                type: 'pdf'
+                type: 'application/pdf',
+                url: '/test/lorem-ipsum.pdf'
               }
             ]
           },
@@ -211,7 +212,8 @@ const inspections = [
               {
                 id: 2,
                 filename: 'photo_cuve.jpg',
-                type: 'image'
+                type: 'image/jpeg',
+                url: 'https://picsum.photos/800/600?image=2'
               }
             ]
           }
