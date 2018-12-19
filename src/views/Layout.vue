@@ -77,7 +77,7 @@ v-app
           v-btn(@click="logout()" color="primary") Déconnexion
 
   v-content
-    router-view(@alert='updateAlert')
+    router-view
 </template>
 
 <script>
