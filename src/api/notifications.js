@@ -33,6 +33,7 @@ export default class NotificationsAPI extends BaseAPI {
           notification.evenement = await this.api.evenements.get(notification.evenementId)
           return notification
         })
+        .reverse()
     )
   }
 
