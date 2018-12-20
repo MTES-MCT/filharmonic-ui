@@ -39,7 +39,7 @@ export default {
   },
   computed: {
     etat () {
-      return this.etats.length < 1 ? createEtat(this.etatId) : this.etats[0]
+      return this.etatId !== '' ? createEtat(this.etatId) : this.etats[0]
     },
     ...mapEtatState({
       etats: state => state.rows
