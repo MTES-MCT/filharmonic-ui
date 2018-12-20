@@ -13,5 +13,5 @@ export class Detail {
 }
 
 export function createDetail (data) {
-  return Object.freeze(new Detail(data))
+  return Object.assign(new Detail(data))
 }
