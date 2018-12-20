@@ -117,17 +117,17 @@ export const { mapMultiRowFields: mapEchangesMultiRowFields } = createHelpers({
   getterType: 'inspection/echange/getField',
   mutationType: 'inspection/echange/updateField'
 })
-export const { mapMultiRowFields: mapInspecteursMultiRowFields } = createHelpers({
-  getterType: 'inspection/inspecteur/getField',
-  mutationType: 'inspection/inspecteur/updateField'
-})
-export const { mapMultiRowFields: mapThemesMultiRowFields } = createHelpers({
-  getterType: 'inspection/theme/getField',
-  mutationType: 'inspection/theme/updateField'
-})
 export const { mapFields: mapEtablissementFields } = createHelpers({
   getterType: 'inspection/etablissement/getField',
   mutationType: 'inspection/etablissement/updateField'
+})
+export const { mapFields: mapThemesFields } = createHelpers({
+  getterType: 'inspection/theme/getField',
+  mutationType: 'inspection/theme/updateField'
+})
+export const { mapFields: mapInspecteursFields } = createHelpers({
+  getterType: 'inspection/inspecteur/getField',
+  mutationType: 'inspection/inspecteur/updateField'
 })
 
 export const inspection = {

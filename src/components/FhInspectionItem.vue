@@ -13,7 +13,7 @@ v-list-tile(:to="`/inspections/${inspection.id}`")
       strong.ml-2 {{ inspection.etablissement.nom }}
       span.ml-4 {{ inspection.etablissement.adresse }}
     v-list-tile-sub-title
-      v-chip(v-for="(theme, index) in inspection.themes" :key="index" small) {{ theme }}
+      v-chip(v-for="(theme, index) in themes" :key="index" small) {{ theme.name }}
 
   v-layout.justify-end(v-if="inspection.messagesNonLus")
     v-icon.ml-4(color="primary" medium :title="`${inspection.messagesNonLus} nouveaux messages`") feedback
@@ -35,6 +35,17 @@ export default {
       type: Object,
       required: true
     }
+  },
+  data () {
+    return {
+      themes: []
+    }
+  },
+  async created () {
+    this.inspection.themes.forEach(async id => {
+      const theme = await this.$api.themes.get(id)
+      this.themes.push(theme)
+    })
   }
 }
 </script>

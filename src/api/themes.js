@@ -32,7 +32,7 @@ export default class ThemesAPI extends BaseAPI {
     return themes
   }
   async get (id) {
-    return themes[id]
+    return themes.find(theme => theme.id === id)
   }
   async create (theme) {
     theme.id = new Date().getTime() % 1000

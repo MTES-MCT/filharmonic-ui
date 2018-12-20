@@ -88,7 +88,7 @@ v-container.pa-0(:class="containerClass")
   v-layout.align-center
     v-flex.subheading.mr-2 Thèmes
     v-flex.text-xs-right
-      v-combobox(v-model="themes" :items="listThemes"
+      v-combobox(v-model="themes" :items="listThemes" item-text="name" item-value="id"
                 chips small-chips deletable-chips dense multiple
                 :search-input.sync="themeSearch"
                 placeholder="Thèmes..."
@@ -98,7 +98,7 @@ v-container.pa-0(:class="containerClass")
                 @click:append-outer="moreThemes = !moreThemes")
         template(slot="selection" slot-scope="{ item, index }")
           v-chip(v-if="index < max")
-            span {{ item }}
+            span {{ item.name }}
           span(v-if="index === max" class="grey--text caption") +{{ numberOtherThemes }} {{ others }}
         template(v-if="!readonly" slot="no-data")
             v-list-tile.subheading Créer le thème
@@ -114,7 +114,8 @@ v-container.pa-0(:class="containerClass")
 
 <script>
 import { createNamespacedHelpers } from 'vuex'
-import { mapInspecteursMultiRowFields, mapThemesMultiRowFields } from '@/store/modules/inspection'
+import { store } from '@/store'
+import { mapInspecteursFields, mapThemesFields } from '@/store/modules/inspection'
 const { mapState: mapDetailState } = createNamespacedHelpers('inspection/detail')
 export default {
   name: 'FhDetailInspection',
@@ -149,10 +150,10 @@ export default {
     ...mapDetailState({
       detail: state => state.rows[0]
     }),
-    ...mapThemesMultiRowFields({
+    ...mapThemesFields({
       themes: 'rows'
     }),
-    ...mapInspecteursMultiRowFields({
+    ...mapInspecteursFields({
       inspecteurs: 'rows'
     }),
     inspectionOrigine () {
@@ -193,17 +194,8 @@ export default {
     [this.listInspecteurs, this.listThemes] = await Promise.all([this.$api.users.listInspecteurs(), await this.$api.themes.list()])
   },
   methods: {
-    removeTheme (theme) {
-      const index = this.themes.indexOf(theme)
-      if (index !== -1) {
-        this.themes.splice(index, 1)
-      }
-    },
-    removeInspecteur (inspecteur) {
-      const index = this.inspecteurs.indexOf(inspecteur.id)
-      if (index !== -1) {
-        this.inspecteurs.splice(index, 1)
-      }
+    removeInspecteur (selected) {
+      store.commit('inspection/inspecteur/REMOVE_ROW', { path: 'rows', selected })
     }
   }
 }
