@@ -68,7 +68,8 @@ v-app
         v-subheader
           | Notifications
           v-btn.ml-5(@click="toutMarquerCommeLues()" small outline color="primary" :disabled="notifications.length === 0") Tout marquer comme lu
-        v-list
+        v-divider
+        v-list.fh-notifications-menu
           fh-notification(v-for="notification in notifications" :key="notification.id" :notification="notification" @marquerCommeLue="marquerCommeLue(notification.id)")
 
     v-menu(
@@ -158,3 +159,9 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+.fh-notifications-menu
+  max-height 300px
+  overflow-y auto
+</style>
