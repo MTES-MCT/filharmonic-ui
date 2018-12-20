@@ -2,7 +2,7 @@ import { ApplicationError } from '@/errors'
 import BaseAPI from './base'
 import * as _ from '@/util'
 
-const evenements = [
+const evenementsDB = [
   {
     id: 1,
     type: 'message',
@@ -113,6 +113,92 @@ const evenements = [
   }
 ]
 
+export const evenements = {
+  // workflow d'une inspection
+  creation_inspection: {
+    notifications: () => ['inspecteurs'],
+    message (evenement) {
+      return `a créé une inspection.`
+    }
+  },
+  publication_inspection: {
+    notifications: () => ['inspecteurs', 'exploitants'],
+    message (evenement) {
+      return `a publié une inspection.`
+    }
+  },
+  demande_validation_inspection: {
+    notifications: () => ['inspecteurs', 'approbateurs'],
+    message (evenement) {
+      return `a fait une demande de validation.`
+    }
+  },
+  rejet_validation_inspection: {
+    notifications: () => ['inspecteurs'],
+    message (evenement) {
+      return `a rejeté une demande de validation.`
+    }
+  },
+  validation_inspection: {
+    notifications: () => ['inspecteurs', 'exploitants'],
+    message (evenement) {
+      return `a validé une inspection.`
+    }
+  },
+
+  // événements liés à une inspection
+  modification_inspection: {
+    notifications: () => ['inspecteurs'],
+    message (evenement) {
+      return `a modifié le détail de l'inspection.`
+    }
+  },
+  creation_pointdecontrole: {
+    notifications: () => ['inspecteurs'],
+    message (evenement) {
+      return `a ajouté un point de contrôle.`
+    }
+  },
+  creation_constat: {
+    notifications: () => ['inspecteurs'],
+    message (evenement) {
+      return `a ajouté un constat.`
+    }
+  },
+  modification_suite: {
+    notifications: () => ['inspecteurs'],
+    message (evenement) {
+      return `a ajouté/modifié une suite.`
+    }
+  },
+  suppression_suite: {
+    notifications: () => ['inspecteurs'],
+    message (evenement) {
+      return `a supprimé une suite.`
+    }
+  },
+  commentaire_general: {
+    notifications: () => ['inspecteurs'],
+    message (evenement) {
+      return `a posté un commentaire général.`
+    }
+  },
+  commentaire: {
+    notifications: () => ['inspecteurs'],
+    message (evenement) {
+      return `a poste un commentaire.`
+    }
+  },
+  message: {
+    notifications (api) {
+      return api.store.getters.isExploitant ? ['inspecteurs'] : ['exploitants']
+    },
+    message (evenement) {
+      return `a posté un message.`
+    }
+  }
+}
+
 /*
 Chaque action importante de l'application devrait faire donner lieu à un événement.
 Ces événements peuvent ensuite être utilisés de plusieurs façons :
@@ -126,7 +212,7 @@ Pour l'instant, les types d'événements sont :
 */
 export default class EvenementsAPI extends BaseAPI {
   async list (options = {}) {
-    let filteredEvenements = _.cloneDeep(evenements)
+    let filteredEvenements = _.cloneDeep(evenementsDB)
 
     if (options.filter) {
       filteredEvenements = filteredEvenements.filter(options.filter)
@@ -157,10 +243,10 @@ export default class EvenementsAPI extends BaseAPI {
   }
 
   async create (evenement) {
-    evenement.id = evenements[evenements.length - 1].id + 1
+    evenement.id = evenementsDB[evenementsDB.length - 1].id + 1
     evenement.created_at = new Date()
     await this.createNotifications(evenement)
-    evenements.push(_.cloneDeep(evenement))
+    evenementsDB.push(_.cloneDeep(evenement))
   }
 
   // permet de créer des notifications aux utilisateurs concernés selon le type d'événément
@@ -169,8 +255,13 @@ export default class EvenementsAPI extends BaseAPI {
     const inspection = await this.api.inspections.get(evenement.inspectionId, {
       etablissement: true
     })
-    const notifications = []
 
+    const metadonneesEvenement = evenements[evenement.type]
+    if (!metadonneesEvenement) {
+      throw new ApplicationError(`Événement ${evenement.type} inconnu`)
+    }
+
+    const notifications = []
     function addNotification (userId) {
       notifications.push({
         userId: userId,
@@ -178,50 +269,20 @@ export default class EvenementsAPI extends BaseAPI {
       })
     }
 
-    function notifierInspecteurs () {
+    const groupsToNotify = metadonneesEvenement.notifications(this.api)
+    if (groupsToNotify.includes('inspecteurs')) {
       inspection.inspecteurs.filter(id => id !== currentUserId).map(addNotification)
     }
-    function notifierExploitants () {
+    if (groupsToNotify.includes('exploitants')) {
       inspection.etablissement.responsablesIds.map(addNotification)
     }
-    function notifierInspecteursEtExploitants () {
-      notifierInspecteurs()
-      notifierExploitants()
-    }
-    const notifierApprobateursEtInspecteurs = async () => {
+    if (groupsToNotify.includes('approbateurs')) {
       (await this.api.users.listApprobateurs())
         .map(user => user.id)
         .filter(id => id !== currentUserId)
         .map(addNotification)
-      notifierInspecteurs()
     }
 
-    switch (evenement.type) {
-      // workflow d'une inspection
-      case 'creation_inspection': notifierInspecteurs(); break
-      case 'publication_inspection': notifierInspecteursEtExploitants(); break
-      case 'demande_validation_inspection': await notifierApprobateursEtInspecteurs(); break
-      case 'rejet_validation_inspection': notifierInspecteurs(); break
-      case 'validation_inspection': notifierInspecteursEtExploitants(); break
-
-      // événements liés à une inspection
-      case 'modification_inspection': notifierInspecteurs(); break
-      case 'creation_pointdecontrole': notifierInspecteurs(); break
-      case 'creation_constat': notifierInspecteurs(); break
-      case 'modification_suite': notifierInspecteurs(); break
-      case 'suppression_suite': notifierInspecteurs(); break
-      case 'commentaire_general': notifierInspecteurs(); break
-      case 'commentaire': notifierInspecteurs(); break
-      case 'message':
-        if (this.api.store.getters.isExploitant) {
-          notifierInspecteurs()
-        } else {
-          notifierExploitants()
-        }
-        break
-      default:
-        throw new ApplicationError(`Événement ${evenement.type} inconnu`)
-    }
     await Promise.all(notifications.map(notification => this.api.notifications.create(notification)))
   }
 }

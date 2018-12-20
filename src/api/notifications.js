@@ -30,7 +30,9 @@ export default class NotificationsAPI extends BaseAPI {
     return Promise.all(
       filteredNotifications
         .map(async notification => {
-          notification.evenement = await this.api.evenements.get(notification.evenementId)
+          notification.evenement = await this.api.evenements.get(notification.evenementId, {
+            auteur: true
+          })
           return notification
         })
         .reverse()

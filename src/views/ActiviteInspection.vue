@@ -1,14 +1,18 @@
 <template lang="pug">
 v-container
   p Voici l'activité survenue pour cette inspection.
-  v-btn(icon @click="toggleSort()" :class="{'fh-toggle--active': sortAscending}")
+  v-btn(icon @click="toggleSort()" :class="{'fh-toggle--active': sortAscending}" title="Inverser le tri")
     v-icon sort
-  div(v-for="evenement in activiteSorted" :key="evenement.id")
-    | {{ evenement.created_at.toLocaleString() }} - {{ evenement.auteur.name }} : {{ evenement.type }}
+  fh-evenement(v-for="evenement in activiteSorted" :key="evenement.id" :evenement="evenement")
 </template>
 
 <script>
+import FhEvenement from '@/components/FhEvenement.vue'
+
 export default {
+  components: {
+    FhEvenement
+  },
   props: {
     inspection: {
       type: Object,
