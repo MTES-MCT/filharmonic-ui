@@ -403,7 +403,9 @@ export default class InspectionsAPI extends BaseAPI {
           })
         }
         if (options.activite) {
-          inspection.activite = (await this.api.evenements.list()).filter(event => event.inspectionId === inspection.id)
+          inspection.activite = (await this.api.evenements.list({
+            auteur: true
+          })).filter(event => event.inspectionId === inspection.id)
         }
         if (options.messagesNonLus) {
           inspection.messagesNonLus = inspection.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
@@ -443,8 +445,9 @@ export default class InspectionsAPI extends BaseAPI {
     inspection.echanges = []
     inspection.comments = []
     inspections.push(_.cloneDeep(inspection))
-    this.api.evenements.create({
-      type: 'create_inspection',
+
+    await this.api.evenements.create({
+      type: 'creation_inspection',
       auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
     })
@@ -460,6 +463,11 @@ export default class InspectionsAPI extends BaseAPI {
     // on devrait nettoyer l'objet pour ne garder que les champs autorisés
     Object.assign(inspection, _.cloneDeep(updatedInspection))
 
+    await this.api.evenements.create({
+      type: 'modification_inspection',
+      auteurId: this.api.store.state.authentication.user.id,
+      inspectionId: inspection.id
+    })
     await this.loadInspection(updatedInspection.id)
   }
 
@@ -486,6 +494,11 @@ export default class InspectionsAPI extends BaseAPI {
     pointDeControleEntity.id = new Date().getTime()
     inspection.echanges.push(pointDeControleEntity)
 
+    await this.api.evenements.create({
+      type: 'creation_pointdecontrole',
+      auteurId: this.api.store.state.authentication.user.id,
+      inspectionId: inspection.id
+    })
     await this.loadInspection(inspectionId)
   }
 
@@ -496,7 +509,7 @@ export default class InspectionsAPI extends BaseAPI {
     }
     inspection.suite = _.cloneDeep(suite)
 
-    this.api.evenements.create({
+    await this.api.evenements.create({
       type: 'modification_suite',
       auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
@@ -511,7 +524,7 @@ export default class InspectionsAPI extends BaseAPI {
     }
     delete inspection.suite
 
-    this.api.evenements.create({
+    await this.api.evenements.create({
       type: 'suppression_suite',
       auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
@@ -527,6 +540,11 @@ export default class InspectionsAPI extends BaseAPI {
     const echange = inspection.echanges.find(echange => echange.id === echangeId)
     echange.constat = _.cloneDeep(constat)
 
+    await this.api.evenements.create({
+      type: 'creation_constat',
+      auteurId: this.api.store.state.authentication.user.id,
+      inspectionId: inspection.id
+    })
     await this.loadInspection(inspection.id)
   }
 
@@ -541,7 +559,8 @@ export default class InspectionsAPI extends BaseAPI {
       throw new ApplicationError(`L'inspection est à l'état "${inspection.etat}". Impossible de la passer à "en_cours"`)
     }
     inspection.etat = 'en_cours'
-    this.api.evenements.create({
+
+    await this.api.evenements.create({
       type: 'publication_inspection',
       auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
@@ -560,7 +579,8 @@ export default class InspectionsAPI extends BaseAPI {
       throw new ApplicationError(`L'inspection est à l'état "${inspection.etat}". Impossible de la passer à "attente_validation"`)
     }
     inspection.etat = 'attente_validation'
-    this.api.evenements.create({
+
+    await this.api.evenements.create({
       type: 'demande_validation_inspection',
       auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
@@ -579,7 +599,8 @@ export default class InspectionsAPI extends BaseAPI {
       throw new ApplicationError(`L'inspection est à l'état "${inspection.etat}". Impossible de la passer à "en_cours"`)
     }
     inspection.etat = 'en_cours'
-    this.api.evenements.create({
+
+    await this.api.evenements.create({
       type: 'rejet_validation_inspection',
       auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
@@ -602,7 +623,8 @@ export default class InspectionsAPI extends BaseAPI {
       auteur: this.api.store.state.authentication.user.id,
       date: new Date()
     }
-    this.api.evenements.create({
+
+    await this.api.evenements.create({
       type: 'validation_inspection',
       auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id

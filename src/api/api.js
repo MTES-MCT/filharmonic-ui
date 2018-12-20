@@ -3,6 +3,7 @@ import EtablissementsAPI from './etablissements'
 import EvenementsAPI from './evenements'
 import InspectionsAPI from './inspections'
 import LettresAPI from './lettres'
+import NotificationsAPI from './notifications'
 import ThemesAPI from './themes'
 import UsersAPI from './users'
 
@@ -21,6 +22,9 @@ export default class API {
       api: this
     })
     this.lettres = new LettresAPI({
+      api: this
+    })
+    this.notifications = new NotificationsAPI({
       api: this
     })
     this.themes = new ThemesAPI({

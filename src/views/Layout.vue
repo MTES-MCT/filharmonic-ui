@@ -48,7 +48,9 @@ v-app
     v-toolbar-side-icon(@click.stop="drawer = !drawer")
     v-toolbar-title(style="width: 300px" class="ml-0 pl-3")
       span(class="hidden-sm-and-down") Fil'Harmonic
+
     v-spacer
+
     v-menu(transition="slide-y-transition" bottom)
       v-btn(icon slot="activator")
         v-icon apps
@@ -56,8 +58,19 @@ v-app
         v-list-tile(:href="app.url" target="_blank" :title="app.nom")
           v-icon open_in_new
           v-list-tile-title {{ app.nom }}
-    v-btn(icon)
-      v-icon notifications
+
+    v-menu(:close-on-content-click="false" offset-x offset-y)
+      v-btn(slot="activator" v-if="notifications.length > 0" icon :title="`${notifications.length} nouvelle(s) notification(s)`")
+        v-icon(color="red") notifications
+      v-btn(slot="activator" v-else icon title="Aucune nouvelle notification")
+        v-icon notifications
+      v-card
+        v-subheader
+          | Notifications
+          v-btn.ml-5(@click="toutMarquerCommeLues()" small outline color="primary" :disabled="notifications.length === 0") Tout marquer comme lu
+        v-list
+          fh-notification(v-for="notification in notifications" :key="notification.id" :notification="notification" @marquerCommeLue="marquerCommeLue(notification.id)")
+
     v-menu(
       :close-on-content-click="false"
       :nudge-width="200"
@@ -82,6 +95,7 @@ v-app
 
 <script>
 import { mapState } from 'vuex'
+import FhNotification from '@/components/FhNotification.vue'
 import events from '@/events'
 
 const snackbarColor = {
@@ -90,6 +104,9 @@ const snackbarColor = {
 }
 
 export default {
+  components: {
+    FhNotification
+  },
   data () {
     return {
       dialog: false,
@@ -102,7 +119,8 @@ export default {
       snackbar: {
         message: '',
         color: ''
-      }
+      },
+      notifications: []
     }
   },
   computed: {
@@ -114,6 +132,7 @@ export default {
   async created () {
     events.bus.$on(events.Alert, this.updateAlert)
     await this.$api.inspections.loadInspectionsFavorites()
+    this.notifications = await this.$api.notifications.listNonLues()
   },
   destroyed () {
     events.bus.$off(events.Alert, this.updateAlert)
@@ -127,6 +146,14 @@ export default {
       this.snackbar.color = snackbarColor[messageType]
       this.snackbar.message = message
       this.showSnackbar = true
+    },
+    async marquerCommeLue (notificationId) {
+      await this.$api.notifications.marquerCommeLue(notificationId)
+      this.notifications = await this.$api.notifications.listNonLues()
+    },
+    async toutMarquerCommeLues () {
+      await this.$api.notifications.marquerCommeLues(this.notifications.map(notification => notification.id))
+      this.notifications = await this.$api.notifications.listNonLues()
     }
   }
 }

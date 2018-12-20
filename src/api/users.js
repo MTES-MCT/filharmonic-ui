@@ -60,6 +60,12 @@ export default class UsersAPI extends BaseAPI {
       filter: user => user.type !== 'exploitant'
     })
   }
+  async listApprobateurs (options) {
+    return this.list({
+      ...options,
+      filter: user => user.type === 'approbateur'
+    })
+  }
   async get (userId, options) {
     const user = (await this.list({
       ...options,
