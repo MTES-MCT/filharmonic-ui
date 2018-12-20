@@ -5,7 +5,7 @@
   v-layout.column(v-if="compact")
     div
       .fh-evenement__auteur {{ evenement.auteur.name }}
-      .fh-evenement__message  {{ message }}
+      .fh-evenement__message {{ message }}
     timeago.fh-evenement__date.grey--text(:datetime="evenement.created_at" :title="evenement.created_at.toLocaleString()")
   v-layout.row(v-else)
     .fh-evenement__auteur {{ evenement.auteur.name }}
