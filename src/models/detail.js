@@ -1,5 +1,5 @@
 export class Detail {
-  constructor ({ id = 0, date = '', type = '', annonce = '', origine = '', favorite = '', contexte = '' } = {}) {
+  constructor ({ id = 0, date = '', type = '', annonce = '', origine = '', favorite = '', contexte = '', circonstances = '', detailCirconstances = '' } = {}) {
     this.id = id
     this.date = date
     this.type = type
@@ -7,6 +7,8 @@ export class Detail {
     this.origine = origine
     this.favorite = favorite
     this.contexte = contexte
+    this.circonstances = circonstances
+    this.detailCirconstances = detailCirconstances
   }
 }
 

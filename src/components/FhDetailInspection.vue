@@ -2,7 +2,7 @@
 v-container.pa-0(:class="containerClass")
   v-layout.align-center
     v-flex.subheading.mr-2 Date
-    v-flex.text-xs-right(v-if="readonly") {{ detail.date }}
+    v-flex.text-xs-right(v-if="readonly") {{ date }}
     v-flex.text-xs-right(v-else)
       v-menu(v-model="showDatePicker"
               :close-on-content-click="false"
@@ -11,7 +11,7 @@ v-container.pa-0(:class="containerClass")
               offset-y
             )
         v-text-field(slot="activator"
-                      v-model="detail.date"
+                      v-model="date"
                       label="Date"
                       prepend-icon="event"
                       readonly
@@ -19,45 +19,45 @@ v-container.pa-0(:class="containerClass")
                       :rules="notEmpty"
                       required
                     )
-        v-date-picker(v-model="detail.date" @input="showDatePicker = false" no-title)
+        v-date-picker(v-model="date" @input="showDatePicker = false" no-title)
 
   v-layout.align-center
     v-flex.subheading.mr-2 Type
-    v-flex.text-xs-right(v-if="readonly") {{ detail.type | capitalize }}
+    v-flex.text-xs-right(v-if="readonly") {{ type | capitalize }}
     v-flex.justify-end(v-else)
-      v-radio-group.justify-end.mt-0(row v-model="detail.type" hide-details)
+      v-radio-group.justify-end.mt-0(row v-model="type" hide-details)
         v-radio(label="Approfondi" value="approfondi")
         v-radio(label="Courant" value="courant")
         v-radio(label="Ponctuel" value="ponctuel")
 
   v-layout.align-center
     v-flex.subheading.mr-2 Annoncé
-    v-flex.text-xs-right(v-if="readonly") {{ detail.annonce | format-yesno }}
+    v-flex.text-xs-right(v-if="readonly") {{ annonce | format-yesno }}
     v-flex(v-else)
-      v-checkbox.mt-0.pr-3.justify-end(v-model="detail.annonce" label="Annoncé" hide-details :readonly="readonly")
+      v-checkbox.mt-0.pr-3.justify-end(v-model="annonce" label="Annoncé" hide-details :readonly="readonly")
 
   v-layout.align-center
     v-flex.subheading.mr-2 Origine
-    v-flex.text-xs-right(v-if="readonly") {{ detail.origine | format-origine }}
+    v-flex.text-xs-right(v-if="readonly") {{ origine | format-origine }}
     v-flex(v-else)
-      v-radio-group.mt-0.justify-end(row hide-details v-model="detail.origine")
+      v-radio-group.mt-0.justify-end(row hide-details v-model="origine")
         v-radio(label="Plan de contrôle" value="plan_de_controle")
         v-radio(label="Circonstancielle" value="circonstancielle")
 
-  v-layout.align-center(v-if="detail.origine === 'circonstancielle'")
+  v-layout.align-center(v-if="origine === 'circonstancielle'")
     v-flex.subheading.mr-2 Circonstances
-    v-flex.text-xs-right(v-if="readonly") {{ detail.circonstances | capitalize }}
+    v-flex.text-xs-right(v-if="readonly") {{ circonstances | capitalize }}
     v-flex(v-else)
-      v-radio-group.mt-0.justify-end(row v-model="detail.circonstances" hide-details required :rules="notEmpty" :readonly="readonly")
+      v-radio-group.mt-0.justify-end(row v-model="circonstances" hide-details required :rules="notEmpty" :readonly="readonly")
         v-radio(label="Incident" value="incident")
         v-radio(label="Plainte" value="plainte")
         v-radio(label="Autre" value="autre")
 
-  v-layout.align-center(v-if="detail.circonstances === 'autre'")
+  v-layout.align-center(v-if="circonstances === 'autre'")
     v-flex.subheading.mr-2 Détail des circonstances
-    v-flex.text-xs-right(v-if="readonly") {{ detail.detailCirconstances }}
+    v-flex.text-xs-right(v-if="readonly") {{ detailCirconstances }}
     v-flex(v-else)
-      v-text-field(v-model="detail.detailCirconstances" required :rules="notEmpty" :readonly="readonly")
+      v-text-field(v-model="detailCirconstances" required :rules="notEmpty" :readonly="readonly")
 
   v-layout.align-center
     v-flex.subheading.mr-2 Inspecteurs
@@ -106,17 +106,15 @@ v-container.pa-0(:class="containerClass")
 
   v-layout.align-center
     v-flex.subheading.mr-2 Contexte
-    v-flex.text-xs-right(v-if="readonly") {{ detail.contexte }}
+    v-flex.text-xs-right(v-if="readonly") {{ contexte }}
     v-flex(v-else)
-      v-textarea(box v-model="detail.contexte" required :rules="notEmpty" :readonly="readonly")
+      v-textarea(box v-model="contexte" required :rules="notEmpty" :readonly="readonly")
 
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex'
 import { store } from '@/store'
-import { mapInspecteursFields, mapThemesFields } from '@/store/modules/inspection'
-const { mapState: mapDetailState } = createNamespacedHelpers('inspection/detail')
+import { mapInspecteursFields, mapThemesFields, mapDetailFields } from '@/store/modules/inspection'
 export default {
   name: 'FhDetailInspection',
   props: {
@@ -147,21 +145,17 @@ export default {
     }
   },
   computed: {
-    ...mapDetailState({
-      detail: state => state.rows[0]
-    }),
-    ...mapThemesFields({
-      themes: 'rows'
-    }),
-    ...mapInspecteursFields({
-      inspecteurs: 'rows'
-    }),
-    inspectionOrigine () {
-      return this.detail.origine
-    },
-    inspectionCirconstances () {
-      return this.detail.circonstances
-    },
+    ...mapDetailFields([
+      'rows[0].origine',
+      'rows[0].annonce',
+      'rows[0].contexte',
+      'rows[0].date',
+      'rows[0].circonstances',
+      'rows[0].detailCirconstances',
+      'rows[0].type'
+    ]),
+    ...mapThemesFields({ themes: 'rows' }),
+    ...mapInspecteursFields({ inspecteurs: 'rows' }),
     containerClass () {
       return `grid-list-${this.readonly ? 'sm' : 'xl'}`
     },
@@ -176,17 +170,17 @@ export default {
     }
   },
   watch: {
-    inspectionOrigine (val, oldVal) {
+    origine (val, oldVal) {
       if (oldVal === 'circonstancielle') {
-        this.detail.circonstances = ''
-        this.detail.detailCirconstances = ''
+        this.circonstances = ''
+        this.detailCirconstances = ''
       } else {
-        this.detail.circonstances = 'incident'
+        this.circonstances = 'incident'
       }
     },
-    inspectionCirconstances (val, oldVal) {
+    circonstances (val, oldVal) {
       if (oldVal === 'autre') {
-        this.detail.detailCirconstances = ''
+        this.detailCirconstances = ''
       }
     }
   },

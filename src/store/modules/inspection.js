@@ -105,8 +105,8 @@ const modules = {
   etablissement,
   theme,
   etat,
-  detail,
-  inspecteur
+  inspecteur,
+  detail
 }
 
 const getters = {
@@ -116,6 +116,10 @@ const getters = {
 export const { mapMultiRowFields: mapEchangesMultiRowFields } = createHelpers({
   getterType: 'inspection/echange/getField',
   mutationType: 'inspection/echange/updateField'
+})
+export const { mapFields: mapDetailFields } = createHelpers({
+  getterType: 'inspection/detail/getField',
+  mutationType: 'inspection/detail/updateField'
 })
 export const { mapFields: mapEtablissementFields } = createHelpers({
   getterType: 'inspection/etablissement/getField',
