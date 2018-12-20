@@ -116,7 +116,7 @@ export default {
   },
   methods: {
     ...mapInspectionActions({ load: GET, valider: VALIDATE }),
-    loadInspection () {
+    async loadInspection () {
       const id = parseInt(this.inspectionId, 10)
       this.wait = this.load(id)
     },
