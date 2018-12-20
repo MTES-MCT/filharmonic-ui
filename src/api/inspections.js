@@ -1,6 +1,7 @@
 import { ApplicationError } from '@/errors'
 import BaseAPI from './base'
 import * as _ from '@/util'
+import { nomsEtatsEnCours } from '@/models/etat'
 
 const inspections = [
   {
@@ -12,13 +13,8 @@ const inspections = [
     favorite: false,
     etat: 'en_cours',
     contexte: 'Emissions de NOx dépassant les seuils le 2/04/2005',
-    themes: [
-      "Rejets dans l'air",
-      'COV'
-    ],
-    inspecteurs: [
-      1
-    ],
+    themes: [2, 6],
+    inspecteurs: [1],
     etablissementId: '0999.00002',
     comments: []
   },
@@ -31,16 +27,8 @@ const inspections = [
     favorite: true,
     etat: 'attente_validation',
     contexte: 'Incident cuve gaz le 30/12/2017',
-    themes: [
-      "Rejets dans l'air",
-      "Rejets dans l'eau",
-      'Incendie',
-      'COV'
-    ],
-    inspecteurs: [
-      1,
-      2
-    ],
+    themes: [1, 2, 5, 6],
+    inspecteurs: [1, 2],
     etablissementId: '0999.00001',
     comments: [
       {
@@ -65,98 +53,6 @@ const inspections = [
   }
 ]
 
-export const allowedStates = {
-  en_cours: {
-    label: 'Avant visite',
-    color: 'indigo',
-    order: 1
-  },
-  visite_site: {
-    label: 'Visite sur site',
-    color: 'primary',
-    order: 2
-  },
-  rapport_suites: {
-    label: 'Rédaction du rapport sur les suites',
-    color: 'warning',
-    order: 3
-  },
-  attente_validation: {
-    label: 'En attente de validation',
-    color: 'teal',
-    order: 4
-  },
-  valide: {
-    label: 'Validé',
-    color: 'green',
-    order: 5
-  },
-  clos: {
-    label: 'Clos',
-    color: 'grey',
-    order: 6
-  }
-}
-
-export const nomsEtatsEnCours = Object.keys(allowedStates)
-  .map(nomEtat => ({
-    nom: nomEtat,
-    etat: allowedStates[nomEtat]
-  }))
-  .filter(({ etat }) => etat.order < allowedStates.attente_validation.order)
-  .map(({ nom }) => nom)
-
-export const typesConstats = {
-  conforme: {
-    label: 'Conforme',
-    color: 'green',
-    icon: 'check_circle'
-  },
-  observation: {
-    label: 'Observation',
-    color: 'orange',
-    icon: 'info'
-  },
-  non_conforme: {
-    label: 'Non conforme',
-    color: 'red',
-    icon: 'error'
-  },
-  proposition_mise_en_demeure: {
-    label: 'Proposition de mise en demeure',
-    color: '#600060',
-    icon: 'error'
-  }
-}
-
-export const typesSuite = {
-  aucune: {
-    label: 'Aucune',
-    color: 'green',
-    icon: 'check_circle'
-  },
-  observation: {
-    label: 'Observation ou non conformités à traiter par courrier',
-    color: 'orange',
-    icon: 'info'
-  },
-  proposition_mise_en_demeure: {
-    label: 'Proposition de suites administratives',
-    color: 'black',
-    icon: 'error'
-  },
-  proposition_renforcement: {
-    label: 'Proposition de renforcement, modification ou mise à jour des prescription',
-    color: 'purple',
-    icon: 'info'
-  },
-  autre: {
-    label: 'Autre',
-    color: 'grey',
-    icon: 'info'
-  }
-}
-
 export default class InspectionsAPI extends BaseAPI {
   /*
   options = {
@@ -173,24 +69,32 @@ export default class InspectionsAPI extends BaseAPI {
     }
     return Promise.all(
       filteredInspections.map(async inspection => {
-        inspection.echanges = await this.api.echanges.listByInspection(inspection.id)
+        if (options.themes) {
+          inspection.themes = (await this.api.themes.list()).filter(t => (inspection.themes.includes(t.id)))
+        }
+        if (options.echanges) {
+          inspection.echanges = await this.api.echanges.listByInspection(inspection.id)
+          if (options.detailMessagesNonLus) {
+            inspection.echanges.forEach(echange => {
+              echange.messagesNonLus = echange.messages.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
+            })
+          }
+          if (options.messagesNonLus) {
+            inspection.messagesNonLus = inspection.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
+              inspection.echanges.reduce((acc, echange) => (
+                acc +
+                echange.messages.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
+              ), 0)
+          }
+        }
+        if (options.inspecteurs) {
+          inspection.inspecteurs = (await this.api.users.list()).filter(u => (inspection.inspecteurs.includes(u.id)))
+        }
         if (options.etablissement) {
           inspection.etablissement = await this.api.etablissements.get(inspection.etablissementId)
         }
         if (options.activite) {
           inspection.activite = (await this.api.evenements.list()).filter(event => event.inspectionId === inspection.id)
-        }
-        if (options.messagesNonLus) {
-          inspection.messagesNonLus = inspection.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
-            inspection.echanges.reduce((acc, echange) => (
-              acc +
-              echange.messages.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
-            ), 0)
-        }
-        if (options.detailMessagesNonLus) {
-          inspection.echanges.forEach(echange => {
-            echange.messagesNonLus = echange.messages.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
-          })
         }
         return _.cloneDeep(inspection)
       })

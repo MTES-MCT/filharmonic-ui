@@ -17,13 +17,16 @@
 </template>
 
 <script>
-import { allowedStates } from '@/api/inspections'
+import { createNamespacedHelpers } from 'vuex'
+import { createEtat } from '@/models/etat'
+const { mapState: mapEtatState } = createNamespacedHelpers('inspection/etat')
 export default {
   name: 'FhEtatInspection',
   props: {
-    etat: {
+    etatId: {
       type: String,
-      default: null
+      required: false,
+      default: ''
     },
     stepper: {
       type: Boolean,
@@ -35,8 +38,14 @@ export default {
     }
   },
   computed: {
+    etat () {
+      return this.etats.length < 1 ? createEtat(this.etatId) : this.etats[0]
+    },
+    ...mapEtatState({
+      etats: state => state.rows
+    }),
     stateInfos () {
-      return allowedStates[this.etat] || {
+      return this.etat || {
         label: '?',
         color: 'grey',
         order: 0

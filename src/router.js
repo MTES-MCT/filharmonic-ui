@@ -20,7 +20,7 @@ Vue.use(Router)
 
 export function createRouter (store) {
   const requireAuthenticatedUser = (to, from, next) => {
-    if (store.state.authentication.valid) {
+    if (store.getters['authentication/isAuthenticated']) {
       next()
     } else {
       next({
@@ -30,7 +30,7 @@ export function createRouter (store) {
     }
   }
   const redirectAuthenticatedUserToDashboard = (to, from, next) => {
-    if (store.state.authentication.valid) {
+    if (store.getters['authentication/isAuthenticated']) {
       next({
         path: '/'
       })

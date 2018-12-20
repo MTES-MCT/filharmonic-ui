@@ -113,15 +113,16 @@ v-expansion-panel(expand v-if="showEchange")
 
 <script>
 import Vue from 'vue'
-import { typesConstats, allowedStates } from '@/api/inspections'
 import FhMessage from '@/components/FhMessage.vue'
 import { SAVE } from '@/store/action-types'
 import { ADD_ROW } from '@/store/mutation-types'
 import { createNamespacedHelpers } from 'vuex'
 import { mapMessagesMultiRowFields } from '@/store/modules/echange'
+import { typesConstat } from '@/models/constat'
 
 const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
 const { mapActions: mapEchangeActions, mapMutations: mapEchangeMutations } = createNamespacedHelpers('inspection/echange')
+const { mapState: mapEtatState } = createNamespacedHelpers('inspection/etat')
 
 export default {
   name: 'FhEchange',
@@ -129,11 +130,6 @@ export default {
     FhMessage
   },
   props: {
-    etatInspection: {
-      type: String,
-      required: true,
-      default: 'en_cours'
-    },
     echange: {
       type: Object,
       required: true
@@ -146,7 +142,6 @@ export default {
   data () {
     return {
       showNewConstatForm: false,
-      typesConstats,
       newConstat: {
         type: 'conforme'
       },
@@ -160,18 +155,24 @@ export default {
     }
   },
   computed: {
+    typesConstat () {
+      return typesConstat
+    },
     typeConstatEchange () {
-      return this.echange.constat ? typesConstats[this.echange.constat.type] : {}
+      return this.echange.constat ? this.echange.constat.type : {}
     },
     showEchange () {
       return !this.$permissions.isExploitant || !this.echange.brouillon
     },
+    ...mapEtatState({
+      etat: state => state.rows[0]
+    }),
     ...mapAuthenticationState({
-      user: state => state.user
+      user: state => state.rows[0].user
     }),
     ...mapMessagesMultiRowFields({ messages: 'rows' }),
     showNewMessageForm () {
-      return allowedStates[this.etatInspection].order < 4
+      return this.etat.order < 4
     },
     colorBrouillon () {
       return this.echange.brouillon ? 'primary' : 'success'

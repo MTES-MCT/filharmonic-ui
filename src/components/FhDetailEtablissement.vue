@@ -31,13 +31,11 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
+const { mapState: mapEtablissementState } = createNamespacedHelpers('inspection/etablissement')
 export default {
   name: 'FhDetailEtablissement',
   props: {
-    etablissement: {
-      type: Object,
-      required: true
-    },
     expand: {
       type: Boolean,
       default: false
@@ -47,6 +45,11 @@ export default {
     return {
       panelExpansion: null
     }
+  },
+  computed: {
+    ...mapEtablissementState({
+      etablissement: state => state.rows[0]
+    })
   },
   created () {
     this.panelExpansion = [ this.expand ]

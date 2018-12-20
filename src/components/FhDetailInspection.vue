@@ -2,7 +2,7 @@
 v-container.pa-0(:class="containerClass")
   v-layout.align-center
     v-flex.subheading.mr-2 Date
-    v-flex.text-xs-right(v-if="readonly") {{ inspection.date }}
+    v-flex.text-xs-right(v-if="readonly") {{ detail.date }}
     v-flex.text-xs-right(v-else)
       v-menu(v-model="showDatePicker"
               :close-on-content-click="false"
@@ -11,7 +11,7 @@ v-container.pa-0(:class="containerClass")
               offset-y
             )
         v-text-field(slot="activator"
-                      v-model="inspection.date"
+                      v-model="detail.date"
                       label="Date"
                       prepend-icon="event"
                       readonly
@@ -19,55 +19,55 @@ v-container.pa-0(:class="containerClass")
                       :rules="notEmpty"
                       required
                     )
-        v-date-picker(v-model="inspection.date" @input="showDatePicker = false" no-title)
+        v-date-picker(v-model="detail.date" @input="showDatePicker = false" no-title)
 
   v-layout.align-center
     v-flex.subheading.mr-2 Type
-    v-flex.text-xs-right(v-if="readonly") {{ inspection.type | capitalize }}
+    v-flex.text-xs-right(v-if="readonly") {{ detail.type | capitalize }}
     v-flex.justify-end(v-else)
-      v-radio-group.justify-end.mt-0(row v-model="inspection.type" hide-details)
+      v-radio-group.justify-end.mt-0(row v-model="detail.type" hide-details)
         v-radio(label="Approfondi" value="approfondi")
         v-radio(label="Courant" value="courant")
         v-radio(label="Ponctuel" value="ponctuel")
 
   v-layout.align-center
     v-flex.subheading.mr-2 Annoncé
-    v-flex.text-xs-right(v-if="readonly") {{ inspection.annonce | format-yesno }}
+    v-flex.text-xs-right(v-if="readonly") {{ detail.annonce | format-yesno }}
     v-flex(v-else)
-      v-checkbox.mt-0.pr-3.justify-end(v-model="inspection.annonce" label="Annoncé" hide-details :readonly="readonly")
+      v-checkbox.mt-0.pr-3.justify-end(v-model="detail.annonce" label="Annoncé" hide-details :readonly="readonly")
 
   v-layout.align-center
     v-flex.subheading.mr-2 Origine
-    v-flex.text-xs-right(v-if="readonly") {{ inspection.origine | format-origine }}
+    v-flex.text-xs-right(v-if="readonly") {{ detail.origine | format-origine }}
     v-flex(v-else)
-      v-radio-group.mt-0.justify-end(row hide-details v-model="inspection.origine")
+      v-radio-group.mt-0.justify-end(row hide-details v-model="detail.origine")
         v-radio(label="Plan de contrôle" value="plan_de_controle")
         v-radio(label="Circonstancielle" value="circonstancielle")
 
-  v-layout.align-center(v-if="inspection.origine === 'circonstancielle'")
+  v-layout.align-center(v-if="detail.origine === 'circonstancielle'")
     v-flex.subheading.mr-2 Circonstances
-    v-flex.text-xs-right(v-if="readonly") {{ inspection.circonstances | capitalize }}
+    v-flex.text-xs-right(v-if="readonly") {{ detail.circonstances | capitalize }}
     v-flex(v-else)
-      v-radio-group.mt-0.justify-end(row v-model="inspection.circonstances" hide-details required :rules="notEmpty" :readonly="readonly")
+      v-radio-group.mt-0.justify-end(row v-model="detail.circonstances" hide-details required :rules="notEmpty" :readonly="readonly")
         v-radio(label="Incident" value="incident")
         v-radio(label="Plainte" value="plainte")
         v-radio(label="Autre" value="autre")
 
-  v-layout.align-center(v-if="inspection.circonstances === 'autre'")
+  v-layout.align-center(v-if="detail.circonstances === 'autre'")
     v-flex.subheading.mr-2 Détail des circonstances
-    v-flex.text-xs-right(v-if="readonly") {{ inspection.detailCirconstances }}
+    v-flex.text-xs-right(v-if="readonly") {{ detail.detailCirconstances }}
     v-flex(v-else)
-      v-text-field(v-model="inspection.detailCirconstances" required :rules="notEmpty" :readonly="readonly")
+      v-text-field(v-model="detail.detailCirconstances" required :rules="notEmpty" :readonly="readonly")
 
   v-layout.align-center
     v-flex.subheading.mr-2 Inspecteurs
     v-flex.text-xs-right(v-if="readonly")
-      v-chip(v-for="inspecteur in inspecteursInspection" :key="inspecteur.id" small)
+      v-chip(v-for="inspecteur in inspecteurs" :key="inspecteur.id" small)
         v-avatar
           img(:src="inspecteur.photoURL")
         | {{ inspecteur.name }}
     v-flex(v-else)
-      v-autocomplete(v-model="inspection.inspecteurs" :items="inspecteurs"
+      v-autocomplete(v-model="inspecteurs" :items="listInspecteurs"
                     chips dense multiple
                     item-text="name" item-value="id"
                     placeholder="Inspecteurs..."
@@ -88,7 +88,7 @@ v-container.pa-0(:class="containerClass")
   v-layout.align-center
     v-flex.subheading.mr-2 Thèmes
     v-flex.text-xs-right
-      v-combobox(v-model="inspection.themes" :items="themes"
+      v-combobox(v-model="themes" :items="listThemes"
                 chips small-chips deletable-chips dense multiple
                 :search-input.sync="themeSearch"
                 placeholder="Thèmes..."
@@ -106,20 +106,19 @@ v-container.pa-0(:class="containerClass")
 
   v-layout.align-center
     v-flex.subheading.mr-2 Contexte
-    v-flex.text-xs-right(v-if="readonly") {{ inspection.contexte }}
+    v-flex.text-xs-right(v-if="readonly") {{ detail.contexte }}
     v-flex(v-else)
-      v-textarea(box v-model="inspection.contexte" required :rules="notEmpty" :readonly="readonly")
+      v-textarea(box v-model="detail.contexte" required :rules="notEmpty" :readonly="readonly")
 
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
+import { mapInspecteursMultiRowFields, mapThemesMultiRowFields } from '@/store/modules/inspection'
+const { mapState: mapDetailState } = createNamespacedHelpers('inspection/detail')
 export default {
   name: 'FhDetailInspection',
   props: {
-    inspection: {
-      type: Object,
-      required: true
-    },
     readonly: {
       type: Boolean,
       default: false
@@ -141,35 +140,35 @@ export default {
       ],
 
       // fetched on init
-      inspecteurs: [],
-      themes: [],
+      listThemes: [],
+      listInspecteurs: [],
       moreThemes: false
     }
   },
   computed: {
+    ...mapDetailState({
+      detail: state => state.rows[0]
+    }),
+    ...mapThemesMultiRowFields({
+      themes: 'rows'
+    }),
+    ...mapInspecteursMultiRowFields({
+      inspecteurs: 'rows'
+    }),
     inspectionOrigine () {
-      return this.inspection.origine
+      return this.detail.origine
     },
     inspectionCirconstances () {
-      return this.inspection.circonstances
+      return this.detail.circonstances
     },
     containerClass () {
       return `grid-list-${this.readonly ? 'sm' : 'xl'}`
     },
-    inspecteursInspection () {
-      if (!this.inspecteurs.length) {
-        return []
-      }
-      return this.inspection.inspecteurs
-        .map(inspecteurId => {
-          return this.inspecteurs.find(inspecteur => inspecteur.id === inspecteurId)
-        })
-    },
     max () {
-      return this.moreThemes ? this.inspection.themes.length : 2
+      return this.moreThemes ? this.themes.length : 2
     },
     numberOtherThemes () {
-      return this.inspection.themes.length - this.max
+      return this.themes.length - this.max
     },
     others () {
       return this.numberOtherThemes > 1 ? 'autres' : 'autre'
@@ -178,32 +177,32 @@ export default {
   watch: {
     inspectionOrigine (val, oldVal) {
       if (oldVal === 'circonstancielle') {
-        this.inspection.circonstances = ''
-        this.inspection.detailCirconstances = ''
+        this.detail.circonstances = ''
+        this.detail.detailCirconstances = ''
       } else {
-        this.inspection.circonstances = 'incident'
+        this.detail.circonstances = 'incident'
       }
     },
     inspectionCirconstances (val, oldVal) {
       if (oldVal === 'autre') {
-        this.inspection.detailCirconstances = ''
+        this.detail.detailCirconstances = ''
       }
     }
   },
   async created () {
-    [this.inspecteurs, this.themes] = await Promise.all([this.$api.users.listInspecteurs(), await this.$api.themes.list()])
+    [this.listInspecteurs, this.listThemes] = await Promise.all([this.$api.users.listInspecteurs(), await this.$api.themes.list()])
   },
   methods: {
     removeTheme (theme) {
-      const index = this.inspection.themes.indexOf(theme)
+      const index = this.themes.indexOf(theme)
       if (index !== -1) {
-        this.inspection.themes.splice(index, 1)
+        this.themes.splice(index, 1)
       }
     },
     removeInspecteur (inspecteur) {
-      const index = this.inspection.inspecteurs.indexOf(inspecteur.id)
+      const index = this.inspecteurs.indexOf(inspecteur.id)
       if (index !== -1) {
-        this.inspection.inspecteurs.splice(index, 1)
+        this.inspecteurs.splice(index, 1)
       }
     }
   }

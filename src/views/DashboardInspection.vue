@@ -1,6 +1,6 @@
 <template lang="pug">
 v-container
-  fh-echange(v-for="(echange, index) in echanges" :key="echange.id" :index="index" :echange="echange" :etatInspection="inspection.etat")
+  fh-echange(v-for="(echange, index) in echanges" :key="echange.id" :index="index" :echange="echange")
 
   v-slide-y-transition(hide-on-leave)
     v-card.my-3.elevation-4(v-if="showNewEchange && showNewEchangeForm")
@@ -47,7 +47,7 @@ v-container
     h4.display-1.my-4 Suites
     p Les suites sont décidées lorsque tous les échanges sont soldés par des constats.
 
-    .fh-inspection__suite.elevation-2.pa-3(v-if="inspection.suite")
+    .fh-inspection__suite.elevation-2.pa-3(v-if="suite")
       v-layout.align-center
         span.subheading.mr-2 Type de suite :
         v-chip(small :color="typeSuiteInspection.color" dark text-color="white")
@@ -91,33 +91,31 @@ v-container
               v-icon(left) gavel
               | Sauvegarder la suite
 
-      v-btn(color="secondary" v-if="!inspection.suite && !showNewSuiteForm" @click="prepareAndShowNewSuiteForm()")
+      v-btn(color="secondary" v-if="!suite && !showNewSuiteForm" @click="prepareAndShowNewSuiteForm()")
         v-icon(left) gavel
         | Ajouter une suite
 </template>
 
 <script>
 import { store } from '@/store'
-import { typesSuite, allowedStates } from '@/api/inspections'
+import { typesSuite } from '@/models/suite'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhEchange from '@/components/FhEchange.vue'
 import * as _ from '@/util'
 import { inspection, mapEchangesMultiRowFields } from '@/store/modules/inspection'
+import { createNamespacedHelpers } from 'vuex'
 
 if (!store.state.inspection) store.registerModule('inspection', inspection)
+const { mapState: mapDetailState } = createNamespacedHelpers('inspection/detail')
+const { mapState: mapEtatState } = createNamespacedHelpers('inspection/etat')
+const { mapState: mapSuiteState } = createNamespacedHelpers('inspection/echange/suite')
 
 export default {
   components: {
     FhEtatInspection,
     FhMessage,
     FhEchange
-  },
-  props: {
-    inspection: {
-      type: Object,
-      required: true
-    }
   },
   data () {
     return {
@@ -130,7 +128,6 @@ export default {
         ],
         reponses: []
       },
-      typesSuite,
       showNewSuiteForm: false,
       validNewSuiteForm: false,
       newSuite: {},
@@ -143,11 +140,17 @@ export default {
   },
   computed: {
     ...mapEchangesMultiRowFields({ echanges: 'rows' }),
+    ...mapDetailState({ detail: state => state.rows[0] }),
+    ...mapEtatState({ etat: state => state.rows[0] }),
+    ...mapSuiteState({ suite: state => state.rows[0] }),
     typeSuiteInspection () {
-      return this.inspection.suite ? typesSuite[this.inspection.suite.type] : {}
+      return this.suite ? this.suite.type : {}
     },
     showNewEchange () {
-      return allowedStates[this.inspection.etat].order < 4
+      return this.etat.order < 4
+    },
+    typesSuite () {
+      return typesSuite
     }
   },
   methods: {
@@ -186,7 +189,7 @@ export default {
     },
     saveNewSuite () {
       if (this.$refs.newSuiteForm.validate()) {
-        this.inspection.suite = this.newSuite
+        this.suite = this.newSuite
         this.resetNewSuite()
       }
     }

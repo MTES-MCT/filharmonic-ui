@@ -1,9 +1,19 @@
 import { ADD_ROW, RESET } from '@/store/mutation-types'
 import { GET, SAVE, VALIDATE } from '@/store/action-types'
-import etablissement from '@/store/modules/etablissement'
+import { etablissement } from '@/store/modules/etablissement'
 import { echange } from '@/store/modules/echange'
+import { theme } from '@/store/modules/theme'
+import { detail } from '@/store/modules/detail'
+import { etat } from '@/store/modules/etat'
+import { inspecteur } from '@/store/modules/inspecteur'
 import { getField, updateField, createHelpers } from 'vuex-map-fields'
+import { createEtat } from '@/models/etat'
+import { createDetail } from '@/models/detail'
+import { createTheme } from '@/models/theme'
+import { createSuite } from '@/models/suite'
+import { createConstat } from '@/models/constat'
 import { createEtablissement } from '@/models/etablissement'
+import { createUser } from '@/models/user'
 
 const actions = {
   async [GET] ({ commit }, id) {
@@ -13,19 +23,35 @@ const actions = {
     const inspection = await this.$api.inspections.get(id, {
       etablissement: true,
       activite: true,
-      detailMessagesNonLus: true
+      detailMessagesNonLus: true,
+      echanges: true,
+      themes: true,
+      inspecteurs: true
     })
-    commit(RESET)
-    commit('echange/' + RESET)
-    commit('echange/message/' + RESET)
-    commit('etablissement/' + RESET)
+    reset(commit)
+    commit('detail/' + ADD_ROW, createDetail(inspection))
+    commit('etat/' + ADD_ROW, createEtat(inspection.etat))
+    commit('etablissement/' + ADD_ROW, createEtablissement(inspection.etablissement))
     inspection.echanges.forEach(e => {
+      commit('echange/' + ADD_ROW, e)
       e.messages.forEach(m => {
         commit('echange/message/' + ADD_ROW, { echangeId: e.id, message: m })
       })
-      commit('echange/' + ADD_ROW, e)
+      if (e.constat) {
+        commit('echange/constat/' + ADD_ROW, createConstat(e.constat))
+      }
+      if (e.suites) {
+        e.suites.forEach(s => {
+          commit('echange/suite/' + ADD_ROW, createSuite(s))
+        })
+      }
     })
-    commit('etablissement/' + ADD_ROW, createEtablissement(inspection.etablissement))
+    inspection.themes.forEach(t => {
+      commit('theme/' + ADD_ROW, createTheme(t))
+    })
+    inspection.inspecteurs.forEach(u => {
+      commit('inspecteur/' + ADD_ROW, createUser(u))
+    })
   },
   async [SAVE] ({ commit }, updatedInspection) {
     if (typeof updatedInspection !== 'object') {
@@ -47,6 +73,19 @@ const actions = {
   }
 }
 
+const reset = (commit) => {
+  commit(RESET)
+  commit('detail/' + RESET)
+  commit('etablissement/' + RESET)
+  commit('etat/' + RESET)
+  commit('theme/' + RESET)
+  commit('echange/' + RESET)
+  commit('inspecteur/' + RESET)
+  commit('echange/message/' + RESET)
+  commit('echange/suite/' + RESET)
+  commit('echange/constat/' + RESET)
+}
+
 const mutations = {
   updateField,
   [ADD_ROW] (state, inspection) {
@@ -63,7 +102,11 @@ const state = () => ({
 
 const modules = {
   echange,
-  etablissement
+  etablissement,
+  theme,
+  etat,
+  detail,
+  inspecteur
 }
 
 const getters = {
@@ -74,7 +117,14 @@ export const { mapMultiRowFields: mapEchangesMultiRowFields } = createHelpers({
   getterType: 'inspection/echange/getField',
   mutationType: 'inspection/echange/updateField'
 })
-
+export const { mapMultiRowFields: mapInspecteursMultiRowFields } = createHelpers({
+  getterType: 'inspection/inspecteur/getField',
+  mutationType: 'inspection/inspecteur/updateField'
+})
+export const { mapMultiRowFields: mapThemesMultiRowFields } = createHelpers({
+  getterType: 'inspection/theme/getField',
+  mutationType: 'inspection/theme/updateField'
+})
 export const { mapFields: mapEtablissementFields } = createHelpers({
   getterType: 'inspection/etablissement/getField',
   mutationType: 'inspection/etablissement/updateField'

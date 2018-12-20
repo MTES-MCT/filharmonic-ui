@@ -1,7 +1,7 @@
 <template lang="pug">
 v-list-tile(:to="`/inspections/${inspection.id}`")
   .fh-inspection-item__etat
-    fh-etat-inspection(:etat="inspection.etat")
+    fh-etat-inspection(:etatId="inspection.etat")
 
   v-list-tile-action.mr-1.fh-inspection-item__date
     v-list-tile-title

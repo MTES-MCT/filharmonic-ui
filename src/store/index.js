@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createLogger from 'vuex/dist/logger'
-import { menu } from '@/store/modules/menu'
+import { favori } from '@/store/modules/favori'
 import { authentication } from '@/store/modules/authentication'
 
 Vue.use(Vuex)
@@ -10,7 +10,7 @@ export const store = new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   modules: {
     authentication: authentication,
-    menu: menu
+    favori: favori
   },
   plugins: [createLogger()]
 })

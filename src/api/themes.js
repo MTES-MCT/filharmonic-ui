@@ -29,7 +29,10 @@ const themes = [
 
 export default class ThemesAPI extends BaseAPI {
   async list () {
-    return themes.map(theme => theme.name) // ids are not referenced in models but copied
+    return themes
+  }
+  async get (id) {
+    return themes[id]
   }
   async create (theme) {
     theme.id = new Date().getTime() % 1000

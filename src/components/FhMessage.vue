@@ -56,7 +56,7 @@ export default {
       return this.message.lu ? 'Lu' : 'Non lu'
     },
     ...mapAuthenticationState({
-      user: state => state.user
+      user: state => state.rows[0].user
     })
   },
   async created () {

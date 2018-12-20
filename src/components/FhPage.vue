@@ -53,6 +53,7 @@ export default {
       } else {
         this.state = 'technical_error'
       }
+      console.log(err)
       this.message = err.message
     }
   }

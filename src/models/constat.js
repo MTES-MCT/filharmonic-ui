@@ -1,11 +1,45 @@
 export class Constat {
-  constructor ({ type = '', remarques = '', echeance = {} } = {}) {
+  constructor ({ id = '', type = '', remarques = '', echeance = {} } = {}) {
+    this.id = id
     this.type = type
     this.remarques = remarques
     this.echeance = echeance
   }
 }
 
+export const typesConstat = [
+  {
+    id: 'conforme',
+    label: 'Conforme',
+    color: 'green',
+    icon: 'check_circle'
+  },
+  {
+    id: 'observation',
+    label: 'Observation',
+    color: 'orange',
+    icon: 'info'
+  },
+  {
+    id: 'non_conforme',
+    label: 'Non conforme',
+    color: 'red',
+    icon: 'error'
+  },
+  {
+    id: 'proposition_mise_en_demeure',
+    label: 'Proposition de mise en demeure',
+    color: '#600060',
+    icon: 'error'
+  }
+]
+
 export function createConstat (data) {
-  return Object.freeze(new Constat(data))
+  const type = typesConstat.find(c => c.id === data.type)
+  return Object.freeze(new Constat({
+    id: data.id,
+    type,
+    remarques: data.remarques,
+    echeance: data.echeance
+  }))
 }

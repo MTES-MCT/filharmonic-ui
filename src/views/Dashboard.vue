@@ -45,10 +45,12 @@ fh-page(:wait="wait")
 </template>
 
 <script>
-import { nomsEtatsEnCours } from '@/api/inspections'
 import FhInspectionItem from '@/components/FhInspectionItem.vue'
 import BasePage from '@/views/mixins/BasePage'
 import * as _ from '@/util'
+import { createNamespacedHelpers } from 'vuex'
+import { nomsEtatsEnCours } from '@/models/etat'
+const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
 
 export default {
   components: {
@@ -62,6 +64,9 @@ export default {
     }
   },
   computed: {
+    ...mapAuthenticationState({
+      user: state => state.rows[0].user
+    }),
     $filter: {
       get () {
         return this.filter
@@ -99,7 +104,7 @@ export default {
         messagesNonLus: true
       })
     } else {
-      this.wait = this.$api.inspections.listAssigned(this.$store.state.authentication.user.id, {
+      this.wait = this.$api.inspections.listAssigned(this.user.id, {
         etablissement: true,
         messagesNonLus: true
       })

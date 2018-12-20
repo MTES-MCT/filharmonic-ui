@@ -20,16 +20,16 @@ v-app
           v-list-tile-content
             v-list-tile-title Inspections favorites
         v-list.py-0.grey.lighten-2(dense)
-          v-list-tile(v-for="inspection in inspectionsOuvertes" :key="inspection.id"
-                      :to="`/inspections/${inspection.id}`"
-                      :title="`${inspection.date} - ${inspection.etablissement.nom}`"
+          v-list-tile(v-for="favori in favoris" :key="favori.id"
+                      :to="`/inspections/${favori.id}`"
+                      :title="`${favori.date} - ${favori.etablissement.nom}`"
                       )
             v-list-tile-content
               v-list-tile-title
-                | {{ inspection.date }}
-                strong.ml-2 {{ inspection.etablissement.nom }}
+                | {{ favori.date }}
+                strong.ml-2 {{ favori.etablissement.nom }}
                 | ,&nbsp;
-                i {{ inspection.etablissement.adresse }}
+                i {{ favori.etablissement.adresse }}
 
       v-list-tile(to="/inspections" exact title="Inspections")
         v-list-tile-action
@@ -82,7 +82,7 @@ v-app
 import events from '@/events'
 import { createNamespacedHelpers } from 'vuex'
 import { LIST } from '@/store/action-types'
-const { mapState: mapMenuState, mapActions: mapMenuActions } = createNamespacedHelpers('menu')
+const { mapState: mapFavorisState, mapActions: mapFavorisActions } = createNamespacedHelpers('favori')
 const { mapState: mapAuthenticationState, mapActions: mapAuthenticationActions } = createNamespacedHelpers('authentication')
 
 const snackbarColor = {
@@ -107,11 +107,11 @@ export default {
     }
   },
   computed: {
-    ...mapMenuState({
-      inspectionsOuvertes: state => state.favoris
+    ...mapFavorisState({
+      favoris: 'rows'
     }),
     ...mapAuthenticationState({
-      user: state => state.user
+      user: state => state.rows[0].user
     })
   },
   async created () {
@@ -122,7 +122,7 @@ export default {
     events.bus.$off(events.Alert, this.updateAlert)
   },
   methods: {
-    ...mapMenuActions({
+    ...mapFavorisActions({
       listFavoris: LIST
     }),
     ...mapAuthenticationActions({

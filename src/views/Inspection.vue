@@ -61,7 +61,7 @@ import { GET, VALIDATE } from '@/store/action-types'
 
 if (!store.state.inspection) store.registerModule('inspection', inspection)
 const { mapActions: mapInspectionActions } = createNamespacedHelpers('inspection')
-const { mapState: mapMenuState } = createNamespacedHelpers('menu')
+const { mapState: mapFavorisState } = createNamespacedHelpers('favori')
 const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
 
 export default {
@@ -85,8 +85,8 @@ export default {
     }
   },
   computed: {
-    ...mapMenuState({ inspection: state => state.favoris[0] }),
-    ...mapAuthenticationState({ user: state => state.user }),
+    ...mapFavorisState({ inspection: state => state.rows[0] }),
+    ...mapAuthenticationState({ user: state => state.rows[0] }),
     breadcrumbs () {
       return this.inspection ? [
         {
