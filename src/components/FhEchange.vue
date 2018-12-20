@@ -99,8 +99,7 @@ export default {
     },
     etatInspection: {
       type: String,
-      required: true,
-      default: 'en_cours'
+      required: true
     }
   },
   data () {
@@ -124,7 +123,7 @@ export default {
       return !this.$permissions.isExploitant || !this.echange.brouillon
     },
     peutAjouterConstat () {
-      return !this.$permissions.isExploitant && !this.echange.constat && !this.showNewConstatForm
+      return !this.$permissions.isExploitant && this.etatInspection === 'en_cours' && !this.echange.constat && !this.showNewConstatForm
     }
   },
   methods: {
