@@ -279,6 +279,46 @@ const inspections = [
         }
       }
     ]
+  },
+  {
+    id: 5,
+    date: '2018-12-21',
+    type: 'courant',
+    annonce: true,
+    origine: 'plan_de_controle',
+    etat: 'valide',
+    contexte: 'Visite annuelle',
+    themes: [
+      "Rejets dans l'eau"
+    ],
+    inspecteurs: [
+      1
+    ],
+    etablissementId: '0999.00003',
+    comments: [],
+    echanges: [
+      {
+        id: 7,
+        brouillon: false,
+        sujet: 'Rejets Eau',
+        referencesReglementaires: [
+          "Article 8.2.1.1. de l'arrêté préfectoral du 28 juin 2017"
+        ],
+        messages: [],
+        constat: {
+          type: 'conforme',
+          remarques: 'RAS'
+        }
+      }
+    ],
+    suite: {
+      type: 'observation',
+      synthese: 'Cette visite à permis de relever des points faisant l’objet d’observations.'
+    },
+    approbation: {
+      approbateurId: 3,
+      date: new Date('2018-12-21T14:28:00')
+    }
   }
 ]
 
@@ -410,6 +450,9 @@ export default class InspectionsAPI extends BaseAPI {
     }
     return Promise.all(
       filteredInspections.map(async inspection => {
+        if (inspection.approbation) {
+          inspection.approbation.approbateur = await this.api.users.get(inspection.approbation.approbateurId)
+        }
         if (options.etablissement) {
           inspection.etablissement = await this.api.etablissements.get(inspection.etablissementId, {
             responsables: !!options.responsablesEtablissement
@@ -709,7 +752,7 @@ export default class InspectionsAPI extends BaseAPI {
     }
     inspection.etat = 'valide'
     inspection.approbation = {
-      auteur: this.api.store.state.authentication.user.id,
+      approbateurId: this.api.store.state.authentication.user.id,
       date: new Date()
     }
 
