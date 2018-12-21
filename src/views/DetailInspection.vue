@@ -8,7 +8,7 @@ v-container
             | Détails
           v-spacer
           v-toolbar-items
-            v-btn(flat :to="`/inspections/${inspection.id}/details/edit`" title="Modifier l'inspection")
+            v-btn(flat :to="`/inspections/${inspection.id}/details/edit`" title="Modifier l'inspection" v-if="peutEditer")
               v-icon(medium) edit
         v-card-text
           fh-detail-inspection(:inspection="inspection" readonly)
@@ -29,6 +29,11 @@ export default {
     inspection: {
       type: Object,
       required: true
+    }
+  },
+  computed: {
+    peutEditer () {
+      return !this.$permissions.isExploitant && (this.inspection.etat === 'preparation' || this.inspection.etat === 'en_cours')
     }
   }
 }

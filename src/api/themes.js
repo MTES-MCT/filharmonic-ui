@@ -36,6 +36,7 @@ export default class ThemesAPI extends BaseAPI {
     return themes.map(theme => theme.name) // ids are not referenced in models but copied
   }
   async create (nomTheme) {
+    this.requireInspecteur()
     const theme = {
       id: new Date().getTime() % 1000,
       name: nomTheme
@@ -44,6 +45,7 @@ export default class ThemesAPI extends BaseAPI {
     return theme
   }
   async delete (themeId) {
+    this.requireApprobateur()
     const index = themes.map(theme => theme.id).indexOf(themeId)
     if (index !== -1) {
       themes.splice(index, 1)

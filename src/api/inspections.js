@@ -521,6 +521,7 @@ export default class InspectionsAPI extends BaseAPI {
   }
 
   async ajouterPointDeControle (inspectionId, pointDeControle) {
+    this.requireInspecteur()
     const inspection = inspections.find(i => i.id === inspectionId)
     if (!inspection) {
       throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
@@ -538,6 +539,7 @@ export default class InspectionsAPI extends BaseAPI {
   }
 
   async modifierSuite (inspectionId, suite) {
+    this.requireInspecteur()
     const inspection = inspections.find(i => i.id === inspectionId)
     if (!inspection) {
       throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
@@ -554,6 +556,7 @@ export default class InspectionsAPI extends BaseAPI {
   }
 
   async supprimerSuite (inspectionId) {
+    this.requireInspecteur()
     const inspection = inspections.find(i => i.id === inspectionId)
     if (!inspection) {
       throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
@@ -569,6 +572,7 @@ export default class InspectionsAPI extends BaseAPI {
   }
 
   async ajouterCommentaireGeneral (inspectionId, commentaire) {
+    this.requireInspecteur()
     const inspection = inspections.find(i => i.id === inspectionId)
     if (!inspection) {
       throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
@@ -617,6 +621,7 @@ export default class InspectionsAPI extends BaseAPI {
   }
 
   async ajouterConstat (echangeId, constat) {
+    this.requireInspecteur()
     const inspection = inspections.find(inspection => inspection.echanges.some(echange => echange.id === echangeId))
     if (!inspection) {
       throw new ApplicationError(`Echange ${echangeId} non trouvé`)
