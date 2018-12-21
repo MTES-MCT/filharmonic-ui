@@ -374,14 +374,27 @@ export default class InspectionsAPI extends BaseAPI {
     filter: function : utilisé pour filtrer les résultats
     etablissement: bool : récupère l'établissement
     activite: bool : récupère l'activité
+    auteursMessages: bool : récupère les utilisateurs de chaque message
     messagesNonLus: bool : calcule le nombre de messages non lus
+    detailMessagesNonLus: bool : calcule le nombre de messages non lus pour chaque échange
     favoris: bool : ajoute le champ 'favoris' en fonction des inspections favorites de l'utilisateur
   }
   */
   async list (options = {}) {
     let filteredInspections = _.cloneDeep(inspections)
     if (this.isExploitant) {
-      filteredInspections = filteredInspections.filter(inspection => inspection.etat !== 'preparation')
+      filteredInspections = filteredInspections
+        .filter(inspection => inspection.etat !== 'preparation')
+        .map(inspection => {
+          delete inspection.comments
+          inspection.echanges = inspection.echanges
+            .filter(echange => !echange.brouillon)
+            .map(echange => {
+              echange.messages = echange.messages.filter(message => !message.confidential)
+              return echange
+            })
+          return inspection
+        })
     }
     if (options.etablissement) {
       const etablissementsAutorises = (await this.api.etablissements.list()).map(etablissement => etablissement.id)
@@ -407,9 +420,9 @@ export default class InspectionsAPI extends BaseAPI {
             auteur: true
           })).filter(event => event.inspectionId === inspection.id)
         }
-        if (options.auteursMessages) {
+        if (options.auteursMessages || options.messagesNonLus || options.detailMessagesNonLus) {
           await Promise.all([
-            ...inspection.comments.map(async message => {
+            ...(inspection.comments || []).map(async message => {
               message.author = await this.api.users.get(message.authorId)
             }),
 
@@ -422,16 +435,23 @@ export default class InspectionsAPI extends BaseAPI {
             })
           ])
         }
+        const filtreAutreMessages = this.isExploitant ? message => message.author.type !== 'exploitant' : message => message.author.type === 'exploitant'
         if (options.messagesNonLus) {
-          inspection.messagesNonLus = inspection.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
-            inspection.echanges.reduce((acc, echange) => (
-              acc +
-              echange.messages.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
-            ), 0)
+          inspection.messagesNonLus = inspection.echanges.reduce((acc, echange) => (
+            acc +
+            echange.messages
+              .filter(filtreAutreMessages)
+              .reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
+          ), 0)
+          if (this.isInspecteur) {
+            inspection.messagesNonLus += inspection.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
+          }
         }
         if (options.detailMessagesNonLus) {
           inspection.echanges.forEach(echange => {
-            echange.messagesNonLus = echange.messages.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
+            echange.messagesNonLus = echange.messages
+              .filter(filtreAutreMessages)
+              .reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
           })
         }
         if (options.favoris) {
