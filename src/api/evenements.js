@@ -165,10 +165,16 @@ export const evenements = {
       return `a ajouté un constat.`
     }
   },
+  creation_suite: {
+    notifications: () => ['inspecteurs'],
+    message (evenement) {
+      return `a ajouté une suite.`
+    }
+  },
   modification_suite: {
     notifications: () => ['inspecteurs'],
     message (evenement) {
-      return `a ajouté/modifié une suite.`
+      return `a modifié une suite.`
     }
   },
   suppression_suite: {

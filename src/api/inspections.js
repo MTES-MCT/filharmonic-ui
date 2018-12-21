@@ -542,10 +542,11 @@ export default class InspectionsAPI extends BaseAPI {
     if (!inspection) {
       throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
     }
+    const creation = !inspection.suite
     inspection.suite = _.cloneDeep(suite)
 
     await this.api.evenements.create({
-      type: 'modification_suite',
+      type: creation ? 'creation_suite' : 'modification_suite',
       auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
     })
