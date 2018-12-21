@@ -59,7 +59,7 @@ v-app
           v-icon open_in_new
           v-list-tile-title {{ app.nom }}
 
-    v-menu(:close-on-content-click="false" offset-x offset-y)
+    v-menu(:close-on-content-click="false" offset-x offset-y v-model="showNotificationsMenu")
       v-btn(slot="activator" v-if="notifications.length > 0" icon :title="`${notifications.length} nouvelle(s) notification(s)`")
         v-icon(color="red") notifications
       v-btn(slot="activator" v-else icon title="Aucune nouvelle notification")
@@ -70,7 +70,11 @@ v-app
           v-btn.ml-5(@click="toutMarquerCommeLues()" small outline color="primary" :disabled="notifications.length === 0") Tout marquer comme lu
         v-divider
         .fh-notifications-menu
-          fh-notification(v-for="notification in notifications" :key="notification.id" :notification="notification" @marquerCommeLue="marquerCommeLue(notification.id)")
+          fh-notification(v-for="notification in notifications" :key="notification.id"
+                          :notification="notification"
+                          @marquer-comme-lue="marquerCommeLue(notification.id)"
+                          @open-inspection="showNotificationsMenu = false"
+                          )
 
     v-menu(
       :close-on-content-click="false"
@@ -121,6 +125,7 @@ export default {
         message: '',
         color: ''
       },
+      showNotificationsMenu: false,
       notifications: []
     }
   },
