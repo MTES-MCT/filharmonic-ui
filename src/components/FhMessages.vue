@@ -16,7 +16,7 @@ v-card
         v-divider
         v-card-text
           v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1" clearable)
-          v-checkbox(v-model="confidential" label="Confidentiel" :disabled="echangeId < 0")
+          v-checkbox(v-model="confidential" label="Confidentiel" v-if="echangeId > 0 && !$permissions.isExploitant")
 
         fh-attachment(v-for="(attachment, index) in attachments" :key="index" :attachment="attachment")
 
