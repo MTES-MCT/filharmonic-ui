@@ -1,13 +1,13 @@
 <template lang="pug">
-  v-timeline-item(v-if="author" fill-dot :color="color" :icon="icon" :left="author.type !== 'exploitant'" :right="author.type === 'exploitant'")
-    span(v-if="author" slot="opposite" v-text="`${author.name} le ${message.date.toLocaleString()}`" :class="`${color}--text`")
+  v-timeline-item(fill-dot :color="color" :icon="icon" :left="message.author.type !== 'exploitant'" :right="message.author.type === 'exploitant'")
+    span(slot="opposite" v-text="`${message.author.name} le ${message.date.toLocaleString()}`" :class="`${color}--text`")
     v-card(dark :color="color" class="white--text")
       v-container.fluid.grid-list(class="pa-0 ma-0 text-xs-left")
         v-layout.row.wrap
           v-flex.xs-12
             v-card-actions
               v-spacer
-              v-btn(v-if="author && user.type !== author.type && !$permissions.isApprobateur" @click="lu =! lu" :label="label" icon flat slot="activator" :title="label")
+              v-btn(v-if="user.type !== message.author.type && !$permissions.isApprobateur" @click="lu =! lu" :label="label" icon flat slot="activator" :title="label")
                 v-icon(v-if="lu") drafts
                 v-icon(v-else) markunread
             v-card-text(:color="color")
@@ -35,11 +35,6 @@ export default {
       required: true
     }
   },
-  data () {
-    return {
-      author: null
-    }
-  },
   computed: {
     color () {
       return this.message.confidential ? 'grey' : (this.message.lu ? this.colorBrouillon : 'red')
@@ -61,9 +56,6 @@ export default {
         this.$store.commit('updateMessageLu', { messageId: this.message.id, lu: value })
       }
     }
-  },
-  async created () {
-    this.author = await this.$api.users.get(this.message.authorId)
   }
 }
 </script>

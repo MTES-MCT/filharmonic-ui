@@ -407,6 +407,21 @@ export default class InspectionsAPI extends BaseAPI {
             auteur: true
           })).filter(event => event.inspectionId === inspection.id)
         }
+        if (options.auteursMessages) {
+          await Promise.all([
+            ...inspection.comments.map(async message => {
+              message.author = await this.api.users.get(message.authorId)
+            }),
+
+            ...inspection.echanges.map(async echange => {
+              return Promise.all(
+                echange.messages.map(async message => {
+                  message.author = await this.api.users.get(message.authorId)
+                })
+              )
+            })
+          ])
+        }
         if (options.messagesNonLus) {
           inspection.messagesNonLus = inspection.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
             inspection.echanges.reduce((acc, echange) => (
@@ -709,6 +724,7 @@ export default class InspectionsAPI extends BaseAPI {
     this.api.store.commit('loadInspection', await this.api.inspections.get(inspectionId, {
       etablissement: true,
       activite: true,
+      auteursMessages: true,
       detailMessagesNonLus: true,
       favoris: true,
       responsablesEtablissement: true
