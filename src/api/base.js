@@ -14,19 +14,28 @@ export default class BaseAPI {
   }
 
   // helpers
+  get isExploitant () {
+    return this.api.store.getters.isExploitant
+  }
+  // ok si inspecteur ou approbateur
+  get isInspecteur () {
+    return !this.isExploitant
+  }
+  get isApprobateur () {
+    return this.api.store.getters.isApprobateur
+  }
   requireAuthentication () {
     if (!this.api.store.state.authentication.valid) {
       throw new ForbiddenError('Il faut être authentifié')
     }
   }
   requireInspecteur () {
-    // ok si inspecteur ou approbateur
-    if (this.api.store.getters.isExploitant) {
+    if (!this.isInspecteur) {
       throw new ForbiddenError('Il faut être inspecteur')
     }
   }
   requireApprobateur () {
-    if (!this.api.store.getters.isApprobateur) {
+    if (!this.isApprobateur) {
       throw new ForbiddenError('Il faut être approbateur')
     }
   }

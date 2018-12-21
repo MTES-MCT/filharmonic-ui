@@ -380,7 +380,7 @@ export default class InspectionsAPI extends BaseAPI {
   */
   async list (options = {}) {
     let filteredInspections = _.cloneDeep(inspections)
-    if (this.api.store.getters.isExploitant) {
+    if (this.isExploitant) {
       filteredInspections = filteredInspections.filter(inspection => inspection.etat !== 'preparation')
     }
     if (options.etablissement) {
