@@ -532,6 +532,51 @@ export default class InspectionsAPI extends BaseAPI {
     await this.loadInspection(inspectionId)
   }
 
+  async ajouterCommentaireGeneral (inspectionId, commentaire) {
+    const inspection = inspections.find(i => i.id === inspectionId)
+    if (!inspection) {
+      throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
+    }
+    const commentaireEntity = _.cloneDeep(commentaire)
+    commentaireEntity.id = new Date().getTime()
+    commentaireEntity.authorId = this.api.store.state.authentication.user.id
+    commentaireEntity.date = new Date()
+    commentaireEntity.lu = false
+    commentaireEntity.confidential = true
+    inspection.comments.push(commentaireEntity)
+
+    await this.api.evenements.create({
+      type: 'commentaire_general',
+      auteurId: this.api.store.state.authentication.user.id,
+      inspectionId: inspection.id
+    })
+    await this.loadInspection(inspection.id)
+  }
+
+  async ajouterMessage (echangeId, message) {
+    const inspection = inspections.find(inspection => inspection.echanges.some(echange => echange.id === echangeId))
+    if (!inspection) {
+      throw new ApplicationError(`Echange ${echangeId} non trouvé`)
+    }
+    const echange = inspection.echanges.find(echange => echange.id === echangeId)
+    const messageEntity = _.cloneDeep(message)
+    messageEntity.id = new Date().getTime()
+    messageEntity.authorId = this.api.store.state.authentication.user.id
+    messageEntity.date = new Date()
+    messageEntity.lu = false
+    echange.messages.push(messageEntity)
+
+    await this.api.evenements.create({
+      type: message.confidential ? 'commentaire' : 'message',
+      auteurId: this.api.store.state.authentication.user.id,
+      inspectionId: inspection.id,
+      data: {
+        echangeId: echange.id
+      }
+    })
+    await this.loadInspection(inspection.id)
+  }
+
   async ajouterConstat (echangeId, constat) {
     const inspection = inspections.find(inspection => inspection.echanges.some(echange => echange.id === echangeId))
     if (!inspection) {

@@ -38,7 +38,7 @@ v-card
 import FhAttachment from '@/components/FhAttachment.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import { allowedStates } from '@/api/inspections'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'FhMessages',
@@ -74,6 +74,9 @@ export default {
     ...mapGetters([
       'user'
     ]),
+    ...mapState({
+      inspection: 'inspectionOuverte'
+    }),
     showNewMessageForm () {
       return allowedStates[this.etatInspection].order < 4
     },
@@ -94,18 +97,21 @@ export default {
     openAttachmentPopup () {
       this.$refs.file.click()
     },
-    addMessage (messageText, confidential) {
-      this.$store.commit('addMessage', {
-        echangeId: this.echangeId,
-        message: {
-          authorId: this.user.id,
-          date: new Date(),
+    async addMessage (messageText, confidential) {
+      if (this.echangeId === -1) {
+        // si onglet commentaires
+        await this.$api.inspections.ajouterCommentaireGeneral(this.inspection.id, {
           text: messageText,
-          lu: false,
-          confidential: confidential,
           attachments: this.attachments
-        }
-      })
+        })
+      } else {
+        // si dans un échange
+        await this.$api.inspections.ajouterMessage(this.echangeId, {
+          text: messageText,
+          attachments: this.attachments,
+          confidential: confidential
+        })
+      }
       this.newMessage = ''
       this.attachments = []
       this.dialogNewMessage = false
