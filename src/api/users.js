@@ -77,7 +77,7 @@ export default class UsersAPI extends BaseAPI {
     return user
   }
   async toggleInspectionFavorite (inspectionId, favoris) {
-    const user = users.find(user => user.id === this.api.store.state.authentication.user.id)
+    const user = users.find(user => user.id === this.userId)
     const inspectionIndex = user.inspectionsFavorites.indexOf(inspectionId)
     if (favoris && inspectionIndex === -1) {
       user.inspectionsFavorites.push(inspectionId)

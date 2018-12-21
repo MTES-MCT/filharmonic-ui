@@ -67,7 +67,7 @@ export default class EtablissementsAPI extends BaseAPI {
   async list (options = {}) {
     let filteredEtablissements = _.cloneDeep(etablissements)
     if (this.isExploitant) {
-      filteredEtablissements = filteredEtablissements.filter(etablissement => etablissement.responsablesIds.includes(this.api.store.state.authentication.user.id))
+      filteredEtablissements = filteredEtablissements.filter(etablissement => etablissement.responsablesIds.includes(this.userId))
     }
     if (options.filter) {
       filteredEtablissements = filteredEtablissements.filter(options.filter)

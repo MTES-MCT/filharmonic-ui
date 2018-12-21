@@ -14,6 +14,9 @@ export default class BaseAPI {
   }
 
   // helpers
+  get userId () {
+    return this.api.store.state.authentication.user.id
+  }
   get isExploitant () {
     return this.api.store.getters.isExploitant
   }

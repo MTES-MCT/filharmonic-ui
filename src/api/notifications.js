@@ -21,7 +21,7 @@ const notifications = [
 
 export default class NotificationsAPI extends BaseAPI {
   async list (options = {}) {
-    let filteredNotifications = _.cloneDeep(notifications.filter(notification => notification.userId === this.api.store.state.authentication.user.id))
+    let filteredNotifications = _.cloneDeep(notifications.filter(notification => notification.userId === this.userId))
 
     if (options.filter) {
       filteredNotifications = filteredNotifications.filter(options.filter)

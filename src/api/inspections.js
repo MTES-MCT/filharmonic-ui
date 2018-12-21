@@ -446,7 +446,7 @@ export default class InspectionsAPI extends BaseAPI {
 
     let inspectionsFavorites = []
     if (options.favoris) {
-      inspectionsFavorites = (await this.api.users.get(this.api.store.state.authentication.user.id)).inspectionsFavorites
+      inspectionsFavorites = (await this.api.users.get(this.userId)).inspectionsFavorites
     }
     return Promise.all(
       filteredInspections.map(async inspection => {
@@ -526,7 +526,6 @@ export default class InspectionsAPI extends BaseAPI {
 
     await this.api.evenements.create({
       type: 'creation_inspection',
-      auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
     })
     return inspection.id
@@ -543,7 +542,6 @@ export default class InspectionsAPI extends BaseAPI {
 
     await this.api.evenements.create({
       type: 'modification_inspection',
-      auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
     })
     await this.loadInspection(updatedInspection.id)
@@ -575,7 +573,6 @@ export default class InspectionsAPI extends BaseAPI {
 
     await this.api.evenements.create({
       type: 'creation_pointdecontrole',
-      auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
     })
     await this.loadInspection(inspectionId)
@@ -592,7 +589,6 @@ export default class InspectionsAPI extends BaseAPI {
 
     await this.api.evenements.create({
       type: creation ? 'creation_suite' : 'modification_suite',
-      auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
     })
     await this.loadInspection(inspectionId)
@@ -608,7 +604,6 @@ export default class InspectionsAPI extends BaseAPI {
 
     await this.api.evenements.create({
       type: 'suppression_suite',
-      auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
     })
     await this.loadInspection(inspectionId)
@@ -622,7 +617,7 @@ export default class InspectionsAPI extends BaseAPI {
     }
     const commentaireEntity = _.cloneDeep(commentaire)
     commentaireEntity.id = new Date().getTime()
-    commentaireEntity.authorId = this.api.store.state.authentication.user.id
+    commentaireEntity.authorId = this.userId
     commentaireEntity.date = new Date()
     commentaireEntity.lu = false
     commentaireEntity.confidential = true
@@ -630,7 +625,6 @@ export default class InspectionsAPI extends BaseAPI {
 
     await this.api.evenements.create({
       type: 'commentaire_general',
-      auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
     })
     await this.loadInspection(inspection.id)
@@ -644,7 +638,7 @@ export default class InspectionsAPI extends BaseAPI {
     const echange = inspection.echanges.find(echange => echange.id === echangeId)
     const messageEntity = _.cloneDeep(message)
     messageEntity.id = new Date().getTime()
-    messageEntity.authorId = this.api.store.state.authentication.user.id
+    messageEntity.authorId = this.userId
     messageEntity.date = new Date()
     messageEntity.lu = false
     if (this.isExploitant) {
@@ -654,7 +648,6 @@ export default class InspectionsAPI extends BaseAPI {
 
     await this.api.evenements.create({
       type: message.confidential ? 'commentaire' : 'message',
-      auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id,
       data: {
         echangeId: echange.id
@@ -674,7 +667,6 @@ export default class InspectionsAPI extends BaseAPI {
 
     await this.api.evenements.create({
       type: 'creation_constat',
-      auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
     })
     await this.loadInspection(inspection.id)
@@ -694,7 +686,6 @@ export default class InspectionsAPI extends BaseAPI {
 
     await this.api.evenements.create({
       type: 'publication_inspection',
-      auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
     })
     await this.loadInspection(inspectionId)
@@ -714,7 +705,6 @@ export default class InspectionsAPI extends BaseAPI {
 
     await this.api.evenements.create({
       type: 'demande_validation_inspection',
-      auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
     })
     await this.loadInspection(inspectionId)
@@ -734,7 +724,6 @@ export default class InspectionsAPI extends BaseAPI {
 
     await this.api.evenements.create({
       type: 'rejet_validation_inspection',
-      auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
     })
     await this.loadInspection(inspectionId)
@@ -752,13 +741,12 @@ export default class InspectionsAPI extends BaseAPI {
     }
     inspection.etat = 'valide'
     inspection.approbation = {
-      approbateurId: this.api.store.state.authentication.user.id,
+      approbateurId: this.userId,
       date: new Date()
     }
 
     await this.api.evenements.create({
       type: 'validation_inspection',
-      auteurId: this.api.store.state.authentication.user.id,
       inspectionId: inspection.id
     })
     await this.loadInspection(inspectionId)
@@ -774,11 +762,11 @@ export default class InspectionsAPI extends BaseAPI {
   async listAssigned (options) {
     return this.list({
       ...options,
-      filter: inspection => inspection.inspecteurs.includes(this.api.store.state.authentication.user.id)
+      filter: inspection => inspection.inspecteurs.includes(this.userId)
     })
   }
   async listInspectionsFavorites (options) {
-    const user = await this.api.users.get(this.api.store.state.authentication.user.id)
+    const user = await this.api.users.get(this.userId)
     return this.list({
       ...options,
       filter: inspection => user.inspectionsFavorites.includes(inspection.id)

@@ -251,13 +251,13 @@ export default class EvenementsAPI extends BaseAPI {
   async create (evenement) {
     evenement.id = evenementsDB[evenementsDB.length - 1].id + 1
     evenement.created_at = new Date()
+    evenement.auteurId = this.userId
     await this.createNotifications(evenement)
     evenementsDB.push(_.cloneDeep(evenement))
   }
 
   // permet de créer des notifications aux utilisateurs concernés selon le type d'événément
   async createNotifications (evenement) {
-    const currentUserId = this.api.store.state.authentication.user.id
     const inspection = await this.api.inspections.get(evenement.inspectionId, {
       etablissement: true
     })
@@ -277,7 +277,7 @@ export default class EvenementsAPI extends BaseAPI {
 
     const groupsToNotify = metadonneesEvenement.notifications(this.api)
     if (groupsToNotify.includes('inspecteurs')) {
-      inspection.inspecteurs.filter(id => id !== currentUserId).map(addNotification)
+      inspection.inspecteurs.filter(id => id !== this.userId).map(addNotification)
     }
     if (groupsToNotify.includes('exploitants')) {
       inspection.etablissement.responsablesIds.map(addNotification)
@@ -285,7 +285,7 @@ export default class EvenementsAPI extends BaseAPI {
     if (groupsToNotify.includes('approbateurs')) {
       (await this.api.users.listApprobateurs())
         .map(user => user.id)
-        .filter(id => id !== currentUserId)
+        .filter(id => id !== this.userId)
         .map(addNotification)
     }
 
