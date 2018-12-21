@@ -1,5 +1,6 @@
 <template lang="pug">
 v-container
+  p Ces commentaires ne sont visibles que par les inspecteurs.
   fh-messages(:etatInspection="inspection.etat" :messages="inspection.comments")
 </template>
 

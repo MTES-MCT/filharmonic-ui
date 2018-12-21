@@ -1,7 +1,7 @@
 <template lang="pug">
 v-card
   v-toolbar(flat dense)
-    v-toolbar-title.subheading Messages {{ echangeId > 0 ? 'visibles' : 'invisibles' }} pour l'exploitant
+    v-toolbar-title.subheading Messages
     v-btn(small icon v-if="echangeId > 0" @click="publier" :color="colorBrouillon" :title="`${brouillon ? 'Brouillon' : 'Publié'}`")
       v-icon {{ brouillon ? 'visibility_off' : 'visibility' }}
     v-dialog(v-model="dialogNewMessage" v-if="showNewMessageForm" width="500")
