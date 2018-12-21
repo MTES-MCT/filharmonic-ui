@@ -564,6 +564,9 @@ export default class InspectionsAPI extends BaseAPI {
     messageEntity.authorId = this.api.store.state.authentication.user.id
     messageEntity.date = new Date()
     messageEntity.lu = false
+    if (this.isExploitant) {
+      messageEntity.confidential = false
+    }
     echange.messages.push(messageEntity)
 
     await this.api.evenements.create({
