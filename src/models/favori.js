@@ -1,7 +1,7 @@
 import { createEtablissement } from '@/models/etablissement'
 
 export class Favori {
-  constructor ({ id = 0, date = null, etablissement = null, userId = -1 } = {}) {
+  constructor ({ id = 0, date = {}, etablissement = {}, userId = -1 } = {}) {
     this.id = id
     this.etablissement = etablissement
     this.date = date

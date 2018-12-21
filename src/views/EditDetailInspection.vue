@@ -1,13 +1,13 @@
 <template lang="pug">
 v-container.grid-list-lg.inspection-form
   v-form(ref="form" v-model="validForm" lazy-validation)
-    fh-detail-inspection(:inspection="updatedInspection")
+    fh-detail-inspection
     v-btn(block @click="saveInspection" :disabled="!validForm" color="primary") Sauvegarder
 </template>
 
 <script>
 import FhDetailInspection from '@/components/FhDetailInspection.vue'
-import * as _ from '@/util'
+import { SAVE } from '@/store/action-types'
 
 export default {
   components: {
@@ -24,13 +24,10 @@ export default {
       validForm: false
     }
   },
-  created () {
-    this.updatedInspection = _.cloneDeep(this.inspection)
-  },
   methods: {
-    async saveInspection () {
+    saveInspection () {
       if (this.$refs.form.validate()) {
-        await this.$store.dispatch('saveInspection', this.updatedInspection)
+        this.$store.dispatch('inspection/' + SAVE)
         this.$router.push(`/inspections/${this.inspection.id}/details`)
       }
     }

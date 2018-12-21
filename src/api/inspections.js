@@ -129,8 +129,10 @@ export default class InspectionsAPI extends BaseAPI {
 
   async save (updatedInspection) {
     this.requireInspecteur()
-    const inspection = inspections.find(i => i.id === updatedInspection.id)
+    console.log('updatedInspection=' + JSON.stringify(updatedInspection))
+    const inspection = inspections.find(i => i.id === updatedInspection.detail.id)
     // on devrait nettoyer l'objet pour ne garder que les champs autorisés
+    console.log('inspection=' + JSON.stringify(inspection))
     Object.assign(inspection, _.cloneDeep(updatedInspection))
   }
 

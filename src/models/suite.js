@@ -1,5 +1,5 @@
 export class Suite {
-  constructor ({ type = '', remarques = '', echeance = {} } = {}) {
+  constructor ({ type = '', remarques = '', echeance = new Date() } = {}) {
     this.type = type
     this.remarques = remarques
     this.echeance = echeance

@@ -1,7 +1,7 @@
-import { createUser } from '@/models/user'
+import { createUser, User } from '@/models/user'
 
 export class Authentication {
-  constructor ({ valid = false, user = null, token = '' } = {}) {
+  constructor ({ valid = false, user = new User(), token = '' } = {}) {
     this.valid = valid
     this.user = user
     this.token = token
