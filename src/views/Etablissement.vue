@@ -23,7 +23,11 @@ import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 import BasePage from '@/views/mixins/BasePage'
 import { createNamespacedHelpers } from 'vuex'
-const { mapState: mapEtablissementState } = createNamespacedHelpers('inspection/detail')
+import { GET } from '@/store/action-types'
+import { store } from '@/store'
+import { inspection } from '@/store/modules/inspection'
+if (!store.state.inspection) store.registerModule('inspection', inspection)
+const { mapState: mapEtablissementState, mapActions: mapEtablissementActions } = createNamespacedHelpers('inspection/etablissement')
 
 export default {
   components: {
@@ -31,15 +35,28 @@ export default {
     FhDetailEtablissement
   },
   mixins: [BasePage],
-  data () {
-    return {
-      etablissement: null
+  props: {
+    etablissementId: {
+      type: String,
+      required: true
     }
   },
   computed: {
     ...mapEtablissementState({
       etablissement: state => state.rows[0]
     })
+  },
+  watch: {
+    etablissementId: {
+      handler: 'loadEtablissement',
+      immediate: true
+    }
+  },
+  methods: {
+    ...mapEtablissementActions({ load: GET }),
+    async loadEtablissement () {
+      this.wait = this.load(this.etablissementId)
+    }
   }
 }
 </script>

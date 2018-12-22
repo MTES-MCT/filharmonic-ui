@@ -5,10 +5,10 @@ fh-page(:wait="wait")
       v-container.pa-0
         v-toolbar(flat dense)
           v-breadcrumbs(:items="breadcrumbs" divider=">" large)
-          fh-etat-inspection(:etat="inspection.etat" small)
+          fh-etat-inspection(small)
           v-spacer
 
-          v-btn.white--text(v-if="$permissions.isApprobateur && inspection.etat == 'attente_validation'"
+          v-btn.white--text(v-if="$permissions.isApprobateur && etat == 'attente_validation'"
                             :loading="workflowActionLoading"
                             :disabled="workflowActionLoading"
                             color="green"
@@ -23,30 +23,30 @@ fh-page(:wait="wait")
             v-list.py-0
               v-list-tile(@click="showLettreAnnonce = true")
                 v-list-tile-title Générer la lettre d'annonce
-                fh-lettre-annonce(:inspection="inspection" :show-dialog="showLettreAnnonce" @close="showLettreAnnonce = false")
+                fh-lettre-annonce(:inspection="detail" :show-dialog="showLettreAnnonce" @close="showLettreAnnonce = false")
               v-list-tile(@click="showLettreSuites = true")
                 v-list-tile-title Générer la lettre de suites
-                fh-lettre-suites(:inspection="inspection" :show-dialog="showLettreSuites" @close="showLettreSuites = false")
+                fh-lettre-suites(:inspection="detail" :show-dialog="showLettreSuites" @close="showLettreSuites = false")
 
           v-toolbar-items(slot="extension")
-            v-btn(flat :to="`/inspections/${inspection.id}`" exact)
+            v-btn(flat :to="`/inspections/${detail.id}`" exact)
               v-icon(left) check_circle
               | Points de contrôle
-            v-btn(flat :to="`/inspections/${inspection.id}/details`")
+            v-btn(flat :to="`/inspections/${detail.id}/details`")
               v-icon(left) info
               | Détails
-            v-btn(flat :to="`/inspections/${inspection.id}/commentaires`")
+            v-btn(flat :to="`/inspections/${detail.id}/commentaires`")
               v-icon(left) message
               | Commentaires
-            v-btn(flat :to="`/inspections/${inspection.id}/recapitulatif`")
+            v-btn(flat :to="`/inspections/${detail.id}/recapitulatif`")
               v-icon(left) wrap_text
               | Récapitulatif
-            v-btn(flat :to="`/inspections/${inspection.id}/activite`")
+            v-btn(flat :to="`/inspections/${detail.id}/activite`")
               v-icon(left) event
               | Activité
 
     v-container.fluid.pa-0
-      router-view(:inspection="inspection")
+      router-view(:inspectionId="detail.id")
 </template>
 
 <script>
@@ -61,7 +61,9 @@ import { GET, VALIDATE } from '@/store/action-types'
 
 if (!store.state.inspection) store.registerModule('inspection', inspection)
 const { mapActions: mapInspectionActions } = createNamespacedHelpers('inspection')
-const { mapState: mapFavorisState } = createNamespacedHelpers('favori')
+const { mapState: mapDetailState } = createNamespacedHelpers('inspection/detail')
+const { mapState: mapEtablissementState } = createNamespacedHelpers('inspection/etablissement')
+const { mapState: mapEtatState } = createNamespacedHelpers('inspection/etat')
 const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
 
 export default {
@@ -85,18 +87,20 @@ export default {
     }
   },
   computed: {
-    ...mapFavorisState({ inspection: state => state.rows[0] }),
+    ...mapEtablissementState({ etablissement: state => state.rows[0] }),
+    ...mapDetailState({ detail: state => state.rows[0] }),
+    ...mapEtatState({ etat: state => state.rows[0] }),
     ...mapAuthenticationState({ user: state => state.rows[0] }),
     breadcrumbs () {
-      return this.inspection ? [
+      return this.detail ? [
         {
-          text: this.inspection.etablissement.nom,
-          to: `/etablissements/${this.inspection.etablissement.id}`
+          text: this.etablissement.nom,
+          to: `/etablissements/${this.etablissement.id}`
         },
         {
-          text: `Inspection du ${this.inspection.date.toLocaleString()}`,
+          text: `Inspection du ${this.detail.date.toLocaleString()}`,
           'active-class': null,
-          to: `/inspections/${this.inspection.id}`
+          to: `/inspections/${this.detail.id}`
         }
       ] : []
     },
