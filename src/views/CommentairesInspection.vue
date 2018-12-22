@@ -3,22 +3,21 @@ v-card
   v-toolbar(flat dense)
     v-toolbar-title.subheading Messages invisibles pour l'exploitant
   v-card-text
-    fh-message(:etatInspection="inspection.etat" v-for="comment in inspection.comments" :message="comment" :key="comment.id")
+    fh-message(v-for="comment in comments" :message="comment" :key="comment.id")
 
 </template>
 
 <script>
 import FhMessage from '@/components/FhMessage.vue'
+import { createNamespacedHelpers } from 'vuex'
+const { mapState: mapCommentState } = createNamespacedHelpers('inspection/comment')
 
 export default {
   components: {
     FhMessage
   },
-  props: {
-    inspection: {
-      type: Object,
-      required: true
-    }
+  computed: {
+    ...mapCommentState({ comments: 'rows' })
   }
 }
 </script>
