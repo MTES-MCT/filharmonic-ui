@@ -14,11 +14,10 @@ export class Echange {
 }
 
 export function createEchange (data) {
-  console.log('echange data = ' + JSON.stringify(data))
   const constat = data.hasOwnProperty('constat') ? createConstat(data.constat) : new Constat()
   const messages = data.messages.map(x => createMessage(x))
   const suites = data.hasOwnProperty('suites') ? data.suites.map(x => createSuite(x)) : []
-  return Object.freeze(new Echange({
+  return Object.assign(new Echange({
     id: data.id,
     sujet: data.sujet,
     brouillon: data.brouillon,

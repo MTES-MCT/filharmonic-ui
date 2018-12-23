@@ -14,7 +14,7 @@ v-expansion-panel(expand v-if="showEchange")
                                             target="_blank")
         | {{ referenceReglementaire }}
 
-      .fh-echange__constat(v-if="echange.constat" :style="`border-left-color: ${typeConstatEchange.color}`")
+      .fh-echange__constat(v-if="constat" :style="`border-left-color: ${typeConstatEchange.color}`")
         v-layout.align-center
           span.subheading.mr-2 Constat finalisé :
           v-chip(small :color="typeConstatEchange.color" dark text-color="white")
@@ -22,22 +22,22 @@ v-expansion-panel(expand v-if="showEchange")
               v-icon(large) {{ typeConstatEchange.icon }}
             | {{ typeConstatEchange.label }}
 
-        v-layout.my-2(v-if="echange.constat.remarques")
+        v-layout.my-2(v-if="constat.remarques")
           span.subheading.mr-2 Remarques&nbsp;:
           v-flex
-            div {{ echange.constat.remarques }}
-        v-layout.align-center(v-if="echange.constat.echeance")
+            div {{ constat.remarques }}
+        v-layout.align-center(v-if="constat.echeance")
           span.subheading.mr-2 Délai de mise en conformité :
           v-flex
             | Avant le&nbsp;
-            time(:datetime="echange.constat.echeance") {{ echange.constat.echeance }}
+            time(:datetime="constat.echeance") {{ constat.echeance }}
 
     v-card.px-3
       v-card-text
         v-card
           v-toolbar(flat dense)
             v-toolbar-title.subheading Messages {{ echange.id > 0 ? 'visibles' : 'invisibles' }} pour l'exploitant
-            v-btn(small icon v-if="echange.id > 0" @click="publier" :color="colorBrouillon" :title="`${echange.brouillon ? 'Brouillon' : 'Publié'}`")
+            v-btn(small icon v-if="echange.id > 0" @click="toggleBrouillon" :color="colorBrouillon" :title="`${echange.brouillon ? 'Brouillon' : 'Publié'}`")
               v-icon {{ echange.brouillon ? 'visibility_off' : 'visibility' }}
             v-dialog(v-model="dialogNewMessage" v-if="showNewMessageForm" width="500")
               v-btn(small icon slot="activator" title="Nouveau message" :color="colorBrouillon")
@@ -64,7 +64,7 @@ v-expansion-panel(expand v-if="showEchange")
             v-timeline
               fh-message(v-for="(message, index) in messages" :key="message.message.id" :index="index" :message="message.message" :colorBrouillon="colorBrouillon" v-if="message.echangeId === echange.id")
 
-        div(v-if="!echange.constat")
+        div(v-if="!constat")
           v-slide-y-transition(hide-on-leave)
             v-card.my-3.elevation-4(v-if="showNewConstatForm")
               v-toolbar(flat color="secondary" dense dark)
@@ -105,7 +105,7 @@ v-expansion-panel(expand v-if="showEchange")
                   v-icon(left) gavel
                   | Sauvegarder le constat
 
-          v-btn.mt-4(color="secondary" v-if="!echange.constat && !showNewConstatForm" @click="showNewConstatForm = true")
+          v-btn.mt-4(color="secondary" v-if="!constat && !showNewConstatForm" @click="showNewConstatForm = true")
             v-icon(left) gavel
             | Ajouter un constat
 
@@ -123,6 +123,7 @@ import { typesConstat } from '@/models/constat'
 const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
 const { mapActions: mapEchangeActions, mapMutations: mapEchangeMutations } = createNamespacedHelpers('inspection/echange')
 const { mapState: mapEtatState } = createNamespacedHelpers('inspection/etat')
+const { mapState: mapConstatState } = createNamespacedHelpers('inspection/echange/constat')
 
 export default {
   name: 'FhEchange',
@@ -130,10 +131,6 @@ export default {
     FhMessage
   },
   props: {
-    echange: {
-      type: Object,
-      required: true
-    },
     index: {
       type: Number,
       required: true
@@ -159,7 +156,7 @@ export default {
       return typesConstat
     },
     typeConstatEchange () {
-      return this.echange.constat ? this.echange.constat.type : {}
+      return this.constat ? this.constat.type : {}
     },
     showEchange () {
       return !this.$permissions.isExploitant || !this.echange.brouillon
@@ -170,6 +167,12 @@ export default {
     ...mapAuthenticationState({
       user: state => state.rows[0].user
     }),
+    ...mapConstatState({
+      constats: 'rows'
+    }),
+    constat () {
+      return this.constats.length > 0 ? this.constats.find(c => c.echangeId === this.echange.id).constat : null
+    },
     ...mapMessagesMultiRowFields({ messages: 'rows' }),
     showNewMessageForm () {
       return this.etat.order < 4
@@ -177,7 +180,7 @@ export default {
     colorBrouillon () {
       return this.echange.brouillon ? 'primary' : 'success'
     },
-    echangeState () {
+    echange () {
       return this.$store.state.inspection.echange.rows[this.index]
     }
   },
@@ -200,7 +203,7 @@ export default {
     }),
     addMessage (messageText, confidential) {
       this.addEchangeMessage('addMessage', {
-        echange: this.echangeState,
+        echange: this.echange,
         message: {
           authorId: this.user.id,
           date: new Date(),
@@ -212,11 +215,12 @@ export default {
       })
       this.newMessage = ''
       this.dialogNewMessage = false
-      this.save(this.echangeState)
+      this.save(this.echange)
     },
-    publier () {
-      if (this.$permissions.isInspecteur) this.echange.brouillon = !this.echange.brouillon
-      this.save(this.echangeState)
+    toggleBrouillon () {
+      const value = !this.echange.brouillon
+      if (this.$permissions.isInspecteur) this.$store.commit('inspection/echange/updateField', { path: 'rows[' + this.index + '].brouillon', value })
+      this.save(this.echange)
     }
   }
 }

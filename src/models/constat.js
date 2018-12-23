@@ -1,5 +1,5 @@
 export class Constat {
-  constructor ({ id = '', type = '', remarques = '', echeance = new Date() } = {}) {
+  constructor ({ id = '', type = {}, remarques = '', echeance = new Date() } = {}) {
     this.id = id
     this.type = type
     this.remarques = remarques
@@ -35,15 +35,12 @@ export const typesConstat = [
 ]
 
 export function createConstat (data) {
-  if (data !== 'undefined') {
-    return {}
-  } else {
-    const type = typesConstat.find(c => c.id === data.type)
-    return Object.freeze(new Constat({
-      id: data.id,
-      type,
-      remarques: data.remarques,
-      echeance: data.echeance
-    }))
+  const type = typesConstat.find(c => c.id === data.type)
+  const input = {
+    id: data.id,
+    type,
+    remarques: data.remarques,
+    echeance: data.echeance
   }
+  return Object.freeze(new Constat(input))
 }
