@@ -33,11 +33,13 @@ export default {
     },
     colorBrouillon: {
       type: String,
-      required: true
+      required: false,
+      default: 'primary'
     },
     index: {
       type: Number,
-      required: true
+      required: false,
+      default: -1
     }
   },
   data () {
