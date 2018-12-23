@@ -4,26 +4,23 @@ v-container
   v-btn(icon @click="toggleSort()" :class="{'fh-toggle--active': sortAscending}")
     v-icon sort
   div(v-for="evenement in activiteSorted" :key="evenement.id")
-    | {{ evenement.created_at.toLocaleString() }} - {{ evenement.auteur.name }} : {{ evenement.type }}
+    | {{ evenement.created.toLocaleString() }} - {{ evenement.author.name }} : {{ evenement.type }}
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
+const { mapState: mapEvenementsState } = createNamespacedHelpers('inspection/evenement')
 export default {
-  props: {
-    inspection: {
-      type: Object,
-      required: true
-    }
-  },
   data () {
     return {
       sortAscending: false
     }
   },
   computed: {
+    ...mapEvenementsState({ evenements: 'rows' }),
     activiteSorted () {
       const sortDirection = this.sortAscending ? 1 : -1
-      return this.inspection.activite.slice().sort((a, b) => (a.created_at < b.created_at ? -1 : 1) * sortDirection)
+      return this.evenements.slice().sort((a, b) => (a.created < b.created ? -1 : 1) * sortDirection)
     }
   },
   methods: {

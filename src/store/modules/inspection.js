@@ -7,6 +7,7 @@ import { detail } from '@/store/modules/detail'
 import { etat } from '@/store/modules/etat'
 import { inspecteur } from '@/store/modules/inspecteur'
 import { comment } from '@/store/modules/comment'
+import { evenement } from '@/store/modules/evenement'
 import { getField, updateField, createHelpers } from 'vuex-map-fields'
 import { createEtat } from '@/models/etat'
 import { createDetail } from '@/models/detail'
@@ -17,6 +18,7 @@ import { createEtablissement } from '@/models/etablissement'
 import { createUser } from '@/models/user'
 import { createInspection } from '@/models/inspection'
 import { createMessage } from '@/models/message'
+import { createEvenement } from '@/models/evenement'
 
 const actions = {
   async [GET] ({ commit }, id) {
@@ -59,6 +61,9 @@ const actions = {
     inspection.comments.forEach(c => {
       commit('comment/' + ADD_ROW, createMessage(c))
     })
+    inspection.evenements.forEach(c => {
+      commit('evenement/' + ADD_ROW, createEvenement(c))
+    })
   },
   async [SAVE] ({ commit, state }) {
     const inspectionState = {
@@ -95,6 +100,7 @@ const reset = (commit) => {
   commit('theme/' + RESET)
   commit('echange/' + RESET)
   commit('comment/' + RESET)
+  commit('evenement/' + RESET)
   commit('inspecteur/' + RESET)
   commit('echange/message/' + RESET)
   commit('echange/suite/' + RESET)
@@ -122,7 +128,8 @@ const modules = {
   etat,
   inspecteur,
   detail,
-  comment
+  comment,
+  evenement
 }
 
 const getters = {

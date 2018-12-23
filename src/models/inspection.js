@@ -5,13 +5,14 @@ import { createEchange } from '@/models/echange'
 import { createEtat, Etat } from '@/models/etat'
 import { createDetail, Detail } from '@/models/detail'
 import { createEtablissement, Etablissement } from '@/models/etablissement'
+import { createEvenement } from '@/models/evenement'
 
 export class Inspection {
   constructor ({
     detail = new Detail(),
     etat = new Etat(), themes = [],
     inspecteurs = [], etablissement = new Etablissement(),
-    comments = [], echanges = [] } = {}) {
+    comments = [], echanges = [], evenements = [] } = {}) {
     this.detail = detail
     this.etat = etat
     this.themes = themes
@@ -19,6 +20,7 @@ export class Inspection {
     this.etablissement = etablissement
     this.comments = comments
     this.echanges = echanges
+    this.evenements = evenements
   }
 }
 
@@ -30,6 +32,7 @@ export function createInspection (data) {
   const inspecteurs = data.inspecteurs.map(x => createUser(x))
   const comments = data.comments.map(x => createMessage(x))
   const echanges = data.echanges.map(x => createEchange(x))
+  const evenements = data.echanges.map(x => createEvenement(x))
   return Object.freeze(new Inspection({
     detail,
     etat,
@@ -37,5 +40,6 @@ export function createInspection (data) {
     inspecteurs,
     etablissement,
     comments,
-    echanges }))
+    echanges,
+    evenements }))
 }

@@ -7,7 +7,7 @@ const evenements = [
     type: 'message',
     auteurId: 1,
     inspectionId: 1,
-    created_at: new Date('2018-09-16T14:00:00'),
+    created: new Date('2018-09-16T14:00:00'),
     data: {
       messageId: 1,
       pointDeControleId: 1
@@ -18,7 +18,7 @@ const evenements = [
     type: 'commentaire_general',
     auteurId: 2,
     inspectionId: 2,
-    created_at: new Date('2018-11-14T08:50:00'),
+    created: new Date('2018-11-14T08:50:00'),
     data: {
       messageId: 2
     }
@@ -28,7 +28,7 @@ const evenements = [
     type: 'commentaire_general',
     auteurId: 1,
     inspectionId: 2,
-    created_at: new Date('2018-11-16T16:50:00'),
+    created: new Date('2018-11-16T16:50:00'),
     data: {
       messageId: 3
     }
@@ -38,7 +38,7 @@ const evenements = [
     type: 'message',
     auteurId: 1,
     inspectionId: 2,
-    created_at: new Date('2018-11-16T14:00:00'),
+    created: new Date('2018-11-16T14:00:00'),
     data: {
       messageId: 4,
       pointDeControleId: 2
@@ -49,7 +49,7 @@ const evenements = [
     type: 'message',
     auteurId: 4,
     inspectionId: 2,
-    created_at: new Date('2018-11-16T16:50:00'),
+    created: new Date('2018-11-16T16:50:00'),
     data: {
       messageId: 5,
       pointDeControleId: 2
@@ -60,7 +60,7 @@ const evenements = [
     type: 'message',
     auteurId: 1,
     inspectionId: 2,
-    created_at: new Date('2018-11-17T12:55:00'),
+    created: new Date('2018-11-17T12:55:00'),
     data: {
       messageId: 6,
       pointDeControleId: 2
@@ -71,7 +71,7 @@ const evenements = [
     type: 'commentaire',
     auteurId: 2,
     inspectionId: 2,
-    created_at: new Date('2018-11-14T08:50:00'),
+    created: new Date('2018-11-14T08:50:00'),
     data: {
       messageId: 7,
       pointDeControleId: 2
@@ -82,7 +82,7 @@ const evenements = [
     type: 'commentaire',
     auteurId: 1,
     inspectionId: 2,
-    created_at: new Date('2018-11-16T16:50:00'),
+    created: new Date('2018-11-16T16:50:00'),
     data: {
       messageId: 8,
       pointDeControleId: 2
@@ -93,7 +93,7 @@ const evenements = [
     type: 'message',
     auteurId: 1,
     inspectionId: 2,
-    created_at: new Date('2018-11-16T14:10:00'),
+    created: new Date('2018-11-16T14:10:00'),
     data: {
       messageId: 9,
       pointDeControleId: 5
@@ -104,7 +104,7 @@ const evenements = [
     type: 'message',
     auteurId: 4,
     inspectionId: 2,
-    created_at: new Date('2018-11-17T08:50:00'),
+    created: new Date('2018-11-17T08:50:00'),
     data: {
       messageId: 10,
       pointDeControleId: 5
@@ -128,9 +128,9 @@ export default class EvenementsAPI extends BaseAPI {
     return Promise.all(
       _.cloneDeep(evenements)
         // tri car les éléments mockés ne sont pas ordonnés
-        .sort((a, b) => a.created_at < b.created_at ? -1 : 1)
+        .sort((a, b) => a.created < b.created ? -1 : 1)
         .map(async evenement => {
-          evenement.auteur = await this.api.users.get(evenement.auteurId)
+          evenement.author = await this.api.users.get(evenement.auteurId)
           return evenement
         })
     )
@@ -138,7 +138,7 @@ export default class EvenementsAPI extends BaseAPI {
 
   async create (evenement) {
     evenement.id = new Date().getTime() % 1000
-    evenement.created_at = new Date()
+    evenement.created = new Date()
     evenements.push(_.cloneDeep(evenement))
   }
 }
