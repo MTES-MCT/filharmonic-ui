@@ -119,7 +119,7 @@ import { createNamespacedHelpers } from 'vuex'
 import { typesConstat } from '@/models/constat'
 
 const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
-const { mapState: mapEchangeState } = createNamespacedHelpers('inspection/echange')
+const { mapState: mapEchangeState, mapActions: mapEchangeActions } = createNamespacedHelpers('inspection/echange')
 const { mapState: mapMessageState, mapActions: mapMessageActions } = createNamespacedHelpers('inspection/echange/message')
 const { mapState: mapEtatState } = createNamespacedHelpers('inspection/etat')
 const { mapState: mapConstatState } = createNamespacedHelpers('inspection/echange/constat')
@@ -204,6 +204,9 @@ export default {
     ...mapEvenementActions({
       saveEvenement: SAVE
     }),
+    ...mapEchangeActions({
+      saveEchange: SAVE
+    }),
     async addMessage (messageText, confidential) {
       const messageId = await this.saveMessage({
         echangeId: this.echange.id,
@@ -220,7 +223,7 @@ export default {
     toggleBrouillon () {
       const value = !this.echange.brouillon
       if (this.$permissions.isInspecteur) this.$store.commit('inspection/echange/updateField', { path: 'rows[' + this.index + '].brouillon', value })
-      this.save(this.echange)
+      this.saveEchange(this.echange)
     }
   }
 }
