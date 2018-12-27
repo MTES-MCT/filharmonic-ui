@@ -40,7 +40,7 @@ const actions = {
     inspection.echanges.forEach(e => {
       commit('echange/' + ADD_ROW, e)
       e.messages.forEach(m => {
-        commit('echange/message/' + ADD_ROW, { echangeId: e.id, message: m })
+        commit('echange/message/' + ADD_ROW, m)
       })
       if (e.constat) {
         const c = createConstat(e.constat)
@@ -48,7 +48,8 @@ const actions = {
       }
       if (e.suites) {
         e.suites.forEach(s => {
-          commit('echange/suite/' + ADD_ROW, createSuite(s))
+          const suite = createSuite(s)
+          commit('echange/suite/' + ADD_ROW, { echangeId: e.id, suite: suite })
         })
       }
     })

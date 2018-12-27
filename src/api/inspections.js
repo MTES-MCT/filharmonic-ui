@@ -75,15 +75,16 @@ export default class InspectionsAPI extends BaseAPI {
         if (options.echanges) {
           inspection.echanges = await this.api.echanges.listByInspection(inspection.id)
           if (options.detailMessagesNonLus) {
-            inspection.echanges.forEach(echange => {
+            inspection.echanges.forEach(async echange => {
+              echange.messages = await this.api.messages.listByEchange(echange.id)
               echange.messagesNonLus = echange.messages.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
             })
           }
           if (options.messagesNonLus) {
             inspection.messagesNonLus = inspection.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0) +
-              inspection.echanges.reduce((acc, echange) => (
+              inspection.echanges.reduce(async (acc, echange) => (
                 acc +
-                echange.messages.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
+                (await this.api.messages.listByEchange(echange.id)).reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
               ), 0)
           }
         }

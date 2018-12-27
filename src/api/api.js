@@ -6,6 +6,7 @@ import LettresAPI from '@/api/lettres'
 import ThemesAPI from '@/api/themes'
 import UsersAPI from '@/api/users'
 import EchangesAPI from '@/api/echanges'
+import MessagesAPI from '@/api/messages'
 
 export default class API {
   constructor (options = {}) {
@@ -22,6 +23,9 @@ export default class API {
       api: this
     })
     this.echanges = new EchangesAPI({
+      api: this
+    })
+    this.messages = new MessagesAPI({
       api: this
     })
     this.lettres = new LettresAPI({

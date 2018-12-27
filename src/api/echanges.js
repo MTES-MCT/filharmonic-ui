@@ -11,16 +11,7 @@ const echanges = [
     referencesReglementaires: [
       "Articles 3.2.3., 3.2.8. et 8.2.1.2. de l'arrêté préfectoral du 28 juin 2017"
     ],
-    messages: [
-      {
-        id: 1,
-        authorId: 1,
-        text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
-        date: new Date('2018-09-16T14:00:00'),
-        lu: true,
-        attachments: []
-      }
-    ]
+    messages: [1]
   },
   {
     id: 6,
@@ -42,59 +33,7 @@ const echanges = [
       "Article 3.2.8. de l'arrêté préfectoral du 28 juin 2017",
       "Article 8.2.1.2. de l'arrêté préfectoral du 28 juin 2017"
     ],
-    messages: [
-      {
-        id: 4,
-        authorId: 1,
-        text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
-        date: new Date('2018-11-16T14:00:00'),
-        confidential: false,
-        lu: true,
-        attachments: []
-      },
-      {
-        id: 5,
-        authorId: 4,
-        text: 'Voici le document en question.',
-        date: new Date('2018-11-16T16:50:00'),
-        confidential: false,
-        lu: true,
-        attachments: [
-          {
-            id: 1,
-            filename: 'analyses_2018.pdf',
-            type: 'pdf'
-          }
-        ]
-      },
-      {
-        id: 6,
-        authorId: 1,
-        text: 'Merci.',
-        date: new Date('2018-11-17T12:55:00'),
-        lu: true,
-        confidential: false,
-        attachments: []
-      },
-      {
-        id: 7,
-        authorId: 2,
-        text: "Attention à l'article 243.",
-        date: new Date('2018-11-14T08:50:00'),
-        confidential: true,
-        lu: true,
-        attachments: []
-      },
-      {
-        id: 8,
-        authorId: 1,
-        text: "L'article 843 s'applique également.",
-        date: new Date('2018-11-16T16:50:00'),
-        confidential: true,
-        lu: true,
-        attachments: []
-      }
-    ],
+    messages: [ 4, 5, 6, 7, 8 ],
     constat: {
       type: 'conforme'
     }
@@ -136,32 +75,7 @@ const echanges = [
     referencesReglementaires: [
       "Article 8.2.1.1. de l'arrêté préfectoral du 28 juin 2017"
     ],
-    messages: [
-      {
-        id: 9,
-        authorId: 1,
-        text: "Auriez-vous l'obligeance de me fournir une photo de la cuve ?",
-        date: new Date('2018-11-16T14:10:00'),
-        confidential: false,
-        lu: true,
-        attachments: []
-      },
-      {
-        id: 10,
-        authorId: 4,
-        text: 'Voici une photo.',
-        date: new Date('2018-11-17T08:50:00'),
-        confidential: false,
-        lu: true,
-        attachments: [
-          {
-            id: 2,
-            filename: 'photo_cuve.jpg',
-            type: 'image'
-          }
-        ]
-      }
-    ],
+    messages: [ 9, 10 ],
     constat: {
       type: 'proposition_mise_en_demeure',
       remarques: 'Il faut réparer la fissure de la cuve.',

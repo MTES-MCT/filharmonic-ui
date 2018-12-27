@@ -62,7 +62,7 @@ v-expansion-panel(expand v-if="showEchange")
 
           v-card-text
             v-timeline
-              fh-message(v-for="(message, index) in messages" :key="message.message.id" :index="index" :message="message.message" :colorBrouillon="colorBrouillon" v-if="message.echangeId === echange.id")
+              fh-message(v-for="(message, indexMessage) in messages" :key="message.id" :index="indexMessage" :colorBrouillon="colorBrouillon" v-if="message.echangeId === echange.id")
 
         div(v-if="!constat")
           v-slide-y-transition(hide-on-leave)
@@ -115,15 +115,15 @@ v-expansion-panel(expand v-if="showEchange")
 import Vue from 'vue'
 import FhMessage from '@/components/FhMessage.vue'
 import { SAVE } from '@/store/action-types'
-import { ADD_ROW } from '@/store/mutation-types'
 import { createNamespacedHelpers } from 'vuex'
-import { mapMessagesMultiRowFields } from '@/store/modules/echange'
 import { typesConstat } from '@/models/constat'
 
 const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
-const { mapActions: mapEchangeActions, mapMutations: mapEchangeMutations } = createNamespacedHelpers('inspection/echange')
+const { mapState: mapEchangeState } = createNamespacedHelpers('inspection/echange')
+const { mapState: mapMessageState, mapActions: mapMessageActions } = createNamespacedHelpers('inspection/echange/message')
 const { mapState: mapEtatState } = createNamespacedHelpers('inspection/etat')
 const { mapState: mapConstatState } = createNamespacedHelpers('inspection/echange/constat')
+const { mapActions: mapEvenementActions } = createNamespacedHelpers('inspection/evenement')
 
 export default {
   name: 'FhEchange',
@@ -170,10 +170,13 @@ export default {
     ...mapConstatState({
       constats: 'rows'
     }),
+    ...mapEchangeState({
+      echanges: 'rows'
+    }),
     constat () {
       return this.constats.length > 0 ? this.constats.find(c => c.echangeId === this.echange.id).constat : null
     },
-    ...mapMessagesMultiRowFields({ messages: 'rows' }),
+    ...mapMessageState({ messages: 'rows' }),
     showNewMessageForm () {
       return this.etat.order < 4
     },
@@ -181,7 +184,7 @@ export default {
       return this.echange.brouillon ? 'primary' : 'success'
     },
     echange () {
-      return this.$store.state.inspection.echange.rows[this.index]
+      return this.echanges[this.index]
     }
   },
   methods: {
@@ -195,27 +198,25 @@ export default {
       Vue.set(this.echange, 'constat', this.newConstat)
       this.resetNewConstat()
     },
-    ...mapEchangeMutations({
-      addEchangeMessage: ADD_ROW
+    ...mapMessageActions({
+      saveMessage: SAVE
     }),
-    ...mapEchangeActions({
-      save: SAVE
+    ...mapEvenementActions({
+      saveEvenement: SAVE
     }),
-    addMessage (messageText, confidential) {
-      this.addEchangeMessage('addMessage', {
-        echange: this.echange,
-        message: {
-          authorId: this.user.id,
-          date: new Date(),
-          text: messageText,
-          lu: false,
-          confidential: confidential,
-          attachments: []
-        }
+    async addMessage (messageText, confidential) {
+      const messageId = await this.saveMessage({
+        echangeId: this.echange.id,
+        authorId: this.user.id,
+        text: messageText,
+        confidential: confidential,
+        attachments: []
       })
       this.newMessage = ''
       this.dialogNewMessage = false
-      this.save(this.echange)
+      const type = confidential ? 2 : 1
+      console.log('messageId=' + messageId)
+      this.saveEvenement({ type: type, inspectionId: this.echange.inspectionId, data: { messageId: messageId }, author: this.user })
     },
     toggleBrouillon () {
       const value = !this.echange.brouillon

@@ -4,7 +4,7 @@ v-container
   v-btn(icon @click="toggleSort()" :class="{'fh-toggle--active': sortAscending}")
     v-icon sort
   div(v-for="evenement in activiteSorted" :key="evenement.id")
-    | {{ evenement.created.toLocaleString() }} - {{ evenement.author.name }} : {{ evenement.type }}
+    | {{ evenement.created.toLocaleString() }} - {{ evenement.author.name }} : {{ evenement.type.name }}
 </template>
 
 <script>

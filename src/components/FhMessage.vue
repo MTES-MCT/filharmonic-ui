@@ -20,6 +20,7 @@
 import FhAttachment from '@/components/FhAttachment.vue'
 import { createNamespacedHelpers } from 'vuex'
 const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
+const { mapState: mapMessageState } = createNamespacedHelpers('inspection/echange/message')
 
 export default {
   name: 'FhMessage',
@@ -27,10 +28,6 @@ export default {
     FhAttachment
   },
   props: {
-    message: {
-      type: Object,
-      required: true
-    },
     colorBrouillon: {
       type: String,
       required: false,
@@ -48,6 +45,10 @@ export default {
     }
   },
   computed: {
+    ...mapMessageState({ messages: 'rows' }),
+    message () {
+      return this.messages[this.index]
+    },
     color () {
       return this.message.confidential ? 'grey' : (this.message.lu ? this.colorBrouillon : 'red')
     },
