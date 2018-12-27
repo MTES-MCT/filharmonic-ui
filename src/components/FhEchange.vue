@@ -215,7 +215,6 @@ export default {
       this.newMessage = ''
       this.dialogNewMessage = false
       const type = confidential ? 2 : 1
-      console.log('messageId=' + messageId)
       this.saveEvenement({ type: type, inspectionId: this.echange.inspectionId, data: { messageId: messageId }, author: this.user })
     },
     toggleBrouillon () {
