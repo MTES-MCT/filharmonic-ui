@@ -55,8 +55,9 @@ v-expansion-panel(expand v-if="showEchange")
                 v-divider
                 v-card-actions
                   v-spacer
-                  v-btn(icon title="Pièce jointe")
+                  v-btn(icon title="Pièce jointe" @click="openAttachmentPopup")
                     v-icon attach_file
+                  input(ref="file" type="file" @change="onFilesChange" multiple hidden)
                   v-btn(icon @click="addMessage(newMessage, confidential)" :disabled="!newMessage" color="primary" title="Envoyer")
                     v-icon send
 
@@ -148,7 +149,8 @@ export default {
       ],
       newMessage: '',
       confidential: true,
-      dialogNewMessage: false
+      dialogNewMessage: false,
+      attachments: []
     }
   },
   computed: {
@@ -188,6 +190,27 @@ export default {
     }
   },
   methods: {
+    openAttachmentPopup () {
+      this.$refs.file.click()
+    },
+    addAttachment (...files) {
+      files.forEach((file, index) => {
+        this.attachments.push({
+          id: new Date().getTime() + index,
+          filename: file.name,
+          type: file.type,
+          url: URL.createObjectURL(file)
+        })
+      })
+    },
+    onFilesChange (e) {
+      const files = e.target.files || e.dataTransfer.files
+      if (!files.length) {
+        return
+      }
+      this.addAttachment(...files)
+      e.target.value = ''
+    },
     resetNewConstat () {
       this.newConstat = {
         type: 'conforme'
