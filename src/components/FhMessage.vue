@@ -67,7 +67,9 @@ export default {
   },
   methods: {
     lire (value) {
-      this.$store.commit('inspection/echange/message/updateField', { path: 'rows[' + this.index + '].message.lu', value })
+      console.log('index=' + this.index)
+      console.log('value=' + value)
+      this.$store.commit('inspection/echange/message/updateField', { path: 'rows[' + this.index + '].lu', value })
     }
   }
 }
