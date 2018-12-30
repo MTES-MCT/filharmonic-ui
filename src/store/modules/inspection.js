@@ -74,7 +74,6 @@ const actions = {
       comments: state.comment.rows,
       inspecteurs: state.inspecteur.rows
     }
-    console.log('inspectionState=' + JSON.stringify(inspectionState))
     const inspection = createInspection(inspectionState)
     await this.$api.inspections.save(inspection)
   },

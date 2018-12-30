@@ -7,28 +7,27 @@ v-container.grid-list-lg.inspection-form
 
 <script>
 import FhDetailInspection from '@/components/FhDetailInspection.vue'
+import { createNamespacedHelpers } from 'vuex'
 import { SAVE } from '@/store/action-types'
+const { mapState: mapDetailState } = createNamespacedHelpers('inspection/detail')
 
 export default {
   components: {
     FhDetailInspection
-  },
-  props: {
-    inspection: {
-      type: Object,
-      required: true
-    }
   },
   data () {
     return {
       validForm: false
     }
   },
+  computed: {
+    ...mapDetailState({ detail: state => state.rows[0] })
+  },
   methods: {
     saveInspection () {
       if (this.$refs.form.validate()) {
         this.$store.dispatch('inspection/' + SAVE)
-        this.$router.push(`/inspections/${this.inspection.id}/details`)
+        this.$router.push(`/inspections/${this.detail.id}/details`)
       }
     }
   }
