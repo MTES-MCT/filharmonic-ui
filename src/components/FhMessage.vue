@@ -63,7 +63,7 @@ export default {
     })
   },
   async created () {
-    this.author = await this.$api.users.get(this.message.authorId)
+    this.author = this.message ? await this.$api.users.get(this.message.authorId) : null
   },
   methods: {
     lire (value) {
