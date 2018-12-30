@@ -27,3 +27,8 @@ export function createEchange (data) {
     suites
   }))
 }
+
+export function addConstat (echange, constat) {
+  constat.echangeId = echange.id
+  echange.constat = constat.id
+}

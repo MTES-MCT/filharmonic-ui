@@ -13,7 +13,6 @@ import { createEtat } from '@/models/etat'
 import { createDetail } from '@/models/detail'
 import { createTheme } from '@/models/theme'
 import { createSuite } from '@/models/suite'
-import { createConstat } from '@/models/constat'
 import { createEtablissement } from '@/models/etablissement'
 import { createUser } from '@/models/user'
 import { createInspection } from '@/models/inspection'
@@ -43,8 +42,7 @@ const actions = {
         commit('echange/message/' + ADD_ROW, m)
       })
       if (e.constat) {
-        const c = createConstat(e.constat)
-        commit('echange/constat/' + ADD_ROW, { echangeId: e.id, constat: c })
+        commit('echange/constat/' + ADD_ROW, e.constat)
       }
       if (e.suites) {
         e.suites.forEach(s => {

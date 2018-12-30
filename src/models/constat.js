@@ -1,5 +1,5 @@
 export class Constat {
-  constructor ({ id = '', type = {}, remarques = '', echeance = new Date() } = {}) {
+  constructor ({ id = -1, type = 'conforme', remarques = '', echeance = '' } = {}) {
     this.id = id
     this.type = type
     this.remarques = remarques

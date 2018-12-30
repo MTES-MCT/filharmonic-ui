@@ -14,13 +14,13 @@ v-expansion-panel(expand v-if="showEchange")
                                             target="_blank")
         | {{ referenceReglementaire }}
 
-      .fh-echange__constat(v-if="constat" :style="`border-left-color: ${typeConstatEchange.color}`")
+      .fh-echange__constat(v-if="constat" :style="`border-left-color: ${constat.type.color}`")
         v-layout.align-center
           span.subheading.mr-2 Constat finalisé :
-          v-chip(small :color="typeConstatEchange.color" dark text-color="white")
+          v-chip(small :color="constat.type.color" dark text-color="white")
             v-avatar
-              v-icon(large) {{ typeConstatEchange.icon }}
-            | {{ typeConstatEchange.label }}
+              v-icon(large) {{ constat.type.icon }}
+            | {{ constat.type.label }}
 
         v-layout.my-2(v-if="constat.remarques")
           span.subheading.mr-2 Remarques&nbsp;:
@@ -77,7 +77,7 @@ v-expansion-panel(expand v-if="showEchange")
 
               v-card-text
                 v-radio-group.mt-0(row v-model="newConstat.type" hide-details required :rules="notEmpty")
-                  v-radio(v-for="(typeConstats, key) in typesConstats" :key="key" :label="typeConstats.label" :value="key")
+                  v-radio(v-for="(typeConstat, key) in typesConstat" :key="key" :label="typeConstat.label" :value="typeConstat.id")
 
                 v-container.pa-0(grid-list-md)
                   v-layout.mt-3.wrap
@@ -102,7 +102,7 @@ v-expansion-panel(expand v-if="showEchange")
                         v-date-picker(v-model="newConstat.echeance" @input="showNewConstatEcheancePicker = false" no-title)
 
               v-card-actions.justify-center.pb-3
-                v-btn(color="primary" @click="saveConstat()")
+                v-btn(color="primary" @click="addConstat")
                   v-icon(left) gavel
                   | Sauvegarder le constat
 
@@ -113,17 +113,16 @@ v-expansion-panel(expand v-if="showEchange")
 </template>
 
 <script>
-import Vue from 'vue'
 import FhMessage from '@/components/FhMessage.vue'
 import { SAVE } from '@/store/action-types'
 import { createNamespacedHelpers } from 'vuex'
-import { typesConstat } from '@/models/constat'
+import { typesConstat, Constat } from '@/models/constat'
 
 const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
 const { mapState: mapEchangeState, mapActions: mapEchangeActions } = createNamespacedHelpers('inspection/echange')
 const { mapState: mapMessageState, mapActions: mapMessageActions } = createNamespacedHelpers('inspection/echange/message')
 const { mapState: mapEtatState } = createNamespacedHelpers('inspection/etat')
-const { mapState: mapConstatState } = createNamespacedHelpers('inspection/echange/constat')
+const { mapState: mapConstatState, mapActions: mapConstatActions } = createNamespacedHelpers('inspection/echange/constat')
 const { mapActions: mapEvenementActions } = createNamespacedHelpers('inspection/evenement')
 
 export default {
@@ -140,9 +139,7 @@ export default {
   data () {
     return {
       showNewConstatForm: false,
-      newConstat: {
-        type: 'conforme'
-      },
+      newConstat: new Constat(),
       showNewConstatEcheancePicker: false,
       notEmpty: [
         v => !!v || 'Il faut renseigner une valeur'
@@ -156,9 +153,6 @@ export default {
   computed: {
     typesConstat () {
       return typesConstat
-    },
-    typeConstatEchange () {
-      return this.constat ? this.constat.type : {}
     },
     showEchange () {
       return !this.$permissions.isExploitant || !this.echange.brouillon
@@ -176,7 +170,7 @@ export default {
       echanges: 'rows'
     }),
     constat () {
-      return this.constats.length > 0 ? this.constats.find(c => c.echangeId === this.echange.id).constat : null
+      return this.constats[this.index]
     },
     ...mapMessageState({ messages: 'rows' }),
     showNewMessageForm () {
@@ -212,15 +206,10 @@ export default {
       e.target.value = ''
     },
     resetNewConstat () {
-      this.newConstat = {
-        type: 'conforme'
-      }
+      this.newConstat = new Constat()
       this.showNewConstatForm = false
     },
-    saveConstat () {
-      Vue.set(this.echange, 'constat', this.newConstat)
-      this.resetNewConstat()
-    },
+    ...mapConstatActions({ saveConstat: SAVE }),
     ...mapMessageActions({
       saveMessage: SAVE
     }),
@@ -230,6 +219,11 @@ export default {
     ...mapEchangeActions({
       saveEchange: SAVE
     }),
+    async addConstat () {
+      this.newConstat.echangeId = this.echange.id
+      await this.saveConstat(this.newConstat)
+      this.resetNewConstat()
+    },
     async addMessage (messageText, confidential) {
       const messageId = await this.saveMessage({
         echangeId: this.echange.id,
