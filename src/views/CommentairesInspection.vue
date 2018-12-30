@@ -3,7 +3,7 @@ v-card
   v-toolbar(flat dense)
     v-toolbar-title.subheading Messages invisibles pour l'exploitant
   v-card-text
-    fh-message(v-for="comment in comments" :message="comment" :key="comment.id")
+    fh-message(v-for="(comment, index) in comments" :index="index" :key="comment.id")
 
 </template>
 
