@@ -23,10 +23,10 @@ fh-page(:wait="wait")
             v-list.py-0
               v-list-tile(@click="showLettreAnnonce = true")
                 v-list-tile-title Générer la lettre d'annonce
-                fh-lettre-annonce(:inspection="detail" :show-dialog="showLettreAnnonce" @close="showLettreAnnonce = false")
+                fh-lettre-annonce(:show-dialog="showLettreAnnonce" @close="showLettreAnnonce = false")
               v-list-tile(@click="showLettreSuites = true")
                 v-list-tile-title Générer la lettre de suites
-                fh-lettre-suites(:inspection="detail" :show-dialog="showLettreSuites" @close="showLettreSuites = false")
+                fh-lettre-suites(:show-dialog="showLettreSuites" @close="showLettreSuites = false")
 
           v-toolbar-items(slot="extension")
             v-btn(flat :to="`/inspections/${detail.id}`" exact)

@@ -11,22 +11,27 @@ v-dialog.d-block(:value="showDialog" @input="$emit('close')" scrollable width="8
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
+const { mapState: mapDetailState } = createNamespacedHelpers('inspection/detail')
+const { mapState: mapEtablissementState } = createNamespacedHelpers('inspection/etablissement')
+const { mapState: mapEchangeState } = createNamespacedHelpers('inspection/echange')
+const { mapState: mapAuthenticationState } = createNamespacedHelpers('authentication')
 // quasiment à l'identique avec FhLettreSuites... pourrait probablement être amélioré
 export default {
   name: 'FhLettreAnnonce',
   props: {
-    inspection: {
-      type: Object,
-      required: true
-    },
     showDialog: {
       type: Boolean,
       required: true
     }
   },
   computed: {
+    ...mapDetailState({ detail: state => state.rows[0] }),
+    ...mapEtablissementState({ etablissement: state => state.rows[0] }),
+    ...mapAuthenticationState({ user: state => state.rows[0].user }),
+    ...mapEchangeState({ echanges: 'rows' }),
     lettre () {
-      return this.showDialog && this.$api.lettres.genererLettreAnnonce(this.inspection)
+      return this.showDialog && this.$api.lettres.genererLettreAnnonce(this.detail, this.etablissement, this.echanges, this.user)
     }
   }
 }
