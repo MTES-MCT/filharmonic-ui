@@ -57,7 +57,7 @@ v-container
       v-layout.align-center
         span.subheading.mr-2 Synthèse :
         v-flex
-          div {{ inspection.suite.synthese }}
+          div {{ suite.synthese }}
 
     div(v-else)
       v-slide-y-transition(hide-on-leave)
@@ -77,7 +77,7 @@ v-container
                                   :rules="notEmpty"
                                 )
                 v-radio(v-for="(typeSuite, key) in typesSuite" :key="key"
-                        :label="typeSuite.label" :value="key"
+                        :label="typeSuite.label" :value="typeSuite.id"
                         )
 
               v-textarea.mt-3(box label="Synthèse" auto-grow hideDetails rows="3" clearable
@@ -97,19 +97,19 @@ v-container
 </template>
 
 <script>
-import { store } from '@/store'
-import { typesSuite } from '@/models/suite'
+import { typesSuite, Suite } from '@/models/suite'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhEchange from '@/components/FhEchange.vue'
-import * as _ from '@/util'
-import { inspection, mapEchangesMultiRowFields } from '@/store/modules/inspection'
+import { mapEchangesMultiRowFields } from '@/store/modules/inspection'
 import { createNamespacedHelpers } from 'vuex'
+import { SAVE } from '@/store/action-types'
+import { Echange } from '@/models/echange'
 
-if (!store.state.inspection) store.registerModule('inspection', inspection)
 const { mapState: mapDetailState } = createNamespacedHelpers('inspection/detail')
 const { mapState: mapEtatState } = createNamespacedHelpers('inspection/etat')
-const { mapState: mapSuiteState } = createNamespacedHelpers('inspection/echange/suite')
+const { mapActions: mapEchangeActions } = createNamespacedHelpers('inspection/echange')
+const { mapState: mapSuiteState, mapActions: mapSuiteActions } = createNamespacedHelpers('inspection/suite')
 
 export default {
   components: {
@@ -121,16 +121,10 @@ export default {
     return {
       validNewEchangeForm: false,
       showNewEchangeForm: false,
-      newEchange: {
-        sujet: '',
-        referencesReglementaires: [
-          ''
-        ],
-        reponses: []
-      },
+      newEchange: new Echange(),
       showNewSuiteForm: false,
       validNewSuiteForm: false,
-      newSuite: {},
+      newSuite: new Suite(),
       newComment: '',
 
       notEmpty: [
@@ -154,42 +148,29 @@ export default {
     }
   },
   methods: {
+    ...mapSuiteActions({ saveSuite: SAVE }),
+    ...mapEchangeActions({ saveEchange: SAVE }),
     resetNewEchange () {
-      this.newEchange = {
-        sujet: '',
-        referencesReglementaires: [
-          ''
-        ],
-        reponses: []
-      }
+      this.newEchange = new Echange({ inspectionId: this.detail.id })
       this.showNewEchangeForm = false
     },
     saveNewEchange () {
       if (this.$refs.newEchangeForm.validate()) {
-        this.echanges.push(_.cloneDeep(this.newEchange))
+        this.saveEchange(this.newEchange)
         this.resetNewEchange()
       }
     },
     prepareAndShowNewSuiteForm () {
-      this.newSuite = {
-        type: 'observation',
-        synthese: 'Cette visite à permis de relever des points faisant l’objet d’observations. L’exploitant devra fournir selon les délais mentionnés dans le présent rapport, les éléments permettant de justifier de la mise en œuvre des actions correctives nécessaires pour les lever.'
-      }
+      this.newSuite = new Suite({ inspectionId: this.detail.id })
       this.showNewSuiteForm = true
     },
     resetNewSuite () {
-      this.newSuite = {
-        sujet: '',
-        referencesReglementaires: [
-          ''
-        ],
-        reponses: []
-      }
+      this.newSuite = new Suite({ inspectionId: this.detail.id })
       this.showNewSuiteForm = false
     },
     saveNewSuite () {
       if (this.$refs.newSuiteForm.validate()) {
-        this.suite = this.newSuite
+        this.saveSuite(this.newSuite)
         this.resetNewSuite()
       }
     }

@@ -8,6 +8,7 @@ import { etat } from '@/store/modules/etat'
 import { inspecteur } from '@/store/modules/inspecteur'
 import { comment } from '@/store/modules/comment'
 import { evenement } from '@/store/modules/evenement'
+import { suite } from '@/store/modules/suite'
 import { getField, updateField, createHelpers } from 'vuex-map-fields'
 import { createEtat } from '@/models/etat'
 import { createDetail } from '@/models/detail'
@@ -30,7 +31,8 @@ const actions = {
       detailMessagesNonLus: true,
       echanges: true,
       themes: true,
-      inspecteurs: true
+      inspecteurs: true,
+      suites: true
     })
     reset(commit)
     commit('detail/' + ADD_ROW, createDetail(inspection))
@@ -44,12 +46,6 @@ const actions = {
       if (e.constat) {
         commit('echange/constat/' + ADD_ROW, e.constat)
       }
-      if (e.suites) {
-        e.suites.forEach(s => {
-          const suite = createSuite(s)
-          commit('echange/suite/' + ADD_ROW, { echangeId: e.id, suite: suite })
-        })
-      }
     })
     inspection.themes.forEach(t => {
       commit('theme/' + ADD_ROW, createTheme(t))
@@ -62,6 +58,10 @@ const actions = {
     })
     inspection.evenements.forEach(c => {
       commit('evenement/' + ADD_ROW, createEvenement(c))
+    })
+    inspection.suites.forEach(s => {
+      const suite = createSuite(s)
+      commit('suite/' + ADD_ROW, suite)
     })
   },
   async [SAVE] ({ commit, state }) {
@@ -96,13 +96,13 @@ const reset = (commit) => {
   commit('etablissement/' + RESET)
   commit('etat/' + RESET)
   commit('theme/' + RESET)
-  commit('echange/' + RESET)
   commit('comment/' + RESET)
   commit('evenement/' + RESET)
   commit('inspecteur/' + RESET)
+  commit('suite/' + RESET)
   commit('echange/message/' + RESET)
-  commit('echange/suite/' + RESET)
   commit('echange/constat/' + RESET)
+  commit('echange/' + RESET)
 }
 
 const mutations = {
@@ -127,7 +127,8 @@ const modules = {
   inspecteur,
   detail,
   comment,
-  evenement
+  evenement,
+  suite
 }
 
 const getters = {

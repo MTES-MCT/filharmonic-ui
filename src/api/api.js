@@ -8,6 +8,7 @@ import UsersAPI from '@/api/users'
 import EchangesAPI from '@/api/echanges'
 import MessagesAPI from '@/api/messages'
 import ConstatsAPI from '@/api/constats'
+import SuitesAPI from '@/api/suites'
 
 export default class API {
   constructor (options = {}) {
@@ -27,6 +28,9 @@ export default class API {
       api: this
     })
     this.constats = new ConstatsAPI({
+      api: this
+    })
+    this.suites = new SuitesAPI({
       api: this
     })
     this.messages = new MessagesAPI({

@@ -16,7 +16,8 @@ const inspections = [
     themes: [2, 6],
     inspecteurs: [1],
     etablissementId: '0999.00002',
-    comments: []
+    comments: [],
+    suites: []
   },
   {
     id: 2,
@@ -49,7 +50,8 @@ const inspections = [
         lu: true,
         attachments: []
       }
-    ]
+    ],
+    suites: [1]
   }
 ]
 
@@ -97,6 +99,9 @@ export default class InspectionsAPI extends BaseAPI {
         if (options.activite) {
           inspection.evenements = (await this.api.evenements.list()).filter(event => event.inspectionId === inspection.id)
         }
+        if (options.suites) {
+          inspection.suites = (await this.api.suites.list()).filter(s => s.inspectionId === inspection.id)
+        }
         return _.cloneDeep(inspection)
       })
     )
@@ -119,6 +124,7 @@ export default class InspectionsAPI extends BaseAPI {
     inspection.etat = 'en_cours'
     inspection.echanges = []
     inspection.comments = []
+    inspection.suites = []
     inspections.push(_.cloneDeep(inspection))
     this.api.evenements.create({
       type: 'create_inspection',

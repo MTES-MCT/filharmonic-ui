@@ -2,7 +2,6 @@ import { getField, updateField, createHelpers } from 'vuex-map-fields'
 import { ADD_ROW, RESET } from '@/store/mutation-types'
 import { message } from '@/store/modules/message'
 import { constat } from '@/store/modules/constat'
-import { suite } from '@/store/modules/suite'
 import { SAVE } from '@/store/action-types'
 
 const actions = {
@@ -35,8 +34,7 @@ const state = () => ({
 
 const modules = {
   message,
-  constat,
-  suite
+  constat
 }
 
 export const { mapMultiRowFields: mapMessagesMultiRowFields } = createHelpers({

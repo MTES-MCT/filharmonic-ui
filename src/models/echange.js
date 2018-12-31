@@ -2,7 +2,7 @@ import { createConstat, Constat } from '@/models/constat'
 import { createMessage } from '@/models/message'
 import { createSuite } from '@/models/suite'
 export class Echange {
-  constructor ({ id = 0, sujet = '', brouillon = true, messages = [], referencesReglementaires = [], constat = new Constat(), suites = [] } = {}) {
+  constructor ({ id = -1, sujet = '', brouillon = true, messages = [], referencesReglementaires = [], constat = new Constat(), suites = [] } = {}) {
     this.id = id
     this.sujet = sujet
     this.brouillon = brouillon
