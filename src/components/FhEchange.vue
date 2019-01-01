@@ -238,9 +238,10 @@ export default {
       this.saveEvenement({ type: type, inspectionId: this.echange.inspectionId, data: { messageId: messageId }, author: this.user })
     },
     toggleBrouillon () {
-      const value = !this.echange.brouillon
-      if (this.$permissions.isInspecteur) this.$store.commit('inspection/echange/updateField', { path: 'rows[' + this.index + '].brouillon', value })
-      this.saveEchange(this.echange)
+      this.saveEchange({
+        echange: { id: this.echange.id, brouillon: !this.echange.brouillon },
+        index: this.index
+      })
     }
   }
 }

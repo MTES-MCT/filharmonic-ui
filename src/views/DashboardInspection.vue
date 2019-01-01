@@ -156,7 +156,7 @@ export default {
     },
     saveNewEchange () {
       if (this.$refs.newEchangeForm.validate()) {
-        this.saveEchange(this.newEchange)
+        this.saveEchange({ echange: this.newEchange })
         this.resetNewEchange()
       }
     },

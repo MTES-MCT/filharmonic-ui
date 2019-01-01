@@ -1,6 +1,7 @@
 import BaseAPI from '@/api/base'
 import * as _ from '@/util'
 import { ApplicationError } from '@/errors'
+import { createEchange, Echange } from '@/models/echange'
 
 const echanges = [
   {
@@ -101,10 +102,17 @@ export default class EchangesAPI extends BaseAPI {
       filter: echange => echange.inspectionId === inspectionId
     })
   }
-  async save (newEchange) {
+  async save (echange) {
     this.requireInspecteur()
-    const oldEchange = echanges.find(e => e.id === newEchange.id)
-    // on devrait nettoyer l'objet pour ne garder que les champs autorisés
-    Object.assign(oldEchange, _.cloneDeep(newEchange))
+    const newEchange = new Echange()
+    if (echange.id > 0) {
+      Object.assign(newEchange, echanges.find(e => e.id === echange.id))
+      Object.assign(newEchange, echange)
+    } else {
+      Object.assign(newEchange, createEchange(echange))
+      newEchange.id = new Date().getTime() % 1000
+      echanges.push(newEchange)
+    }
+    return newEchange
   }
 }
