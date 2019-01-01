@@ -8,7 +8,7 @@ const suites = [
     id: 1,
     inspectionId: 2,
     type: 'observation',
-    synthese: ''
+    synthese: 'Réduire la croissance des émissions de NOx'
   }
 ]
 
@@ -31,7 +31,7 @@ export default class SuitesAPI extends BaseAPI {
       filter: suite => suite.id === id
     }))[0]
     if (!suite) {
-      throw new ApplicationError(`Constat ${id} non trouvé`)
+      throw new ApplicationError(`Suite ${id} non trouvée`)
     }
     return suite
   }

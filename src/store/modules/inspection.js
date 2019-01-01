@@ -13,7 +13,6 @@ import { getField, updateField, createHelpers } from 'vuex-map-fields'
 import { createEtat } from '@/models/etat'
 import { createDetail } from '@/models/detail'
 import { createTheme } from '@/models/theme'
-import { createSuite } from '@/models/suite'
 import { createEtablissement } from '@/models/etablissement'
 import { createUser } from '@/models/user'
 import { createInspection } from '@/models/inspection'
@@ -60,8 +59,7 @@ const actions = {
       commit('evenement/' + ADD_ROW, createEvenement(c))
     })
     inspection.suites.forEach(s => {
-      const suite = createSuite(s)
-      commit('suite/' + ADD_ROW, suite)
+      commit('suite/' + ADD_ROW, s)
     })
   },
   async [SAVE] ({ commit, state }) {
