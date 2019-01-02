@@ -349,13 +349,15 @@ export const allowedStates = {
   }
 }
 
+export function isBeforeState (actualState, targetState) {
+  return allowedStates[actualState].order < allowedStates[targetState].order
+}
+export function isAfterState (actualState, targetState) {
+  return allowedStates[actualState].order > allowedStates[targetState].order
+}
+
 export const nomsEtatsEnCours = Object.keys(allowedStates)
-  .map(nomEtat => ({
-    nom: nomEtat,
-    etat: allowedStates[nomEtat]
-  }))
-  .filter(({ etat }) => etat.order < allowedStates.attente_validation.order)
-  .map(({ nom }) => nom)
+  .filter(nomEtat => isBeforeState(nomEtat, 'attente_validation'))
 
 export const typesConstats = {
   conforme: {

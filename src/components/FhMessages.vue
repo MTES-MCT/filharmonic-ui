@@ -2,9 +2,9 @@
 v-card
   v-toolbar(flat dense)
     v-toolbar-title.subheading Messages
-    v-btn(small icon v-if="echangeId > 0" @click="publier" :color="colorBrouillon" :title="`${brouillon ? 'Brouillon' : 'Publié'}`")
+    v-btn(small icon v-if="peutPublier" @click="publier" :color="colorBrouillon" :title="`${brouillon ? 'Brouillon' : 'Publié'}`")
       v-icon {{ brouillon ? 'visibility_off' : 'visibility' }}
-    v-dialog(v-model="dialogNewMessage" v-if="showNewMessageForm" width="500")
+    v-dialog(v-model="dialogNewMessage" v-if="peutAjouterMessage" width="500")
       v-btn(small icon slot="activator" title="Nouveau message" :color="colorBrouillon")
         v-icon add
       v-card
@@ -37,8 +37,8 @@ v-card
 <script>
 import FhAttachment from '@/components/FhAttachment.vue'
 import FhMessage from '@/components/FhMessage.vue'
-import { allowedStates } from '@/api/inspections'
-import { mapGetters, mapState } from 'vuex'
+import { isBeforeState } from '@/api/inspections'
+import { mapState } from 'vuex'
 
 export default {
   name: 'FhMessages',
@@ -71,14 +71,18 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'user'
-    ]),
     ...mapState({
       inspection: 'inspectionOuverte'
     }),
-    showNewMessageForm () {
-      return allowedStates[this.etatInspection].order < 4
+    commentairesGeneraux () {
+      return this.echangeId === -1
+    },
+    peutAjouterMessage () {
+      return this.commentairesGeneraux || isBeforeState(this.etatInspection, 'attente_validation')
+    },
+    peutPublier () {
+      // TODO serait plutôt à mettre au niveau du point de contrôle
+      return !this.$permissions.isExploitant && isBeforeState(this.etatInspection, 'attente_validation')
     },
     brouillon: {
       get () {
