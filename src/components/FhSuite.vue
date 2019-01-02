@@ -55,11 +55,11 @@ div(v-if="openSuite")
 
 div(v-else)
   div(v-if="!$permissions.isExploitant")
-      p Les suites sont décidées lorsque tous les échanges sont soldés par des constats.
-      p(v-if="inspection.echanges.length === 0") Il faut ajouter au moins un point de contrôle avant de définir une suite.
+      p Les suites sont décidées lorsque tous les points de contrôle sont soldés par des constats.
+      p(v-if="inspection.pointsDeControle.length === 0") Il faut ajouter au moins un point de contrôle avant de définir une suite.
       p(v-if="nombreConstatsRestants > 0") Il reste {{ nombreConstatsRestants }} {{ nombreConstatsRestants | pluralize('constat') }} à établir avant de pouvoir ajouter une suite.
 
-  v-btn(color="secondary" v-if="modifiable" :disabled="inspection.echanges.length === 0 || nombreConstatsRestants > 0" @click="prepareAndShowEditionForm()")
+  v-btn(color="secondary" v-if="modifiable" :disabled="inspection.pointsDeControle.length === 0 || nombreConstatsRestants > 0" @click="prepareAndShowEditionForm()")
     v-icon(left) gavel
     | Ajouter une suite
 </template>
@@ -97,7 +97,7 @@ export default {
       return this.inspection.suite ? typesSuite[this.inspection.suite.type] : {}
     },
     nombreConstatsRestants () {
-      return this.inspection.echanges.filter(e => !e.constat).length
+      return this.inspection.pointsDeControle.filter(p => !p.constat).length
     }
   },
   methods: {

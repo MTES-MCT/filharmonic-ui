@@ -47,8 +47,8 @@ ${inspection.etablissement.adresse}<br>
   }
 
   genererLettreAnnonce (inspection) {
-    const pointsDeControles = inspection.echanges.map(echange => {
-      return ` - <strong>${echange.sujet}</strong> (${echange.referencesReglementaires.join(', ')})<br>`
+    const pointsDeControles = inspection.pointsDeControle.map(pointDeControle => {
+      return ` - <strong>${pointDeControle.sujet}</strong> (${pointDeControle.referencesReglementaires.join(', ')})<br>`
     }).join('')
     return `
 <div style="text-align: justify">

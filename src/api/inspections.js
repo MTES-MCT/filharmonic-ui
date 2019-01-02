@@ -20,7 +20,7 @@ const inspections = [
     ],
     etablissementId: '0999.00002',
     comments: [],
-    echanges: [
+    pointsDeControle: [
       {
         id: 1,
         brouillon: true,
@@ -89,7 +89,7 @@ const inspections = [
         attachments: []
       }
     ],
-    echanges: [
+    pointsDeControle: [
       {
         id: 2,
         brouillon: false,
@@ -246,7 +246,7 @@ const inspections = [
     ],
     etablissementId: '0999.00002',
     comments: [],
-    echanges: []
+    pointsDeControle: []
   },
   {
     id: 4,
@@ -264,7 +264,7 @@ const inspections = [
     ],
     etablissementId: '0999.00003',
     comments: [],
-    echanges: [
+    pointsDeControle: [
       {
         id: 7,
         brouillon: false,
@@ -296,7 +296,7 @@ const inspections = [
     ],
     etablissementId: '0999.00003',
     comments: [],
-    echanges: [
+    pointsDeControle: [
       {
         id: 7,
         brouillon: false,
@@ -418,7 +418,7 @@ export default class InspectionsAPI extends BaseAPI {
     activite: bool : récupère l'activité
     auteursMessages: bool : récupère les utilisateurs de chaque message
     messagesNonLus: bool : calcule le nombre de messages non lus
-    detailMessagesNonLus: bool : calcule le nombre de messages non lus pour chaque échange
+    detailMessagesNonLus: bool : calcule le nombre de messages non lus pour chaque point de contrôle
     favoris: bool : ajoute le champ 'favoris' en fonction des inspections favorites de l'utilisateur
   }
   */
@@ -429,11 +429,11 @@ export default class InspectionsAPI extends BaseAPI {
         .filter(inspection => inspection.etat !== 'preparation')
         .map(inspection => {
           delete inspection.comments
-          inspection.echanges = inspection.echanges
-            .filter(echange => !echange.brouillon)
-            .map(echange => {
-              echange.messages = echange.messages.filter(message => !message.confidential)
-              return echange
+          inspection.pointsDeControle = inspection.pointsDeControle
+            .filter(pointDeControle => !pointDeControle.brouillon)
+            .map(pointDeControle => {
+              pointDeControle.messages = pointDeControle.messages.filter(message => !message.confidential)
+              return pointDeControle
             })
           return inspection
         })
@@ -471,9 +471,9 @@ export default class InspectionsAPI extends BaseAPI {
               message.author = await this.api.users.get(message.authorId)
             }),
 
-            ...inspection.echanges.map(async echange => {
+            ...inspection.pointsDeControle.map(async pointDeControle => {
               return Promise.all(
-                echange.messages.map(async message => {
+                pointDeControle.messages.map(async message => {
                   message.author = await this.api.users.get(message.authorId)
                 })
               )
@@ -482,9 +482,9 @@ export default class InspectionsAPI extends BaseAPI {
         }
         const filtreAutreMessages = this.isExploitant ? message => message.author.type !== 'exploitant' : message => message.author.type === 'exploitant'
         if (options.messagesNonLus) {
-          inspection.messagesNonLus = inspection.echanges.reduce((acc, echange) => (
+          inspection.messagesNonLus = inspection.pointsDeControle.reduce((acc, pointDeControle) => (
             acc +
-            echange.messages
+            pointDeControle.messages
               .filter(filtreAutreMessages)
               .reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
           ), 0)
@@ -493,8 +493,8 @@ export default class InspectionsAPI extends BaseAPI {
           }
         }
         if (options.detailMessagesNonLus) {
-          inspection.echanges.forEach(echange => {
-            echange.messagesNonLus = echange.messages
+          inspection.pointsDeControle.forEach(pointDeControle => {
+            pointDeControle.messagesNonLus = pointDeControle.messages
               .filter(filtreAutreMessages)
               .reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
           })
@@ -522,7 +522,7 @@ export default class InspectionsAPI extends BaseAPI {
     this.requireInspecteur()
     inspection.id = new Date().getTime() % 1000
     inspection.etat = 'preparation'
-    inspection.echanges = []
+    inspection.pointsDeControle = []
     inspection.comments = []
     inspections.push(_.cloneDeep(inspection))
 
@@ -571,7 +571,7 @@ export default class InspectionsAPI extends BaseAPI {
     }
     const pointDeControleEntity = _.cloneDeep(pointDeControle)
     pointDeControleEntity.id = new Date().getTime()
-    inspection.echanges.push(pointDeControleEntity)
+    inspection.pointsDeControle.push(pointDeControleEntity)
 
     await this.api.evenements.create({
       type: 'creation_pointdecontrole',
@@ -632,12 +632,12 @@ export default class InspectionsAPI extends BaseAPI {
     await this.loadInspection(inspection.id)
   }
 
-  async ajouterMessage (echangeId, message) {
-    const inspection = inspections.find(inspection => inspection.echanges.some(echange => echange.id === echangeId))
+  async ajouterMessage (pointDeControleId, message) {
+    const inspection = inspections.find(inspection => inspection.pointsDeControle.some(pointDeControle => pointDeControle.id === pointDeControleId))
     if (!inspection) {
-      throw new ApplicationError(`Echange ${echangeId} non trouvé`)
+      throw new ApplicationError(`Point de contrôle ${pointDeControleId} non trouvé`)
     }
-    const echange = inspection.echanges.find(echange => echange.id === echangeId)
+    const pointDeControle = inspection.pointsDeControle.find(pointDeControle => pointDeControle.id === pointDeControleId)
     const messageEntity = _.cloneDeep(message)
     messageEntity.id = new Date().getTime()
     messageEntity.authorId = this.userId
@@ -646,26 +646,26 @@ export default class InspectionsAPI extends BaseAPI {
     if (this.isExploitant) {
       messageEntity.confidential = false
     }
-    echange.messages.push(messageEntity)
+    pointDeControle.messages.push(messageEntity)
 
     await this.api.evenements.create({
       type: message.confidential ? 'commentaire' : 'message',
       inspectionId: inspection.id,
       data: {
-        echangeId: echange.id
+        pointDeControleId: pointDeControle.id
       }
     })
     await this.loadInspection(inspection.id)
   }
 
-  async ajouterConstat (echangeId, constat) {
+  async ajouterConstat (pointDeControleId, constat) {
     this.requireInspecteur()
-    const inspection = inspections.find(inspection => inspection.echanges.some(echange => echange.id === echangeId))
+    const inspection = inspections.find(inspection => inspection.pointsDeControle.some(pointDeControle => pointDeControle.id === pointDeControleId))
     if (!inspection) {
-      throw new ApplicationError(`Echange ${echangeId} non trouvé`)
+      throw new ApplicationError(`Point de contrôle ${pointDeControleId} non trouvé`)
     }
-    const echange = inspection.echanges.find(echange => echange.id === echangeId)
-    echange.constat = _.cloneDeep(constat)
+    const pointDeControle = inspection.pointsDeControle.find(pointDeControle => pointDeControle.id === pointDeControleId)
+    pointDeControle.constat = _.cloneDeep(constat)
 
     await this.api.evenements.create({
       type: 'creation_constat',

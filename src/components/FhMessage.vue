@@ -50,7 +50,7 @@ export default {
     ]),
     lu: {
       get () {
-        return this.$store.state.inspectionOuverte.echanges.find(echange => echange.messages.filter(message => message.id === this.message.id).length > 0).messages.find(message => message.id === this.message.id).lu
+        return this.$store.state.inspectionOuverte.pointsDeControle.find(pointDeControle => pointDeControle.messages.filter(message => message.id === this.message.id).length > 0).messages.find(message => message.id === this.message.id).lu
       },
       set (value) {
         this.$store.commit('updateMessageLu', { messageId: this.message.id, lu: value })

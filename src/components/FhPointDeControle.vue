@@ -1,42 +1,42 @@
 <template lang="pug">
-v-expansion-panel(expand v-if="showEchange")
-  v-expansion-panel-content.fh-echange
+v-expansion-panel(expand v-if="showPointDeControle")
+  v-expansion-panel-content.fh-point-de-controle
     v-layout.column(slot="header")
-      .fh-echange__sujet
-        | {{ echange.sujet }}
-        v-icon.ml-4(v-if="echange.messagesNonLus"
-                    :title="`${echange.messagesNonLus} nouveaux messages`"
+      .fh-point-de-controle__sujet
+        | {{ pointDeControle.sujet }}
+        v-icon.ml-4(v-if="pointDeControle.messagesNonLus"
+                    :title="`${pointDeControle.messagesNonLus} nouveaux messages`"
                     color="primary"
                     ) feedback
 
-      a.fh-echange__referenceReglementaire(v-for="referenceReglementaire in echange.referencesReglementaires"
+      a.fh-point-de-controle__referenceReglementaire(v-for="referenceReglementaire in pointDeControle.referencesReglementaires"
                                             href="https://www.legifrance.gouv.fr/eli/arrete/2017/6/28/TREP1719163A/jo/texte/fr"
                                             target="_blank")
         | {{ referenceReglementaire }}
 
-      .fh-echange__constat(v-if="echange.constat" :style="`border-left-color: ${typeConstatEchange.color}`")
+      .fh-point-de-controle__constat(v-if="pointDeControle.constat" :style="`border-left-color: ${typeConstatPointDeControle.color}`")
         v-layout.align-center
           span.subheading.mr-2 Constat finalisé :
-          v-chip(small :color="typeConstatEchange.color" dark text-color="white")
+          v-chip(small :color="typeConstatPointDeControle.color" dark text-color="white")
             v-avatar
-              v-icon(large) {{ typeConstatEchange.icon }}
-            | {{ typeConstatEchange.label }}
+              v-icon(large) {{ typeConstatPointDeControle.icon }}
+            | {{ typeConstatPointDeControle.label }}
 
-        v-layout.my-2(v-if="echange.constat.remarques")
+        v-layout.my-2(v-if="pointDeControle.constat.remarques")
           span.subheading.mr-2 Remarques&nbsp;:
           v-flex
-            div {{ echange.constat.remarques }}
-        v-layout.align-center(v-if="echange.constat.echeance")
+            div {{ pointDeControle.constat.remarques }}
+        v-layout.align-center(v-if="pointDeControle.constat.echeance")
           span.subheading.mr-2 Délai de mise en conformité :
           v-flex
             | Avant le&nbsp;
-            time(:datetime="echange.constat.echeance") {{ echange.constat.echeance }}
+            time(:datetime="pointDeControle.constat.echeance") {{ pointDeControle.constat.echeance }}
 
     v-card.px-3
       v-card-text
-        fh-messages(:echangeId="echange.id" :etatInspection="etatInspection" :messages="echange.messages")
+        fh-messages(:pointDeControleId="pointDeControle.id" :etatInspection="etatInspection" :messages="pointDeControle.messages")
 
-        div(v-if="!echange.constat")
+        div(v-if="!pointDeControle.constat")
           v-slide-y-transition(hide-on-leave)
             v-card.my-3.elevation-4(v-if="showNewConstatForm")
               v-toolbar(flat color="secondary" dense dark)
@@ -88,12 +88,12 @@ import { typesConstats } from '@/api/inspections'
 import FhMessages from '@/components/FhMessages.vue'
 
 export default {
-  name: 'FhEchange',
+  name: 'FhPointDeControle',
   components: {
     FhMessages
   },
   props: {
-    echange: {
+    pointDeControle: {
       type: Object,
       required: true
     },
@@ -116,14 +116,14 @@ export default {
     }
   },
   computed: {
-    typeConstatEchange () {
-      return this.echange.constat ? typesConstats[this.echange.constat.type] : {}
+    typeConstatPointDeControle () {
+      return this.pointDeControle.constat ? typesConstats[this.pointDeControle.constat.type] : {}
     },
-    showEchange () {
-      return !this.$permissions.isExploitant || !this.echange.brouillon
+    showPointDeControle () {
+      return !this.$permissions.isExploitant || !this.pointDeControle.brouillon
     },
     peutAjouterConstat () {
-      return !this.$permissions.isExploitant && this.etatInspection === 'en_cours' && !this.echange.constat && !this.showNewConstatForm
+      return !this.$permissions.isExploitant && this.etatInspection === 'en_cours' && !this.pointDeControle.constat && !this.showNewConstatForm
     }
   },
   methods: {
@@ -134,7 +134,7 @@ export default {
       this.showNewConstatForm = false
     },
     async ajouterConstat () {
-      await this.$api.inspections.ajouterConstat(this.echange.id, this.newConstat)
+      await this.$api.inspections.ajouterConstat(this.pointDeControle.id, this.newConstat)
       this.resetNewConstat()
     }
   }
@@ -142,7 +142,7 @@ export default {
 </script>
 
 <style lang="stylus">
-.fh-echange
+.fh-point-de-controle
   background-color #f0f0f0 !important
   &:hover
     background-color darken(#f0f0f0, 5%) !important

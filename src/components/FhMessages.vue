@@ -16,7 +16,7 @@ v-card
         v-divider
         v-card-text
           v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1" clearable)
-          v-checkbox(v-model="confidential" label="Confidentiel" v-if="echangeId > 0 && !$permissions.isExploitant")
+          v-checkbox(v-model="confidential" label="Confidentiel" v-if="pointDeControleId > 0 && !$permissions.isExploitant")
 
         fh-attachment(v-for="(attachment, index) in attachments" :key="index" :attachment="attachment")
 
@@ -56,7 +56,7 @@ export default {
       required: true,
       default: 'en_cours'
     },
-    echangeId: {
+    pointDeControleId: {
       type: Number,
       required: false,
       default: -1
@@ -75,7 +75,7 @@ export default {
       inspection: 'inspectionOuverte'
     }),
     commentairesGeneraux () {
-      return this.echangeId === -1
+      return this.pointDeControleId === -1
     },
     peutAjouterMessage () {
       return this.commentairesGeneraux || isBeforeState(this.etatInspection, 'attente_validation')
@@ -86,11 +86,11 @@ export default {
     },
     brouillon: {
       get () {
-        const echange = this.$store.state.inspectionOuverte.echanges.find(echange => echange.id === this.echangeId)
-        return echange === undefined ? true : echange.brouillon
+        const pointDeControle = this.$store.state.inspectionOuverte.pointsDeControle.find(pointDeControle => pointDeControle.id === this.pointDeControleId)
+        return pointDeControle === undefined ? true : pointDeControle.brouillon
       },
       set (value) {
-        this.$store.commit('updateEchangeBrouillon', { echangeId: this.echangeId, brouillon: value })
+        this.$store.commit('updatePointDeControleBrouillon', { pointDeControleId: this.pointDeControleId, brouillon: value })
       }
     },
     colorBrouillon () {
@@ -102,15 +102,15 @@ export default {
       this.$refs.file.click()
     },
     async addMessage (messageText, confidential) {
-      if (this.echangeId === -1) {
+      if (this.pointDeControleId === -1) {
         // si onglet commentaires
         await this.$api.inspections.ajouterCommentaireGeneral(this.inspection.id, {
           text: messageText,
           attachments: this.attachments
         })
       } else {
-        // si dans un échange
-        await this.$api.inspections.ajouterMessage(this.echangeId, {
+        // si dans un point de contrôle
+        await this.$api.inspections.ajouterMessage(this.pointDeControleId, {
           text: messageText,
           attachments: this.attachments,
           confidential: confidential

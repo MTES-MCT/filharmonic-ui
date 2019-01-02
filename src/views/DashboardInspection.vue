@@ -1,6 +1,6 @@
 <template lang="pug">
 v-container
-  fh-echange(v-for="echange in inspection.echanges" :key="echange.id" :echange="echange" :etatInspection="inspection.etat")
+  fh-point-de-controle(v-for="pointDeControle in inspection.pointsDeControle" :key="pointDeControle.id" :pointDeControle="pointDeControle" :etatInspection="inspection.etat")
 
   v-slide-y-transition(hide-on-leave)
     v-card.my-3.elevation-4(v-if="showNewPointDeControleForm")
@@ -51,14 +51,14 @@ v-container
 <script>
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhMessage from '@/components/FhMessage.vue'
-import FhEchange from '@/components/FhEchange.vue'
+import FhPointDeControle from '@/components/FhPointDeControle.vue'
 import FhSuite from '@/components/FhSuite.vue'
 
 export default {
   components: {
     FhEtatInspection,
     FhMessage,
-    FhEchange,
+    FhPointDeControle,
     FhSuite
   },
   props: {
