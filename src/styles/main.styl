@@ -18,3 +18,10 @@
     transform: rotate(0deg)
   to
     transform: rotate(360deg)
+
+// pour les icones qui veulent être retournées
+.fh-toggle-icon
+  transition all .3s cubic-bezier(0.25, 0.8, 0.5, 1) !important
+
+  &--reverse
+    transform rotate(-180deg)

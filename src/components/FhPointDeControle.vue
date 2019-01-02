@@ -1,7 +1,10 @@
 <template lang="pug">
-v-expansion-panel(expand v-if="showPointDeControle")
-  v-expansion-panel-content.fh-point-de-controle
-    v-layout.column(slot="header")
+.fh-point-de-controle.elevation-1(v-if="showPointDeControle")
+  fh-toolbar
+    v-btn(flat title="Déplier/replier" @click="toggleShowMessages()")
+      v-icon.fh-toggle-icon(large :class="{'fh-toggle-icon--reverse': showMessages}") keyboard_arrow_down
+
+    v-layout.column.pa-2
       .fh-point-de-controle__sujet
         | {{ pointDeControle.sujet }}
         v-icon.ml-4(v-if="pointDeControle.messagesNonLus"
@@ -32,9 +35,13 @@ v-expansion-panel(expand v-if="showPointDeControle")
             | Avant le&nbsp;
             time(:datetime="pointDeControle.constat.echeance") {{ pointDeControle.constat.echeance }}
 
-    v-card.px-3
+    v-btn(flat title="Éditer/supprimer" v-if="peutEditer")
+      v-icon settings
+
+  v-expand-transition
+    v-card.elevation-0.fh-point-de-controle__body(v-if="showMessages")
       v-card-text
-        fh-messages(:pointDeControleId="pointDeControle.id" :etatInspection="etatInspection" :messages="pointDeControle.messages")
+        fh-messages.elevation-0(:pointDeControleId="pointDeControle.id" :etatInspection="etatInspection" :messages="pointDeControle.messages")
 
         div(v-if="!pointDeControle.constat")
           v-slide-y-transition(hide-on-leave)
@@ -84,13 +91,15 @@ v-expansion-panel(expand v-if="showPointDeControle")
 </template>
 
 <script>
-import { typesConstats } from '@/api/inspections'
+import { isBeforeState, typesConstats } from '@/api/inspections'
 import FhMessages from '@/components/FhMessages.vue'
+import FhToolbar from '@/components/FhToolbar.vue'
 
 export default {
   name: 'FhPointDeControle',
   components: {
-    FhMessages
+    FhMessages,
+    FhToolbar
   },
   props: {
     pointDeControle: {
@@ -104,6 +113,7 @@ export default {
   },
   data () {
     return {
+      showMessages: false,
       showNewConstatForm: false,
       typesConstats,
       newConstat: {
@@ -122,11 +132,17 @@ export default {
     showPointDeControle () {
       return !this.$permissions.isExploitant || !this.pointDeControle.brouillon
     },
+    peutEditer () {
+      return !this.$permissions.isExploitant && isBeforeState(this.etatInspection, 'attente_validation')
+    },
     peutAjouterConstat () {
       return !this.$permissions.isExploitant && this.etatInspection === 'en_cours' && !this.pointDeControle.constat && !this.showNewConstatForm
     }
   },
   methods: {
+    async toggleShowMessages () {
+      this.showMessages = !this.showMessages
+    },
     resetNewConstat () {
       this.newConstat = {
         type: 'conforme'
@@ -143,10 +159,6 @@ export default {
 
 <style lang="stylus">
 .fh-point-de-controle
-  background-color #f0f0f0 !important
-  &:hover
-    background-color darken(#f0f0f0, 5%) !important
-
   &__sujet
     font-size 1.3em
 
