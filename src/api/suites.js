@@ -1,7 +1,7 @@
 import BaseAPI from '@/api/base'
 import * as _ from '@/util'
 import { ApplicationError } from '@/errors'
-import { createSuite } from '@/models/suite'
+import { Suite } from '@/models/suite'
 
 const suites = [
   {
@@ -43,12 +43,9 @@ export default class SuitesAPI extends BaseAPI {
   async save (newSuite) {
     this.requireInspecteur()
     const newId = new Date().getTime() % 1000
-    const suite = createSuite({
-      id: newId,
-      type: newSuite.type,
-      inspectionId: newSuite.inspectionId,
-      synthese: newSuite.synthese
-    })
+    const suite = new Suite()
+    Object.assign(suite, newSuite)
+    suite.id = newId
     suites.push(suite)
     return suite
   }

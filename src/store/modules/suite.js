@@ -1,6 +1,7 @@
 import { getField, updateField } from 'vuex-map-fields'
 import { ADD_ROW, RESET } from '@/store/mutation-types'
 import { SAVE } from '@/store/action-types'
+import { createSuite } from '@/models/suite'
 
 const actions = {
   async [SAVE] ({ commit }, suite) {
@@ -9,7 +10,7 @@ const actions = {
       throw new TypeError(message)
     }
     const newSuite = await this.$api.suites.save(suite)
-    commit(ADD_ROW, newSuite)
+    commit(ADD_ROW, createSuite(newSuite))
   }
 }
 
