@@ -1,7 +1,7 @@
 import BaseAPI from '@/api/base'
 import * as _ from '@/util'
 import { ApplicationError } from '@/errors'
-import { typesSuite, createSuite } from '@/models/suite'
+import { createSuite } from '@/models/suite'
 
 const suites = [
   {
@@ -20,7 +20,6 @@ export default class SuitesAPI extends BaseAPI {
     }
     return Promise.all(
       filtered.map(async suite => {
-        suite.type = typesSuite.find(t => t.id === suite.type)
         return _.cloneDeep(suite)
       })
     )
@@ -35,7 +34,7 @@ export default class SuitesAPI extends BaseAPI {
     }
     return suite
   }
-  async getByInspection (inspectionId, options) {
+  async listByInspection (inspectionId, options) {
     return this.list({
       ...options,
       filter: suite => suite.inspectionId === inspectionId

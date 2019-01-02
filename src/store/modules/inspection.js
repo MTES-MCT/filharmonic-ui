@@ -18,6 +18,22 @@ import { createUser } from '@/models/user'
 import { createInspection } from '@/models/inspection'
 import { createMessage } from '@/models/message'
 import { createEvenement } from '@/models/evenement'
+import { createSuite } from '@/models/suite'
+
+const reset = (commit) => {
+  commit(RESET)
+  commit('detail/' + RESET)
+  commit('etablissement/' + RESET)
+  commit('etat/' + RESET)
+  commit('theme/' + RESET)
+  commit('comment/' + RESET)
+  commit('evenement/' + RESET)
+  commit('inspecteur/' + RESET)
+  commit('suite/' + RESET)
+  commit('echange/message/' + RESET)
+  commit('echange/constat/' + RESET)
+  commit('echange/' + RESET)
+}
 
 const actions = {
   async [GET] ({ commit }, id) {
@@ -59,7 +75,7 @@ const actions = {
       commit('evenement/' + ADD_ROW, createEvenement(c))
     })
     inspection.suites.forEach(s => {
-      commit('suite/' + ADD_ROW, s)
+      commit('suite/' + ADD_ROW, createSuite(s))
     })
   },
   async [SAVE] ({ commit, state }) {
@@ -86,21 +102,6 @@ const actions = {
     }
     await this.$api.inspections.valider(inspectionId, approbateurId)
   }
-}
-
-const reset = (commit) => {
-  commit(RESET)
-  commit('detail/' + RESET)
-  commit('etablissement/' + RESET)
-  commit('etat/' + RESET)
-  commit('theme/' + RESET)
-  commit('comment/' + RESET)
-  commit('evenement/' + RESET)
-  commit('inspecteur/' + RESET)
-  commit('suite/' + RESET)
-  commit('echange/message/' + RESET)
-  commit('echange/constat/' + RESET)
-  commit('echange/' + RESET)
 }
 
 const mutations = {

@@ -100,7 +100,7 @@ export default class InspectionsAPI extends BaseAPI {
           inspection.evenements = (await this.api.evenements.list()).filter(event => event.inspectionId === inspection.id)
         }
         if (options.suites) {
-          inspection.suites = (await this.api.suites.list()).filter(s => s.inspectionId === inspection.id)
+          inspection.suites = await this.api.suites.listByInspection(inspection.id)
         }
         return _.cloneDeep(inspection)
       })
