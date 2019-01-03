@@ -1,6 +1,6 @@
 <template lang="pug">
 .fh-point-de-controle.elevation-1(v-if="showPointDeControle")
-  fh-toolbar
+  fh-toolbar(:class="{'fh-point-de-controle--brouillon': pointDeControle.brouillon}")
     v-btn(flat title="Déplier/replier" @click="toggleShowMessages()")
       v-icon.fh-toggle-icon(large :class="{'fh-toggle-icon--reverse': showMessages}") keyboard_arrow_down
 
@@ -13,8 +13,10 @@
           v-icon.ml-4(v-if="pointDeControle.messagesNonLus"
                       :title="`${pointDeControle.messagesNonLus} nouveaux messages`"
                       color="primary"
-                      required
                       ) feedback
+          v-icon.ml-4(v-if="pointDeControle.brouillon"
+                      title="Ce point de contrôle n'est pas publié"
+                      ) visibility_off
         a.fh-point-de-controle__referenceReglementaire(v-for="referenceReglementaire in pointDeControle.referencesReglementaires"
                                                       href="https://www.legifrance.gouv.fr/eli/arrete/2017/6/28/TREP1719163A/jo/texte/fr"
                                                       target="_blank") {{ referenceReglementaire }}
@@ -48,9 +50,14 @@
         v-icon settings
       v-layout.column
         v-btn.ma-0(depressed large title="Modifier le point de contrôle"
-              @click="enterEditMode"
-              )
+                  @click="enterEditMode"
+                  )
           v-icon(x-large) edit
+        v-btn.ma-0(v-if="peutPublier"
+                  depressed large title="Publier le point de contrôle"
+                  @click="publierPointDeControle"
+                  )
+          v-icon(x-large) visibility
         v-btn.ma-0(depressed color="error" large title="Supprimer le point de contrôle"
                   @click="supprimerPointDeControle"
                   )
@@ -161,6 +168,9 @@ export default {
     peutEditer () {
       return !this.$permissions.isExploitant && isBeforeState(this.etatInspection, 'attente_validation') && !this.editMode
     },
+    peutPublier () {
+      return !this.$permissions.isExploitant && this.pointDeControle.brouillon && isBeforeState(this.etatInspection, 'attente_validation')
+    },
     peutAjouterConstat () {
       return !this.$permissions.isExploitant && this.etatInspection === 'en_cours' && !this.pointDeControle.constat && !this.showNewConstatForm
     },
@@ -184,6 +194,9 @@ export default {
         this.quitEditMode()
       }
     },
+    async publierPointDeControle () {
+      await this.$api.inspections.publierPointDeControle(this.pointDeControle.id)
+    },
     async supprimerPointDeControle () {
       await this.$api.inspections.supprimerPointDeControle(this.pointDeControle.id)
     },
@@ -206,6 +219,9 @@ export default {
 
 <style lang="stylus">
 .fh-point-de-controle
+  &--brouillon
+    opacity 0.5
+
   &__sujet
     font-size 1.3em
 

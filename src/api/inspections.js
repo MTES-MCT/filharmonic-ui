@@ -571,6 +571,7 @@ export default class InspectionsAPI extends BaseAPI {
     }
     const pointDeControleEntity = _.cloneDeep(pointDeControle)
     pointDeControleEntity.id = new Date().getTime()
+    pointDeControleEntity.brouillon = true
     inspection.pointsDeControle.push(pointDeControleEntity)
 
     await this.api.evenements.create({
@@ -609,6 +610,22 @@ export default class InspectionsAPI extends BaseAPI {
 
     await this.api.evenements.create({
       type: 'suppression_pointdecontrole',
+      inspectionId: inspection.id
+    })
+    await this.loadInspection(inspection.id)
+  }
+
+  async publierPointDeControle (pointDeControleId) {
+    this.requireInspecteur()
+    const inspection = inspections.find(inspection => inspection.pointsDeControle.some(pointDeControle => pointDeControle.id === pointDeControleId))
+    if (!inspection) {
+      throw new ApplicationError(`Point de contrôle ${pointDeControleId} non trouvé`)
+    }
+    const pointDeControle = inspection.pointsDeControle.find(pointDeControle => pointDeControle.id === pointDeControleId)
+    pointDeControle.brouillon = false
+
+    await this.api.evenements.create({
+      type: 'publication_pointdecontrole',
       inspectionId: inspection.id
     })
     await this.loadInspection(inspection.id)

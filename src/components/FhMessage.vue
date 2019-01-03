@@ -29,15 +29,11 @@ export default {
     message: {
       type: Object,
       required: true
-    },
-    colorBrouillon: {
-      type: String,
-      required: true
     }
   },
   computed: {
     color () {
-      return this.message.confidential ? 'grey' : (this.message.lu ? this.colorBrouillon : 'red')
+      return this.message.confidential ? 'grey' : (this.message.lu ? 'primary' : 'red')
     },
     icon () {
       return this.message.confidential ? 'message' : (this.message.lu ? 'drafts' : 'markunread')

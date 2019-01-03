@@ -171,6 +171,12 @@ export const evenements = {
       return `a supprimé un point de contrôle.`
     }
   },
+  publication_pointdecontrole: {
+    notifications: () => ['inspecteurs'],
+    message (evenement) {
+      return `a publié un point de contrôle.`
+    }
+  },
   creation_constat: {
     notifications: () => ['inspecteurs'],
     message (evenement) {

@@ -2,8 +2,6 @@
 v-card
   v-toolbar(flat dense)
     v-toolbar-title.subheading Messages
-    v-btn(small icon v-if="peutPublier" @click="publier" :color="colorBrouillon" :title="`${brouillon ? 'Brouillon' : 'Publié'}`")
-      v-icon {{ brouillon ? 'visibility_off' : 'visibility' }}
     v-dialog(v-model="dialogNewMessage" v-if="peutAjouterMessage" width="500")
       v-btn(small icon slot="activator" title="Nouveau message" :color="colorBrouillon")
         v-icon add
@@ -80,19 +78,6 @@ export default {
     peutAjouterMessage () {
       return this.commentairesGeneraux || isBeforeState(this.etatInspection, 'attente_validation')
     },
-    peutPublier () {
-      // TODO serait plutôt à mettre au niveau du point de contrôle
-      return !this.$permissions.isExploitant && isBeforeState(this.etatInspection, 'attente_validation')
-    },
-    brouillon: {
-      get () {
-        const pointDeControle = this.$store.state.inspectionOuverte.pointsDeControle.find(pointDeControle => pointDeControle.id === this.pointDeControleId)
-        return pointDeControle === undefined ? true : pointDeControle.brouillon
-      },
-      set (value) {
-        this.$store.commit('updatePointDeControleBrouillon', { pointDeControleId: this.pointDeControleId, brouillon: value })
-      }
-    },
     colorBrouillon () {
       return this.brouillon ? 'primary' : 'success'
     }
@@ -119,9 +104,6 @@ export default {
       this.newMessage = ''
       this.attachments = []
       this.dialogNewMessage = false
-    },
-    publier () {
-      if (this.$permissions.isInspecteur) this.brouillon = !this.brouillon
     },
     /*
     Exemple attachment = {
