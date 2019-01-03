@@ -14,25 +14,7 @@ v-container
       v-card-text
         v-container.pa-0(grid-list-md)
           v-form(ref="newPointDeControleForm" v-model="validNewPointDeControleForm")
-            v-layout.column
-              v-text-field(label="Sujet" hideDetails clearable
-                            v-model="newPointDeControle.sujet"
-                            required
-                            :rules="notEmpty"
-                          )
-
-              v-text-field(v-for="(referenceReglementaire, index) in newPointDeControle.referencesReglementaires" :key="index"
-                            label="Référence réglementaire" hideDetails clearable
-                            v-model="newPointDeControle.referencesReglementaires[index]"
-                            :append-outer-icon="newPointDeControle.referencesReglementaires.length > 1 ? 'delete' : null"
-                            @click:append-outer="newPointDeControle.referencesReglementaires.splice(index, 1)"
-                            required
-                            :rules="notEmpty"
-                          )
-              .d-block
-                v-btn(flat title="Ajouter une référence réglementaire" @click="newPointDeControle.referencesReglementaires.push('')")
-                  v-icon(medium left) add
-                  | Nouvelle référence réglementaire
+            fh-point-de-controle-form(:pointDeControle="newPointDeControle")
 
       v-card-actions.justify-center.pb-3
         v-btn(color="primary" @click="saveNewPointDeControle()" :disabled="!validNewPointDeControleForm")
@@ -52,6 +34,7 @@ v-container
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhPointDeControle from '@/components/FhPointDeControle.vue'
+import FhPointDeControleForm from '@/components/FhPointDeControleForm.vue'
 import FhSuite from '@/components/FhSuite.vue'
 
 export default {
@@ -59,6 +42,7 @@ export default {
     FhEtatInspection,
     FhMessage,
     FhPointDeControle,
+    FhPointDeControleForm,
     FhSuite
   },
   props: {

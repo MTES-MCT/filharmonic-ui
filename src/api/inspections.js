@@ -580,6 +580,40 @@ export default class InspectionsAPI extends BaseAPI {
     await this.loadInspection(inspectionId)
   }
 
+  async modifierPointDeControle (pointDeControleId, updatedPointDeControle) {
+    this.requireInspecteur()
+    const inspection = inspections.find(inspection => inspection.pointsDeControle.some(pointDeControle => pointDeControle.id === pointDeControleId))
+    if (!inspection) {
+      throw new ApplicationError(`Point de contrôle ${pointDeControleId} non trouvé`)
+    }
+    const pointDeControle = inspection.pointsDeControle.find(pointDeControle => pointDeControle.id === pointDeControleId)
+    Object.assign(pointDeControle, updatedPointDeControle)
+
+    await this.api.evenements.create({
+      type: 'modification_pointdecontrole',
+      inspectionId: inspection.id
+    })
+    await this.loadInspection(inspection.id)
+  }
+
+  async supprimerPointDeControle (pointDeControleId) {
+    this.requireInspecteur()
+    const inspection = inspections.find(inspection => inspection.pointsDeControle.some(pointDeControle => pointDeControle.id === pointDeControleId))
+    if (!inspection) {
+      throw new ApplicationError(`Point de contrôle ${pointDeControleId} non trouvé`)
+    }
+    const index = inspection.pointsDeControle.map(pointDeControle => pointDeControle.id).indexOf(pointDeControleId)
+    if (index !== -1) {
+      inspection.pointsDeControle.splice(index, 1)
+    }
+
+    await this.api.evenements.create({
+      type: 'suppression_pointdecontrole',
+      inspectionId: inspection.id
+    })
+    await this.loadInspection(inspection.id)
+  }
+
   async modifierSuite (inspectionId, suite) {
     this.requireInspecteur()
     const inspection = inspections.find(i => i.id === inspectionId)

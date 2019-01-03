@@ -159,6 +159,18 @@ export const evenements = {
       return `a ajouté un point de contrôle.`
     }
   },
+  modification_pointdecontrole: {
+    notifications: () => ['inspecteurs'],
+    message (evenement) {
+      return `a modifié un point de contrôle.`
+    }
+  },
+  suppression_pointdecontrole: {
+    notifications: () => ['inspecteurs'],
+    message (evenement) {
+      return `a supprimé un point de contrôle.`
+    }
+  },
   creation_constat: {
     notifications: () => ['inspecteurs'],
     message (evenement) {

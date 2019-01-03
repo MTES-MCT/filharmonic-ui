@@ -4,18 +4,20 @@
     v-btn(flat title="Déplier/replier" @click="toggleShowMessages()")
       v-icon.fh-toggle-icon(large :class="{'fh-toggle-icon--reverse': showMessages}") keyboard_arrow_down
 
-    v-layout.column.pa-2
-      .fh-point-de-controle__sujet
-        | {{ pointDeControle.sujet }}
-        v-icon.ml-4(v-if="pointDeControle.messagesNonLus"
-                    :title="`${pointDeControle.messagesNonLus} nouveaux messages`"
-                    color="primary"
-                    ) feedback
-
-      a.fh-point-de-controle__referenceReglementaire(v-for="referenceReglementaire in pointDeControle.referencesReglementaires"
-                                            href="https://www.legifrance.gouv.fr/eli/arrete/2017/6/28/TREP1719163A/jo/texte/fr"
-                                            target="_blank")
-        | {{ referenceReglementaire }}
+    .flex.pa-2
+      v-form(v-if="editMode" ref="pointDeControleEditeForm" v-model="validPointDeControleEditeForm")
+        fh-point-de-controle-form(:pointDeControle="pointDeControleEdite")
+      v-layout.column(v-else)
+        .fh-point-de-controle__sujet
+          | {{ pointDeControle.sujet }}
+          v-icon.ml-4(v-if="pointDeControle.messagesNonLus"
+                      :title="`${pointDeControle.messagesNonLus} nouveaux messages`"
+                      color="primary"
+                      required
+                      ) feedback
+        a.fh-point-de-controle__referenceReglementaire(v-for="referenceReglementaire in pointDeControle.referencesReglementaires"
+                                                      href="https://www.legifrance.gouv.fr/eli/arrete/2017/6/28/TREP1719163A/jo/texte/fr"
+                                                      target="_blank") {{ referenceReglementaire }}
 
       .fh-point-de-controle__constat(v-if="pointDeControle.constat" :style="`border-left-color: ${typeConstatPointDeControle.color}`")
         v-layout.align-center
@@ -35,8 +37,24 @@
             | Avant le&nbsp;
             time(:datetime="pointDeControle.constat.echeance") {{ pointDeControle.constat.echeance }}
 
-    v-btn(flat title="Éditer/supprimer" v-if="peutEditer")
-      v-icon settings
+    .d-flex(v-if="editMode")
+      v-btn(flat title="Annuler l'édition" @click="quitEditMode")
+        v-icon(medium) clear
+      v-btn(depressed color="success" title="Mettre à jour" @click="modifierPointDeControle" :disabled="!validPointDeControleEditeForm")
+        v-icon(medium) check
+
+    v-menu.d-flex(bottom offset-y transition="slide-y-transition" v-if="peutEditer")
+      v-btn.fh-fill-height(slot="activator" flat title="Éditer/supprimer")
+        v-icon settings
+      v-layout.column
+        v-btn.ma-0(depressed large title="Modifier le point de contrôle"
+              @click="enterEditMode"
+              )
+          v-icon(x-large) edit
+        v-btn.ma-0(depressed color="error" large title="Supprimer le point de contrôle"
+                  @click="supprimerPointDeControle"
+                  )
+          v-icon(x-large) delete
 
   v-expand-transition
     v-card.elevation-0.fh-point-de-controle__body(v-if="showMessages")
@@ -93,12 +111,15 @@
 <script>
 import { isBeforeState, typesConstats } from '@/api/inspections'
 import FhMessages from '@/components/FhMessages.vue'
+import FhPointDeControleForm from '@/components/FhPointDeControleForm.vue'
 import FhToolbar from '@/components/FhToolbar.vue'
+import * as _ from '@/util'
 
 export default {
   name: 'FhPointDeControle',
   components: {
     FhMessages,
+    FhPointDeControleForm,
     FhToolbar
   },
   props: {
@@ -113,6 +134,8 @@ export default {
   },
   data () {
     return {
+      pointDeControleEdite: null,
+      validPointDeControleEditeForm: true,
       showMessages: false,
       showNewConstatForm: false,
       typesConstats,
@@ -126,6 +149,9 @@ export default {
     }
   },
   computed: {
+    editMode () {
+      return this.pointDeControleEdite !== null
+    },
     typeConstatPointDeControle () {
       return this.pointDeControle.constat ? typesConstats[this.pointDeControle.constat.type] : {}
     },
@@ -133,13 +159,31 @@ export default {
       return !this.$permissions.isExploitant || !this.pointDeControle.brouillon
     },
     peutEditer () {
-      return !this.$permissions.isExploitant && isBeforeState(this.etatInspection, 'attente_validation')
+      return !this.$permissions.isExploitant && isBeforeState(this.etatInspection, 'attente_validation') && !this.editMode
     },
     peutAjouterConstat () {
       return !this.$permissions.isExploitant && this.etatInspection === 'en_cours' && !this.pointDeControle.constat && !this.showNewConstatForm
     }
   },
   methods: {
+    quitEditMode () {
+      this.pointDeControleEdite = null
+    },
+    enterEditMode () {
+      this.pointDeControleEdite = _.cloneDeep({
+        sujet: this.pointDeControle.sujet,
+        referencesReglementaires: this.pointDeControle.referencesReglementaires
+      })
+    },
+    async modifierPointDeControle () {
+      if (this.$refs.pointDeControleEditeForm.validate()) {
+        await this.$api.inspections.modifierPointDeControle(this.pointDeControle.id, this.pointDeControleEdite)
+        this.quitEditMode()
+      }
+    },
+    async supprimerPointDeControle () {
+      await this.$api.inspections.supprimerPointDeControle(this.pointDeControle.id)
+    },
     async toggleShowMessages () {
       this.showMessages = !this.showMessages
     },

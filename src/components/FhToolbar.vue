@@ -15,12 +15,10 @@ export default {
 <style lang="stylus">
 .fh-toolbar
   display flex
-  flex-direction row
   background-color #f0f0f0
 
   // surcharge vuetify pour étirer les boutons
   .v-btn
-    display flex
     height inherit
     margin 0
 </style>
