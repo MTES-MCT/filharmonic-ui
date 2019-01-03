@@ -25,7 +25,7 @@ v-container
       v-icon(left) add
       | Ajouter un point de contrôle
 
-  section(v-if="showSuites")
+  section(v-if="peutVoirSuites")
     h4.display-1.my-4 Suites
     fh-suite(:inspection="inspection" :modifiable="peutModifierSuites")
 </template>
@@ -78,8 +78,8 @@ export default {
     peutModifierSuites () {
       return !this.$permissions.isExploitant && this.inspectionModifiable
     },
-    showSuites () {
-      return this.inspection.etat !== 'preparation' && (this.inspection.suite || !this.$permissions.isExploitant)
+    peutVoirSuites () {
+      return this.inspection.etat !== 'preparation' && (!this.$permissions.isExploitant || this.inspection.etat === 'valide')
     }
   },
   methods: {

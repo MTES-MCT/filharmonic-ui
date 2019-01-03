@@ -19,7 +19,7 @@
                                                       href="https://www.legifrance.gouv.fr/eli/arrete/2017/6/28/TREP1719163A/jo/texte/fr"
                                                       target="_blank") {{ referenceReglementaire }}
 
-      .fh-point-de-controle__constat(v-if="pointDeControle.constat" :style="`border-left-color: ${typeConstatPointDeControle.color}`")
+      .fh-point-de-controle__constat(v-if="peutVoirConstat" :style="`border-left-color: ${typeConstatPointDeControle.color}`")
         v-layout.align-center
           span.subheading.mr-2 Constat finalisé :
           v-chip(small :color="typeConstatPointDeControle.color" dark text-color="white")
@@ -163,6 +163,9 @@ export default {
     },
     peutAjouterConstat () {
       return !this.$permissions.isExploitant && this.etatInspection === 'en_cours' && !this.pointDeControle.constat && !this.showNewConstatForm
+    },
+    peutVoirConstat () {
+      return this.pointDeControle.constat && (!this.$permissions.isExploitant || this.etatInspection === 'valide')
     }
   },
   methods: {
