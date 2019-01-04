@@ -220,6 +220,14 @@ export const evenements = {
     message (evenement) {
       return `a posté un message.`
     }
+  },
+  lecture_message: {
+    notifications (api) {
+      return api.store.getters.isExploitant ? ['inspecteurs'] : ['exploitants']
+    },
+    message (evenement) {
+      return `a lu un message.`
+    }
   }
 }
 

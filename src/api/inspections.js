@@ -709,6 +709,33 @@ export default class InspectionsAPI extends BaseAPI {
     await this.loadInspection(inspection.id)
   }
 
+  async lireMessage (messageId) {
+    const inspection = inspections.find(inspection => (
+      inspection.pointsDeControle.some(pointDeControle => (
+        pointDeControle.messages.some(message => message.id === messageId)
+      ))
+    ))
+    if (!inspection) {
+      throw new ApplicationError(`Message ${messageId} non trouvé`)
+    }
+    inspection.pointsDeControle.find(pointDeControle => {
+      const message = pointDeControle.messages.find(message => message.id === messageId)
+      if (message) {
+        message.lu = true
+        return true
+      }
+    })
+
+    await this.api.evenements.create({
+      type: 'lecture_message',
+      inspectionId: inspection.id,
+      data: {
+        messageId: messageId
+      }
+    })
+    await this.loadInspection(inspection.id)
+  }
+
   async ajouterConstat (pointDeControleId, constat) {
     this.requireInspecteur()
     const inspection = inspections.find(inspection => inspection.pointsDeControle.some(pointDeControle => pointDeControle.id === pointDeControleId))
