@@ -28,7 +28,7 @@ export async function createStore (options = {}) {
     mutations,
     actions,
     strict: process.env.NODE_ENV !== 'production',
-    plugins: [createLogger()]
+    plugins: process.env.NODE_ENV !== 'production' ? [createLogger()] : []
   })
 
   // expose the API to the store
