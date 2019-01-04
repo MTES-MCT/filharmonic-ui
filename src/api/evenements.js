@@ -210,7 +210,7 @@ export const evenements = {
   commentaire: {
     notifications: () => ['inspecteurs'],
     message (evenement) {
-      return `a poste un commentaire.`
+      return `a posté un commentaire.`
     }
   },
   message: {
