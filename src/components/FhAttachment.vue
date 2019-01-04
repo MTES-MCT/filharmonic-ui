@@ -1,5 +1,5 @@
 <template lang="pug">
-v-dialog(v-if="previewer" v-model="showDialog" scrollable width="800px")
+v-dialog(v-if="previewer" v-model="showDialog" scrollable lazy width="800px")
   v-btn(flat slot="activator")
     v-icon(left) {{ fileIcon }}
     span {{ attachment.filename }}
