@@ -488,9 +488,6 @@ export default class InspectionsAPI extends BaseAPI {
               .filter(filtreAutreMessages)
               .reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
           ), 0)
-          if (this.isInspecteur) {
-            inspection.messagesNonLus += inspection.comments.reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
-          }
         }
         if (options.detailMessagesNonLus) {
           inspection.pointsDeControle.forEach(pointDeControle => {
