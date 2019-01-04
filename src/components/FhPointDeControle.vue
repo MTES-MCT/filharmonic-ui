@@ -10,10 +10,7 @@
       v-layout.column(v-else)
         .fh-point-de-controle__sujet
           | {{ pointDeControle.sujet }}
-          v-icon.ml-4(v-if="pointDeControle.messagesNonLus"
-                      :title="`${pointDeControle.messagesNonLus} nouveaux messages`"
-                      color="primary"
-                      ) feedback
+          fh-icone-nouveaux-messages(:messages="pointDeControle.messagesNonLus")
           v-icon.ml-4(v-if="pointDeControle.brouillon"
                       title="Ce point de contrôle n'est pas publié"
                       ) visibility_off
@@ -117,6 +114,7 @@
 
 <script>
 import { isBeforeState, typesConstats } from '@/api/inspections'
+import FhIconeNouveauxMessages from '@/components/FhIconeNouveauxMessages.vue'
 import FhMessages from '@/components/FhMessages.vue'
 import FhPointDeControleForm from '@/components/FhPointDeControleForm.vue'
 import FhToolbar from '@/components/FhToolbar.vue'
@@ -125,6 +123,7 @@ import * as _ from '@/util'
 export default {
   name: 'FhPointDeControle',
   components: {
+    FhIconeNouveauxMessages,
     FhMessages,
     FhPointDeControleForm,
     FhToolbar

@@ -16,18 +16,20 @@ v-list-tile(:to="`/inspections/${inspection.id}`")
       v-chip(v-for="(theme, index) in inspection.themes" :key="index" small) {{ theme }}
 
   v-layout.justify-end(v-if="inspection.messagesNonLus")
-    v-icon.ml-4(color="primary" medium :title="`${inspection.messagesNonLus} nouveaux messages`") feedback
+    fh-icone-nouveaux-messages(:messages="inspection.messagesNonLus" big)
 
 </template>
 
 <script>
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
+import FhIconeNouveauxMessages from '@/components/FhIconeNouveauxMessages.vue'
 import FhMessage from '@/components/FhMessage.vue'
 
 export default {
   name: 'FhInspectionItem',
   components: {
     FhEtatInspection,
+    FhIconeNouveauxMessages,
     FhMessage
   },
   props: {
