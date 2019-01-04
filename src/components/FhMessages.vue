@@ -3,7 +3,7 @@ v-card
   v-toolbar(flat dense)
     v-toolbar-title.subheading Messages
     v-dialog(v-model="dialogNewMessage" v-if="peutAjouterMessage" width="500")
-      v-btn(small icon slot="activator" title="Nouveau message" :color="colorBrouillon")
+      v-btn(small icon slot="activator" title="Nouveau message" color="primary")
         v-icon add
       v-card
         v-toolbar(dark color="primary")
@@ -29,7 +29,7 @@ v-card
 
   v-card-text
     v-timeline
-      fh-message(v-for="message in messages" :key="message.id" :message="message" :colorBrouillon="colorBrouillon")
+      fh-message(v-for="message in messages" :key="message.id" :message="message")
 </template>
 
 <script>
@@ -77,9 +77,6 @@ export default {
     },
     peutAjouterMessage () {
       return this.commentairesGeneraux || isBeforeState(this.etatInspection, 'attente_validation')
-    },
-    colorBrouillon () {
-      return this.brouillon ? 'primary' : 'success'
     }
   },
   methods: {
