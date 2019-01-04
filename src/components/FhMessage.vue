@@ -2,7 +2,7 @@
   v-timeline-item(fill-dot :color="color" :icon="icon" :left="message.author.type !== 'exploitant'" :right="message.author.type === 'exploitant'")
     span(slot="opposite" v-text="`${message.author.name} le ${message.date.toLocaleString()}`" :class="`${color}--text`")
     v-card.white--text(dark :color="color")
-      v-container.fluid.grid-list(class="pa-0 ma-0 text-xs-left")
+      v-container.fluid.grid-list.pa-0.ma-0.text-xs-left
         v-layout.row.wrap
           v-flex.xs-12
             v-card-actions

@@ -99,7 +99,7 @@ v-container.pa-0(:class="containerClass")
         template(slot="selection" slot-scope="{ item, index }")
           v-chip(v-if="index < max")
             span {{ item }}
-          span(v-if="index === max" class="grey--text caption") +{{ numberOtherThemes }} {{ others }}
+          span.grey--text.caption(v-if="index === max") +{{ numberOtherThemes }} {{ others }}
         template(v-if="!readonly" slot="no-data")
             v-list-tile.subheading Créer le thème
               v-chip(label small) {{ themeSearch }}

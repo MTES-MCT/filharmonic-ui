@@ -46,7 +46,7 @@ v-app
 
   v-toolbar(:clipped-left="$vuetify.breakpoint.lgAndUp" color="blue darken-3" dark app fixed)
     v-toolbar-side-icon(@click.stop="drawer = !drawer")
-    v-toolbar-title(style="width: 300px" class="ml-0 pl-3")
+    v-toolbar-title.ml-0.pl-3(style="width: 300px")
       span(class="hidden-sm-and-down") Fil'Harmonic
 
     v-spacer
