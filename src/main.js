@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import * as Sentry from '@sentry/browser'
 
 import API from './api/api'
 import events from './events'
@@ -19,6 +20,16 @@ import { ApplicationError } from './errors'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import './styles/main.styl'
+
+if (process.env.NODE_ENV === 'production') {
+  const sentryURL = '{{SENTRY_URL}}' // this URL will be replaced in the Docker image
+  if (!sentryURL.startsWith('{{')) {
+    Sentry.init({
+      dsn: sentryURL,
+      integrations: [new Sentry.Integrations.Vue({ Vue })]
+    })
+  }
+}
 
 Vue.config.productionTip = false
 function errorHandler (error) {
