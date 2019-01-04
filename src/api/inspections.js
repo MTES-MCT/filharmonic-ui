@@ -159,7 +159,7 @@ const inspections = [
       },
       {
         id: 3,
-        brouillon: true,
+        brouillon: false,
         sujet: 'Atelier de malaxage filage',
         referencesReglementaires: [
           "Article 3.1 de l'arrêté préfectoral du 9 juin 1999"
@@ -172,7 +172,7 @@ const inspections = [
       },
       {
         id: 4,
-        brouillon: true,
+        brouillon: false,
         sujet: 'Eau - Air',
         referencesReglementaires: [
           "Article 1 de l'Arrêté ministériel du 28 avril 2014"
@@ -186,7 +186,7 @@ const inspections = [
       },
       {
         id: 5,
-        brouillon: true,
+        brouillon: false,
         sujet: 'Autosurveillance des émissions canalisées de COV',
         referencesReglementaires: [
           "Article 8.2.1.1. de l'arrêté préfectoral du 28 juin 2017"
