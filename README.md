@@ -4,7 +4,7 @@
 
 > Prévenir efficacement les risques industriels
 
-Application en cours de développement, pas encore accessible.
+Application en cours de développement et accessible sur [filharmonic.beta.gouv.fr](https://filharmonic.beta.gouv.fr).
 
 ## Développement
 
