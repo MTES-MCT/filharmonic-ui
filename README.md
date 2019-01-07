@@ -1,3 +1,5 @@
+[![CircleCI](https://img.shields.io/circleci/project/github/MTES-MCT/filharmonic-ui/master.svg?style=flat-square)](https://circleci.com/gh/MTES-MCT/filharmonic-ui/tree/master)
+
 # Fil'Harmonic UI
 
 > Prévenir efficacement les risques industriels
