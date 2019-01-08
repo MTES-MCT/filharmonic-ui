@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/browser'
 import API from './api/api'
 import events from './events'
 import APIPlugin from './plugins/api'
+import ConfirmPlugin from './plugins/confirm'
 import PermissionsPlugin from './plugins/permissions'
 import './plugins/timeago'
 import './plugins/vuetify'
@@ -55,6 +56,7 @@ window.addEventListener('unhandledrejection', errorEventHandler => {
       api
     })
     Vue.use(APIPlugin, { api })
+    Vue.use(ConfirmPlugin)
     Vue.use(PermissionsPlugin, { store })
     new Vue({
       router: createRouter(store),

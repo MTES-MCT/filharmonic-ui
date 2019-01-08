@@ -208,7 +208,9 @@ export default {
       await this.$api.inspections.publierPointDeControle(this.pointDeControle.id)
     },
     async supprimerPointDeControle () {
-      await this.$api.inspections.supprimerPointDeControle(this.pointDeControle.id)
+      if (await this.$confirm('Êtes-vous sûr de vouloir supprimer ce point de contrôle ?')) {
+        await this.$api.inspections.supprimerPointDeControle(this.pointDeControle.id)
+      }
     },
     async toggleShowMessages () {
       this.showMessages = !this.showMessages
@@ -224,7 +226,9 @@ export default {
       this.resetNewConstat()
     },
     async supprimerConstat () {
-      await this.$api.inspections.supprimerConstat(this.pointDeControle.id)
+      if (await this.$confirm('Êtes-vous sûr de vouloir supprimer ce constat ?')) {
+        await this.$api.inspections.supprimerConstat(this.pointDeControle.id)
+      }
     }
   }
 }
