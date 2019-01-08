@@ -49,7 +49,8 @@
         v-btn.ma-0(depressed large title="Modifier le point de contrôle"
                   @click="enterEditMode"
                   )
-          v-icon(x-large) edit
+          v-icon(left) edit
+          | Modifier
         v-btn.ma-0(v-if="peutPublier"
                   depressed large title="Publier le point de contrôle"
                   @click="publierPointDeControle"
@@ -59,11 +60,13 @@
                   depressed large title="Supprimer le constat"
                   @click="supprimerConstat"
                   )
-          v-icon(x-large) delete gavel
+          v-icon(left) delete gavel
+          | Supprimer le constat
         v-btn.ma-0(depressed color="error" large title="Supprimer le point de contrôle"
                   @click="supprimerPointDeControle"
                   )
-          v-icon(x-large) delete
+          v-icon(left) delete
+          | Supprimer
 
   v-expand-transition
     v-card.elevation-0.fh-point-de-controle__body(v-if="showMessages")
