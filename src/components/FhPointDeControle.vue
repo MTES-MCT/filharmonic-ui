@@ -55,6 +55,11 @@
                   @click="publierPointDeControle"
                   )
           v-icon(x-large) visibility
+        v-btn.ma-0(v-if="peutSupprimerConstat"
+                  depressed large title="Supprimer le constat"
+                  @click="supprimerConstat"
+                  )
+          v-icon(x-large) delete gavel
         v-btn.ma-0(depressed color="error" large title="Supprimer le point de contrôle"
                   @click="supprimerPointDeControle"
                   )
@@ -175,6 +180,9 @@ export default {
     },
     peutVoirConstat () {
       return this.pointDeControle.constat && (!this.$permissions.isExploitant || this.etatInspection === 'valide')
+    },
+    peutSupprimerConstat () {
+      return this.pointDeControle.constat && !this.$permissions.isExploitant && this.etatInspection === 'en_cours'
     }
   },
   methods: {
@@ -211,6 +219,9 @@ export default {
     async ajouterConstat () {
       await this.$api.inspections.ajouterConstat(this.pointDeControle.id, this.newConstat)
       this.resetNewConstat()
+    },
+    async supprimerConstat () {
+      await this.$api.inspections.supprimerConstat(this.pointDeControle.id)
     }
   }
 }

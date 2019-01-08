@@ -749,6 +749,22 @@ export default class InspectionsAPI extends BaseAPI {
     await this.loadInspection(inspection.id)
   }
 
+  async supprimerConstat (pointDeControleId) {
+    this.requireInspecteur()
+    const inspection = inspections.find(inspection => inspection.pointsDeControle.some(pointDeControle => pointDeControle.id === pointDeControleId))
+    if (!inspection) {
+      throw new ApplicationError(`Point de contrôle ${pointDeControleId} non trouvé`)
+    }
+    const pointDeControle = inspection.pointsDeControle.find(pointDeControle => pointDeControle.id === pointDeControleId)
+    delete pointDeControle.constat
+
+    await this.api.evenements.create({
+      type: 'suppression_constat',
+      inspectionId: inspection.id
+    })
+    await this.loadInspection(inspection.id)
+  }
+
   // passage état preparation -> en_cours
   async publier (inspectionId) {
     this.requireInspecteur()
