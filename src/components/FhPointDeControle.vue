@@ -26,7 +26,7 @@
               v-icon(large) {{ typeConstatPointDeControle.icon }}
             | {{ typeConstatPointDeControle.label }}
 
-        v-layout.my-2(v-if="pointDeControle.constat.remarques")
+        v-layout.align-center.my-2(v-if="pointDeControle.constat.remarques")
           span.subheading.mr-2 Remarques&nbsp;:
           v-flex
             div {{ pointDeControle.constat.remarques }}
