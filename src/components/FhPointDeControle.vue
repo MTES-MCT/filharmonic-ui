@@ -55,7 +55,8 @@
                   depressed large title="Publier le point de contrôle"
                   @click="publierPointDeControle"
                   )
-          v-icon(x-large) visibility
+          v-icon(left) visibility
+          | Publier
         v-btn.ma-0(v-if="peutSupprimerConstat"
                   depressed large title="Supprimer le constat"
                   @click="supprimerConstat"
