@@ -219,7 +219,7 @@ const inspections = [
           }
         ],
         constat: {
-          type: 'proposition_mise_en_demeure',
+          type: 'non_conforme',
           remarques: 'Il faut réparer la fissure de la cuve.',
           echeance: '2019-02-17'
         }
@@ -373,11 +373,6 @@ export const typesConstats = {
   non_conforme: {
     label: 'Non conforme',
     color: 'red',
-    icon: 'error'
-  },
-  proposition_mise_en_demeure: {
-    label: 'Proposition de mise en demeure',
-    color: '#600060',
     icon: 'error'
   }
 }
