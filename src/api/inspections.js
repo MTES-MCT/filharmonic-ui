@@ -75,7 +75,7 @@ const inspections = [
         authorId: 2,
         text: "Attention à l'article 243.",
         date: new Date('2018-11-14T08:50:00'),
-        confidential: true,
+        interne: true,
         lu: true,
         attachments: []
       },
@@ -84,7 +84,7 @@ const inspections = [
         authorId: 1,
         text: "L'article 843 s'applique également.",
         date: new Date('2018-11-16T16:50:00'),
-        confidential: true,
+        interne: true,
         lu: true,
         attachments: []
       }
@@ -105,7 +105,7 @@ const inspections = [
             authorId: 1,
             text: "Auriez-vous l'obligeance de me fournir le document approprié ?",
             date: new Date('2018-11-16T14:00:00'),
-            confidential: false,
+            interne: false,
             lu: true,
             attachments: []
           },
@@ -114,7 +114,7 @@ const inspections = [
             authorId: 4,
             text: 'Voici le document en question.',
             date: new Date('2018-11-16T16:50:00'),
-            confidential: false,
+            interne: false,
             lu: true,
             attachments: [
               {
@@ -131,7 +131,7 @@ const inspections = [
             text: 'Merci.',
             date: new Date('2018-11-17T12:55:00'),
             lu: true,
-            confidential: false,
+            interne: false,
             attachments: []
           },
           {
@@ -139,7 +139,7 @@ const inspections = [
             authorId: 2,
             text: "Attention à l'article 243.",
             date: new Date('2018-11-14T08:50:00'),
-            confidential: true,
+            interne: true,
             lu: true,
             attachments: []
           },
@@ -148,7 +148,7 @@ const inspections = [
             authorId: 1,
             text: "L'article 843 s'applique également.",
             date: new Date('2018-11-16T16:50:00'),
-            confidential: true,
+            interne: true,
             lu: true,
             attachments: []
           }
@@ -197,7 +197,7 @@ const inspections = [
             authorId: 1,
             text: "Auriez-vous l'obligeance de me fournir une photo de la cuve ?",
             date: new Date('2018-11-16T14:10:00'),
-            confidential: false,
+            interne: false,
             lu: true,
             attachments: []
           },
@@ -206,7 +206,7 @@ const inspections = [
             authorId: 4,
             text: 'Voici une photo.',
             date: new Date('2018-11-17T08:50:00'),
-            confidential: false,
+            interne: false,
             lu: true,
             attachments: [
               {
@@ -427,7 +427,7 @@ export default class InspectionsAPI extends BaseAPI {
           inspection.pointsDeControle = inspection.pointsDeControle
             .filter(pointDeControle => !pointDeControle.brouillon)
             .map(pointDeControle => {
-              pointDeControle.messages = pointDeControle.messages.filter(message => !message.confidential)
+              pointDeControle.messages = pointDeControle.messages.filter(message => !message.interne)
               return pointDeControle
             })
           return inspection
@@ -665,7 +665,7 @@ export default class InspectionsAPI extends BaseAPI {
     commentaireEntity.authorId = this.userId
     commentaireEntity.date = new Date()
     commentaireEntity.lu = false
-    commentaireEntity.confidential = true
+    commentaireEntity.interne = true
     inspection.comments.push(commentaireEntity)
 
     await this.api.evenements.create({
@@ -687,12 +687,12 @@ export default class InspectionsAPI extends BaseAPI {
     messageEntity.date = new Date()
     messageEntity.lu = false
     if (this.isExploitant) {
-      messageEntity.confidential = false
+      messageEntity.interne = false
     }
     pointDeControle.messages.push(messageEntity)
 
     await this.api.evenements.create({
-      type: message.confidential ? 'commentaire' : 'message',
+      type: message.interne ? 'commentaire' : 'message',
       inspectionId: inspection.id,
       data: {
         pointDeControleId: pointDeControle.id

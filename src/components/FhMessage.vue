@@ -37,10 +37,10 @@ export default {
       'user'
     ]),
     color () {
-      return this.message.confidential ? 'grey' : (this.message.lu ? 'primary' : 'red')
+      return this.message.interne ? 'grey' : (this.message.lu ? 'primary' : 'red')
     },
     icon () {
-      return this.message.confidential ? 'message' : (this.message.lu ? 'drafts' : 'markunread')
+      return this.message.interne ? 'message' : (this.message.lu ? 'drafts' : 'markunread')
     },
     peutLireMessage () {
       return !this.message.lu && this.user.type !== this.message.author.type && !this.$permissions.isApprobateur

@@ -14,7 +14,7 @@ v-card
         v-divider
         v-card-text
           v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1" clearable)
-          v-checkbox(v-model="confidential" label="Confidentiel" v-if="pointDeControleId > 0 && !$permissions.isExploitant")
+          v-checkbox(v-model="interne" label="Interne" v-if="pointDeControleId > 0 && !$permissions.isExploitant")
 
         fh-attachment(v-for="(attachment, index) in attachments" :key="index" :attachment="attachment")
 
@@ -24,7 +24,7 @@ v-card
           v-btn(icon title="Ajouter une pièce jointe" @click="openAttachmentPopup")
             v-icon attach_file
           input(ref="file" type="file" @change="onFilesChange" multiple hidden)
-          v-btn(icon @click="addMessage(newMessage, confidential)" :disabled="!newMessage" color="primary" title="Envoyer")
+          v-btn(icon @click="addMessage" :disabled="!newMessage" color="primary" title="Envoyer")
             v-icon send
 
   v-card-text
@@ -63,7 +63,7 @@ export default {
   data () {
     return {
       newMessage: '',
-      confidential: true,
+      interne: true,
       attachments: [],
       dialogNewMessage: false
     }
@@ -83,19 +83,19 @@ export default {
     openAttachmentPopup () {
       this.$refs.file.click()
     },
-    async addMessage (messageText, confidential) {
+    async addMessage () {
       if (this.pointDeControleId === -1) {
         // si onglet commentaires
         await this.$api.inspections.ajouterCommentaireGeneral(this.inspection.id, {
-          text: messageText,
+          text: this.newMessage,
           attachments: this.attachments
         })
       } else {
         // si dans un point de contrôle
         await this.$api.inspections.ajouterMessage(this.pointDeControleId, {
-          text: messageText,
+          text: this.newMessage,
           attachments: this.attachments,
-          confidential: confidential
+          interne: this.interne
         })
       }
       this.newMessage = ''
