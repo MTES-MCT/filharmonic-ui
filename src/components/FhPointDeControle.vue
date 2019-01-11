@@ -14,9 +14,7 @@
           v-icon.ml-4(v-if="pointDeControle.brouillon"
                       title="Ce point de contrôle n'est pas publié"
                       ) visibility_off
-        a.fh-point-de-controle__referenceReglementaire(v-for="referenceReglementaire in pointDeControle.referencesReglementaires"
-                                                      href="https://www.legifrance.gouv.fr/eli/arrete/2017/6/28/TREP1719163A/jo/texte/fr"
-                                                      target="_blank") {{ referenceReglementaire }}
+        .fh-point-de-controle__referenceReglementaire(v-for="referenceReglementaire in pointDeControle.referencesReglementaires") {{ referenceReglementaire }}
 
       .fh-point-de-controle__constat(v-if="peutVoirConstat" :style="`border-left-color: ${typeConstatPointDeControle.color}`")
         v-layout.align-center
@@ -245,7 +243,6 @@ export default {
 
   &__referenceReglementaire
     font-size 0.9em
-    align-self start
 
   &__constat
     margin-top 1em
