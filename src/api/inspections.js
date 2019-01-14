@@ -546,7 +546,6 @@ export default class InspectionsAPI extends BaseAPI {
     if (!inspection) {
       throw new ApplicationError(`Inspection ${inspectionId} non trouvée`)
     }
-    inspection.favoris = favoris
     await this.api.users.toggleInspectionFavorite(inspectionId, favoris)
 
     await Promise.all([
