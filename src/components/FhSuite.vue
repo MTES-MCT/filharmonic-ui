@@ -10,15 +10,16 @@ div(v-if="openSuite")
 
     v-card-text
       v-form(ref="openSuiteForm" v-model="validEditionForm")
-        v-radio-group.mt-0(hide-details
-                            v-model="openSuite.type"
-                            required
-                            :rules="notEmpty"
-                          )
-          v-radio(v-for="(typeSuite, key) in typesSuite" :key="key"
-                  :label="typeSuite.label" :value="key"
-                  )
-
+        v-layout
+          v-radio-group.mt-0(hide-details
+                              v-model="openSuite.type"
+                              required
+                              :rules="notEmpty"
+                            )
+            v-radio(v-for="(typeSuite, key) in typesSuite" :key="key"
+                    :label="typeSuite.label" :value="key"
+                    )
+          v-checkbox(v-model="openSuite.penalEngage" label="Suites pénales engagées")
         v-textarea.mt-3(box label="Synthèse" auto-grow hideDetails rows="3" clearable
                         v-model="openSuite.synthese"
                         required
@@ -48,6 +49,9 @@ div(v-if="openSuite")
           @click="supprimerSuite()"
           )
       v-icon(color="red") delete
+  v-layout.align-center.mb-2(v-if="inspection.suite.penalEngage")
+    v-icon.mr-2 report_problem
+    strong Suites pénales engagées
   v-layout.align-center
     span.subheading.mr-2 Synthèse&nbsp;:
     v-flex
@@ -104,7 +108,8 @@ export default {
     prepareAndShowEditionForm () {
       this.openSuite = {
         type: 'observation',
-        synthese: 'Cette visite à permis de relever des points faisant l’objet d’observations. L’exploitant devra fournir selon les délais mentionnés dans le présent rapport, les éléments permettant de justifier de la mise en œuvre des actions correctives nécessaires pour les lever.'
+        synthese: 'Cette visite à permis de relever des points faisant l’objet d’observations. L’exploitant devra fournir selon les délais mentionnés dans le présent rapport, les éléments permettant de justifier de la mise en œuvre des actions correctives nécessaires pour les lever.',
+        penalEngage: false
       }
     },
     resetOpenSuite () {
