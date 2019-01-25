@@ -145,7 +145,7 @@ export default {
   },
   methods: {
     async logout () {
-      await this.$store.dispatch('logout')
+      await this.$api.authentication.logout()
       this.$router.push('/login?redirect=/')
     },
     updateAlert (messageType, message) {

@@ -4,7 +4,6 @@ import createLogger from 'vuex/dist/logger'
 import actions from '@/store/actions'
 import getters from '@/store/getters'
 import mutations from '@/store/mutations'
-import sessionStorage from '@/store/sessionStorage'
 import { createInitialStoreState } from '@/store/state'
 
 Vue.use(Vuex)
@@ -15,12 +14,7 @@ export async function createStore (options = {}) {
     throw new Error('Missing `api` option')
   }
 
-  const sessionToken = sessionStorage.load()
-
-  const authenticationInfos = await api.authentication.authenticate(sessionToken)
-  if (!authenticationInfos.valid) {
-    sessionStorage.delete()
-  }
+  const authenticationInfos = await api.authentication.authenticate()
 
   const store = new Vuex.Store({
     state: createInitialStoreState(authenticationInfos),
