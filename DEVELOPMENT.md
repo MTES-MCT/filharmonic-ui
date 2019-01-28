@@ -13,6 +13,11 @@ Il faut d'abord installer les dépendances.
 yarn install
 ```
 
+Ajouter l'entrée DNS `filharmonic.local.beta.gouv.fr -> 127.0.0.1` au fichier */etc/hosts*, afin de faire marcher la redirection Cerbère. (Attention, le fichier doit comporter une seule ligne avec 127.0.0.1)
+```sh
+127.0.0.1 localhost filharmonic.local.beta.gouv.fr
+```
+
 Puis démarrer le serveur de développement.
 ```
 yarn run serve

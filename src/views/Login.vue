@@ -30,8 +30,12 @@ export default {
     const params = new URLSearchParams(window.location.search)
     const ticket = params.get('ticket')
     if (ticket) {
-      await this.$api.authentication.login(ticket)
-      this.$router.push('/')
+      try {
+        await this.$api.authentication.login(ticket)
+        this.$router.push('/')
+      } catch (e) {
+        this.error = "L'authentification a échoué. Erreur: " + e.message
+      }
     }
   }
 }
