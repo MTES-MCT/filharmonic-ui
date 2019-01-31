@@ -1,6 +1,6 @@
 <template lang="pug">
 v-container
-  fh-point-de-controle(v-for="pointDeControle in inspection.pointsDeControle" :key="pointDeControle.id" :pointDeControle="pointDeControle" :etatInspection="inspection.etat")
+  fh-point-de-controle(v-for="pointDeControle in inspection.points_de_controle" :key="pointDeControle.id" :pointDeControle="pointDeControle" :etatInspection="inspection.etat")
 
   v-slide-y-transition(hide-on-leave)
     v-card.my-3.elevation-4(v-if="showNewPointDeControleForm")
@@ -57,7 +57,7 @@ export default {
       showNewPointDeControleForm: false,
       newPointDeControle: {
         sujet: '',
-        referencesReglementaires: [
+        references_reglementaires: [
           ''
         ],
         messages: []
@@ -86,7 +86,7 @@ export default {
     resetNewPointDeControle () {
       this.newPointDeControle = {
         sujet: '',
-        referencesReglementaires: [
+        references_reglementaires: [
           ''
         ],
         messages: []

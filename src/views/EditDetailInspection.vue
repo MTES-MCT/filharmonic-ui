@@ -21,7 +21,8 @@ export default {
   },
   data () {
     return {
-      validForm: false
+      validForm: false,
+      updatedInspection: {}
     }
   },
   created () {

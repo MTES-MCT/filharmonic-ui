@@ -7,16 +7,16 @@ v-container.pa-0(grid-list-md)
                   :rules="notEmpty"
                 )
 
-    v-text-field(v-for="(referenceReglementaire, index) in pointDeControle.referencesReglementaires" :key="index"
+    v-text-field(v-for="(referenceReglementaire, index) in pointDeControle.references_reglementaires" :key="index"
                   label="Référence réglementaire" hideDetails clearable
-                  v-model="pointDeControle.referencesReglementaires[index]"
-                  :append-outer-icon="pointDeControle.referencesReglementaires.length > 1 ? 'delete' : null"
-                  @click:append-outer="pointDeControle.referencesReglementaires.splice(index, 1)"
+                  v-model="pointDeControle.references_reglementaires[index]"
+                  :append-outer-icon="pointDeControle.references_reglementaires.length > 1 ? 'delete' : null"
+                  @click:append-outer="pointDeControle.references_reglementaires.splice(index, 1)"
                   required
                   :rules="notEmpty"
                 )
     .d-block
-      v-btn(flat title="Ajouter une référence réglementaire" @click="pointDeControle.referencesReglementaires.push('')")
+      v-btn(flat title="Ajouter une référence réglementaire" @click="pointDeControle.references_reglementaires.push('')")
         v-icon(medium left) add
         | Nouvelle référence réglementaire
 </template>

@@ -47,7 +47,7 @@ ${inspection.etablissement.adresse}<br>
   }
 
   genererLettreAnnonce (inspection) {
-    const pointsDeControles = inspection.pointsDeControle.map(pointDeControle => {
+    const pointsDeControle = inspection.pointsDeControle.map(pointDeControle => {
       return ` - <strong>${pointDeControle.sujet}</strong> (${pointDeControle.referencesReglementaires.join(', ')})<br>`
     }).join('')
     return `
@@ -66,7 +66,7 @@ situé ${inspection.etablissement.adresse} le <strong>${new Date(inspection.date
 <br>
 Cette inspection portera sur le respect de votre arrêté préfectoral d'autorisation ainsi que sur les textes applicables
 aux rubriques ICPE dont relève l'établissement, à savoir :<br>
-${pointsDeControles}<br>
+${pointsDeControle}<br>
 <br>
 Dans le cas où cette date ne vous conviendrait pas, je vous invite à me contacter dans les meilleurs délais, afin que
 nous convenions éventuellement d'une autre date.<br>

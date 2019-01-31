@@ -46,44 +46,38 @@ v-container.pa-0(:class="containerClass")
 
   v-layout.align-center(v-if="inspection.origine === 'circonstancielle'")
     v-flex.subheading.mr-2 Circonstances
-    v-flex.text-xs-right(v-if="readonly") {{ inspection.circonstances | capitalize }}
+    v-flex.text-xs-right(v-if="readonly") {{ inspection.circonstance | capitalize }}
     v-flex(v-else)
-      v-radio-group.mt-0.justify-end(row v-model="inspection.circonstances" hide-details required :rules="notEmpty" :readonly="readonly")
+      v-radio-group.mt-0.justify-end(row v-model="inspection.circonstance" hide-details required :rules="notEmpty" :readonly="readonly")
         v-radio(label="Incident" value="incident")
         v-radio(label="Plainte" value="plainte")
         v-radio(label="Autre" value="autre")
 
-  v-layout.align-center(v-if="inspection.circonstances === 'autre'")
+  v-layout.align-center(v-if="inspection.circonstance === 'autre'")
     v-flex.subheading.mr-2 Détail des circonstances
-    v-flex.text-xs-right(v-if="readonly") {{ inspection.detailCirconstances }}
+    v-flex.text-xs-right(v-if="readonly") {{ inspection.detail_circonstance }}
     v-flex(v-else)
-      v-text-field(v-model="inspection.detailCirconstances" required :rules="notEmpty" :readonly="readonly")
+      v-text-field(v-model="inspection.detail_circonstance" required :rules="notEmpty" :readonly="readonly")
 
   v-layout.align-center
     v-flex.subheading.mr-2 Inspecteurs
     v-flex.text-xs-right(v-if="readonly")
-      v-chip(v-for="inspecteur in inspecteursInspection" :key="inspecteur.id" small)
-        v-avatar
-          img(:src="inspecteur.photoURL")
-        | {{ inspecteur.name }}
+      v-chip(v-for="inspecteur in inspection.inspecteurs" :key="inspecteur.id" small)
+        | {{ inspecteur.prenom }} {{ inspecteur.nom }}
     v-flex(v-else)
       v-autocomplete(v-model="inspection.inspecteurs" :items="inspecteurs"
-                    chips dense multiple
-                    item-text="name" item-value="id"
+                    chips dense multiple hide-selected
+                    item-text="id" return-object
                     placeholder="Inspecteurs..."
                     required :rules="inspecteursRules"
                     :readonly="readonly"
                     )
         template(slot="selection" slot-scope="data")
-          v-chip(:close="!readonly" @input="removeInspecteur(data.item)")
-            v-avatar
-              img(:src="data.item.photoURL")
-            | {{ data.item.name }}
+          v-chip(:close="!readonly" @input="removeInspecteur(data.item.id)")
+            | {{ data.item.prenom }} {{ data.item.nom }}
         template(slot="item" slot-scope="data")
-          v-list-tile-avatar
-            img(:src="data.item.photoURL")
           v-list-tile-content
-            v-list-tile-title(v-html="data.item.name")
+            v-list-tile-title(v-html="`${data.item.prenom} ${data.item.nom}`")
 
   v-layout.align-center
     v-flex.subheading.mr-2 Thèmes
@@ -150,20 +144,11 @@ export default {
     inspectionOrigine () {
       return this.inspection.origine
     },
-    inspectionCirconstances () {
-      return this.inspection.circonstances
+    inspectionCirconstance () {
+      return this.inspection.circonstance
     },
     containerClass () {
       return `grid-list-${this.readonly ? 'sm' : 'xl'}`
-    },
-    inspecteursInspection () {
-      if (!this.inspecteurs.length) {
-        return []
-      }
-      return this.inspection.inspecteurs
-        .map(inspecteurId => {
-          return this.inspecteurs.find(inspecteur => inspecteur.id === inspecteurId)
-        })
     },
     max () {
       return this.moreThemes ? this.inspection.themes.length : 2
@@ -178,15 +163,15 @@ export default {
   watch: {
     inspectionOrigine (val, oldVal) {
       if (oldVal === 'circonstancielle') {
-        this.inspection.circonstances = ''
-        this.inspection.detailCirconstances = ''
+        this.inspection.circonstance = ''
+        this.inspection.detail_circonstance = ''
       } else {
-        this.inspection.circonstances = 'incident'
+        this.inspection.circonstance = 'incident'
       }
     },
-    inspectionCirconstances (val, oldVal) {
+    inspectionCirconstance (val, oldVal) {
       if (oldVal === 'autre') {
-        this.inspection.detailCirconstances = ''
+        this.inspection.detail_circonstance = ''
       }
     }
   },
@@ -200,11 +185,8 @@ export default {
         this.inspection.themes.splice(index, 1)
       }
     },
-    removeInspecteur (inspecteur) {
-      const index = this.inspection.inspecteurs.indexOf(inspecteur.id)
-      if (index !== -1) {
-        this.inspection.inspecteurs.splice(index, 1)
-      }
+    removeInspecteur (inspecteurId) {
+      this.inspection.inspecteurs = this.inspection.inspecteurs.filter(i => i.id !== inspecteurId)
     }
   }
 }

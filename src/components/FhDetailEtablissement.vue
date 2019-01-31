@@ -1,7 +1,7 @@
 <template lang="pug">
   v-expansion-panel(expand v-model="panelExpansion")
     v-expansion-panel-content
-      div(slot="header") {{ etablissement.nom }} n°{{ etablissement.id }}
+      div(slot="header") {{ etablissement.raison }} n°{{ etablissement.s3ic }}
       v-card
         v-toolbar(flat)
           v-toolbar-title Détails
@@ -9,7 +9,7 @@
           v-container.pa-0.grid-list-sm
             v-layout
               v-flex S3IC
-              v-flex.text-xs-right {{ etablissement.id }}
+              v-flex.text-xs-right {{ etablissement.s3ic }}
             v-layout
               v-flex Nom usuel
               v-flex.text-xs-right {{ etablissement.nom }}
@@ -28,13 +28,13 @@
             v-layout
               v-flex Régime Seveso
               v-flex.text-xs-right {{ etablissement.seveso | capitalize }}
-            v-layout.align-center(v-if="etablissement.responsables")
+            v-layout.align-center(v-if="etablissement.exploitants")
               v-flex Responsables
               v-flex.text-xs-right
-                v-chip(v-for="responsable in etablissement.responsables" :key="responsable.id" small)
-                  v-avatar
-                    img(:src="responsable.photoURL")
-                  | {{ responsable.name }}
+                v-chip(v-for="exploitant in etablissement.exploitants" :key="exploitant.id" small)
+                  //- v-avatar
+                    img(:src="exploitant.photoURL")
+                  | {{ exploitant.prenom }} {{ exploitant.nom }}
 </template>
 
 <script>

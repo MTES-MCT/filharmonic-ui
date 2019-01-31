@@ -7,45 +7,57 @@
         v-card-text
           v-form(ref="form" lazy-validation)
             v-text-field(
-              v-model="nom"
+              v-model="filter.nom"
               label="Nom usuel ou raison sociale")
             v-text-field(
-              v-model="localisation"
+              v-model="filter.adresse"
               label="Localisation par commune ou code postal")
             v-text-field(
-              v-model="s3ic"
+              v-model="filter.s3ic"
               label="Code S3IC")
             v-btn(
-              @click="list = true"
+              @click="listEtablissements"
               color="primary") Rechercher
-            v-btn(
-              @click="list = false") Effacer
-      v-list(two-line v-if="list")
+            v-btn(@click="resetForm") Effacer
+
+      v-list(two-line v-if="showResults")
         v-subheader Résultats
-        v-list-tile(:to="`/etablissements/${etablissement.id}`" v-for="etablissement in etablissements" :key="etablissement.id")
-          v-list-tile-action
-            v-icon location_city
-          v-list-tile-content
-            v-list-tile-title {{ etablissement.nom }}
-            v-list-tile-sub-title {{ etablissement.adresse }}
-        v-divider
+        v-list-tile(v-if="etablissements.length === 0") Aucun résultat
+        template(v-else)
+          v-list-tile(:to="`/etablissements/${etablissement.id}`" v-for="etablissement in etablissements" :key="etablissement.id")
+            v-list-tile-action
+              v-icon location_city
+            v-list-tile-content
+              v-list-tile-title {{ etablissement.raison }}
+              v-list-tile-sub-title {{ etablissement.adresse }}
+          v-divider
+
 </template>
 
 <script>
 export default {
   data () {
     return {
-      list: false,
+      showResults: false,
       etablissements: [],
-      nom: '',
-      localisation: '',
-      s3ic: ''
+      filter: {
+        s3ic: '',
+        nom: '',
+        adresse: ''
+      }
     }
   },
-  async created () {
-    this.etablissements = await this.$api.etablissements.list()
-    if (!this.etablissement) {
-      this.errorNotFound = true
+  methods: {
+    resetForm () {
+      this.filter = {}
+      this.showResults = false
+    },
+    async listEtablissements () {
+      this.showResults = true
+      this.etablissements = await this.$api.etablissements.list(this.filter)
+      if (!this.etablissement) {
+        this.errorNotFound = true
+      }
     }
   }
 }

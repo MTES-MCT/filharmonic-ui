@@ -1,6 +1,9 @@
 <template lang="pug">
-  v-timeline-item(fill-dot :color="color" :icon="icon" :left="message.author.type !== 'exploitant'" :right="message.author.type === 'exploitant'")
-    span(slot="opposite" v-text="`${message.author.name} le ${message.date.toLocaleString()}`" :class="`${color}--text`")
+  v-timeline-item(fill-dot :color="color" :icon="icon" :left="message.auteur.profile !== 'exploitant'" :right="message.auteur.profile === 'exploitant'")
+    span(slot="opposite")
+      | {{ message.auteur.prenom }} {{ message.auteur.nom }}&nbsp;
+      timeago(:datetime="message.date" :title="message.date.toLocaleString()")
+
     v-card.white--text(dark :color="color")
       v-container.fluid.grid-list.pa-0.ma-0.text-xs-left
         v-layout.row.wrap
@@ -13,8 +16,8 @@
                     )
                 v-icon drafts
             v-card-text(:color="color")
-              p {{ message.text }}
-            fh-attachment(v-for="attachment in message.attachments" :key="attachment.id" :attachment="attachment")
+              p {{ message.message }}
+            fh-attachment(v-for="pieceJointe in message.pieces_jointes" :key="pieceJointe.id" :attachment="pieceJointe")
 </template>
 
 <script>
@@ -43,7 +46,7 @@ export default {
       return this.message.interne ? 'message' : (this.message.lu ? 'drafts' : 'markunread')
     },
     peutLireMessage () {
-      return !this.message.lu && this.user.type !== this.message.author.type && !this.$permissions.isApprobateur
+      return !this.message.lu && this.user.profile !== this.message.auteur.profile && !this.$permissions.isApprobateur
     }
   },
   methods: {

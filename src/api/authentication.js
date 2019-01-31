@@ -11,6 +11,7 @@ export default class AuthenticationAPI extends BaseAPI {
           token
         })
         const userInfos = await res.json()
+        this.api.setAuthToken(token)
         return {
           valid: true,
           user: userInfos
@@ -30,6 +31,7 @@ export default class AuthenticationAPI extends BaseAPI {
     const authenticationInfos = await res.json()
     if (authenticationInfos) {
       sessionStorage.save(authenticationInfos.token)
+      this.api.setAuthToken(authenticationInfos.token)
       this.api.store.commit('login', authenticationInfos.user)
     }
   }

@@ -1,6 +1,6 @@
 <template lang="pug">
 .fh-point-de-controle.elevation-1(v-if="showPointDeControle")
-  fh-toolbar(:class="{'fh-point-de-controle--brouillon': pointDeControle.brouillon}")
+  fh-toolbar(:class="{'fh-point-de-controle--brouillon': !pointDeControle.publie}")
     v-btn(flat title="Déplier/replier" @click="toggleShowMessages()")
       v-icon.fh-toggle-icon(large :class="{'fh-toggle-icon--reverse': showMessages}") keyboard_arrow_down
 
@@ -10,11 +10,11 @@
       v-layout.column(v-else)
         .fh-point-de-controle__sujet
           | {{ pointDeControle.sujet }}
-          fh-icone-nouveaux-messages(:messages="pointDeControle.messagesNonLus")
-          v-icon.ml-4(v-if="pointDeControle.brouillon"
+          fh-icone-nouveaux-messages(v-if="pointDeControle.messagesNonLus" :messages="pointDeControle.messagesNonLus")
+          v-icon.ml-4(v-if="!pointDeControle.publie"
                       title="Ce point de contrôle n'est pas publié"
                       ) visibility_off
-        .fh-point-de-controle__referenceReglementaire(v-for="referenceReglementaire in pointDeControle.referencesReglementaires") {{ referenceReglementaire }}
+        .fh-point-de-controle__referenceReglementaire(v-for="referenceReglementaire in pointDeControle.references_reglementaires") {{ referenceReglementaire }}
 
       .fh-point-de-controle__constat(v-if="peutVoirConstat" :style="`border-left-color: ${typeConstatPointDeControle.color}`")
         v-layout.align-center
@@ -169,13 +169,13 @@ export default {
       return this.pointDeControle.constat ? typesConstats[this.pointDeControle.constat.type] : {}
     },
     showPointDeControle () {
-      return !this.$permissions.isExploitant || !this.pointDeControle.brouillon
+      return !this.$permissions.isExploitant || this.pointDeControle.publie
     },
     peutEditer () {
       return !this.$permissions.isExploitant && isBeforeState(this.etatInspection, 'attente_validation') && !this.editMode
     },
     peutPublier () {
-      return !this.$permissions.isExploitant && this.pointDeControle.brouillon && isBeforeState(this.etatInspection, 'attente_validation')
+      return !this.$permissions.isExploitant && !this.pointDeControle.publie && isBeforeState(this.etatInspection, 'attente_validation')
     },
     peutAjouterConstat () {
       return !this.$permissions.isExploitant && this.etatInspection === 'en_cours' && !this.pointDeControle.constat && !this.showNewConstatForm
@@ -194,7 +194,7 @@ export default {
     enterEditMode () {
       this.pointDeControleEdite = _.cloneDeep({
         sujet: this.pointDeControle.sujet,
-        referencesReglementaires: this.pointDeControle.referencesReglementaires
+        references_reglementaires: this.pointDeControle.references_reglementaires
       })
     },
     async modifierPointDeControle () {

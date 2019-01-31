@@ -105,7 +105,7 @@ export default {
     breadcrumbs () {
       return this.inspection ? [
         {
-          text: this.inspection.etablissement.nom,
+          text: this.inspection.etablissement.raison,
           to: `/etablissements/${this.inspection.etablissement.id}`
         },
         {

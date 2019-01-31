@@ -16,7 +16,7 @@ v-card
           v-textarea(box label="Message" v-model="newMessage" auto-grow hideDetails rows="1" clearable)
           v-checkbox(v-model="interne" label="Interne" v-if="pointDeControleId > 0 && !$permissions.isExploitant")
 
-        fh-attachment(v-for="(attachment, index) in attachments" :key="index" :attachment="attachment")
+        fh-attachment(v-for="(attachment, index) in pieces_jointes" :key="index" :attachment="attachment")
 
         v-divider
         v-card-actions
@@ -64,7 +64,7 @@ export default {
     return {
       newMessage: '',
       interne: true,
-      attachments: [],
+      pieces_jointes: [],
       dialogNewMessage: false
     }
   },
@@ -86,20 +86,20 @@ export default {
     async addMessage () {
       if (this.pointDeControleId === -1) {
         // si onglet commentaires
-        await this.$api.inspections.ajouterCommentaireGeneral(this.inspection.id, {
-          text: this.newMessage,
-          attachments: this.attachments
+        await this.$api.inspections.ajouterCommentaire(this.inspection.id, {
+          message: this.newMessage,
+          pieces_jointes: this.pieces_jointes
         })
       } else {
         // si dans un point de contrôle
         await this.$api.inspections.ajouterMessage(this.pointDeControleId, {
-          text: this.newMessage,
-          attachments: this.attachments,
+          message: this.newMessage,
+          pieces_jointes: this.pieces_jointes,
           interne: this.interne
         })
       }
       this.newMessage = ''
-      this.attachments = []
+      this.pieces_jointes = []
       this.dialogNewMessage = false
     },
     /*
@@ -113,12 +113,18 @@ export default {
     }
     */
     addAttachment (...files) {
-      files.forEach((file, index) => {
-        this.attachments.push({
-          id: new Date().getTime() + index,
+      files.forEach(async (file, index) => {
+        const pieceJointeId = await this.$api.inspections.ajouterPieceJointe({
+          file: file,
           filename: file.name,
           type: file.type,
-          url: URL.createObjectURL(file)
+          size: file.size
+        })
+        this.pieces_jointes.push({
+          id: pieceJointeId,
+          nom: file.name,
+          type: file.type,
+          taille: file.size
         })
       })
     },
