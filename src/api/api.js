@@ -43,7 +43,7 @@ export default class API {
               user: userInfos
             }
           } catch (err) {
-            console.log('failed authentication', err)
+            console.log('failed authentication', err) // eslint-disable-line no-console
             sessionStorage.delete()
           }
         }
