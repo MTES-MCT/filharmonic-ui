@@ -1,5 +1,6 @@
 import { ForbiddenError, UnknownServerError } from '@/errors'
-import AuthenticationAPI from './authentication'
+// import AuthenticationAPI from './authentication'
+import sessionStorage from '@/api/sessionStorage'
 // import EtablissementsAPI from './etablissements'
 import EvenementsAPI from './evenements'
 // import InspectionsAPI from './inspections'
@@ -10,9 +11,6 @@ import ThemesAPI from './themes'
 
 export default class API {
   constructor (options = {}) {
-    this.authentication = new AuthenticationAPI({
-      api: this
-    })
     this.evenements = new EvenementsAPI({
       api: this
     })
@@ -25,6 +23,62 @@ export default class API {
     this.themes = new ThemesAPI({
       api: this
     })
+
+    this.authentication = {
+      authenticate: async () => {
+        const token = sessionStorage.load()
+        if (token) {
+          try {
+            const res = await this.request('post', 'authenticate',
+              {
+                token
+              })
+            const userInfos = await res.json()
+            this.setAuthToken(token)
+            if (!userInfos.hasOwnProperty('favoris')) {
+              userInfos.favoris = []
+            }
+            return {
+              valid: true,
+              user: userInfos
+            }
+          } catch (err) {
+            console.log('failed authentication', err)
+            sessionStorage.delete()
+          }
+        }
+        return null
+      },
+      login: async (ticket) => {
+        const res = await this.request('post', 'login',
+          {
+            ticket
+          })
+        const authenticationInfos = await res.json()
+        if (authenticationInfos) {
+          sessionStorage.save(authenticationInfos.token)
+          this.setAuthToken(authenticationInfos.token)
+          if (!authenticationInfos.user.hasOwnProperty('favoris')) {
+            authenticationInfos.user.favoris = []
+          }
+          this.store.commit('login', authenticationInfos.user)
+        }
+      },
+      loadUser: async () => {
+        const user = await this.authRequestJson('get', 'user')
+        if (!user.hasOwnProperty('favoris')) {
+          user.favoris = []
+        }
+        this.store.commit('login', user)
+      },
+      refreshUser: () => {
+        return this.authentication.loadUser()
+      },
+      logout: () => {
+        sessionStorage.delete()
+        this.store.dispatch('logout')
+      }
+    }
 
     this.users = {
       listInspecteurs: () => {
@@ -134,6 +188,14 @@ export default class API {
         await this.authRequestJson('post', `pointsdecontrole/${pointDeControleId}/publier`)
         await this.inspections.refreshInspectionOuverte()
       },
+      addFavori: async idInspection => {
+        await this.authRequestJson('post', `inspections/${idInspection}/favori`)
+        await this.authentication.refreshUser()
+      },
+      removeFavori: async idInspection => {
+        await this.authRequestJson('delete', `inspections/${idInspection}/favori`)
+        await this.authentication.refreshUser()
+      },
 
       // interne
       refreshInspectionOuverte: () => {
@@ -154,13 +216,6 @@ export default class API {
           })
         }
         this.store.commit('loadInspection', inspection)
-      },
-
-      loadInspectionsFavorites: async () => {
-        const inspectionsFavorites = await this.api.inspections.listInspectionsFavorites({
-          etablissement: true
-        })
-        this.store.commit('loadInspectionsFavorites', inspectionsFavorites)
       }
     }
   }

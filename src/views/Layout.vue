@@ -25,15 +25,15 @@ v-app
           v-list-tile-title Thèmes
 
       v-list-group(value="true" v-if="!$permissions.isExploitant")
-        v-list-tile(slot="activator" title="Inspections favoris")
+        v-list-tile(slot="activator" title="Inspections favorites")
           v-list-tile-action
             v-icon star
           v-list-tile-content
             v-list-tile-title
               | Inspections favorites
-              span.grey--text.ml-1 ({{ inspectionsFavorites.length }})
+              span.grey--text.ml-1 ({{ favoris.length }})
         v-list.py-0.grey.lighten-2(dense)
-          v-list-tile(v-for="inspection in inspectionsFavorites" :key="inspection.id"
+          v-list-tile(v-for="inspection in favoris" :key="inspection.id"
                       :to="`/inspections/${inspection.id}`"
                       :title="`${inspection.date} - ${inspection.etablissement.nom}, ${inspection.etablissement.adresse}`"
                       )
@@ -130,12 +130,11 @@ export default {
   computed: {
     ...mapState({
       user: state => state.authentication.user,
-      inspectionsFavorites: 'inspectionsFavorites'
+      favoris: state => state.authentication.user.favoris
     })
   },
   async created () {
     events.bus.$on(events.Alert, this.updateAlert)
-    await this.$api.inspections.loadInspectionsFavorites()
     this.notifications = await this.$api.notifications.listNonLues()
   },
   destroyed () {

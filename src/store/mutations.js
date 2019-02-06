@@ -1,7 +1,4 @@
 export default {
-  loadInspectionsFavorites (state, inspectionsFavorites) {
-    state.inspectionsFavorites = inspectionsFavorites
-  },
   loadInspection (state, inspection) {
     state.inspectionOuverte = inspection
   },
