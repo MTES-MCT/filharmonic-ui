@@ -14,6 +14,6 @@ describe('Login view', () => {
     const wrapper = mount(Login, {
       router
     })
-    expect(wrapper.text()).toContain('Se connecter')
+    expect(wrapper.text()).toContain('Fil\'HarmonicConnexion via le portail Cerbère')
   })
 })
