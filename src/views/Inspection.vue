@@ -36,8 +36,8 @@ fh-page(:wait="wait")
             v-icon(left) done
             | Valider
 
-          v-btn(icon large @click="toggleFavoris()" :title="hasFavoris ? 'Retirer des favoris' : 'Mettre en favoris'" v-if="!$permissions.isExploitant")
-            v-icon {{ hasFavoris ? 'star' : 'star_border' }}
+          v-btn(icon large @click="toggleFavoris()" :title="isFavorite ? 'Retirer des favoris' : 'Mettre en favoris'" v-if="!$permissions.isExploitant")
+            v-icon {{ isFavorite ? 'star' : 'star_border' }}
 
           v-menu(offset-y v-if="peutGenererDocuments")
             v-btn(slot="activator" icon large title="Générer des documents")
@@ -103,7 +103,7 @@ export default {
       inspection: state => state.inspectionOuverte,
       favoris: state => state.authentication.user.favoris
     }),
-    hasFavoris () {
+    isFavorite () {
       return this.favoris.filter(favori => favori.id === this.inspection.id).length > 0
     },
     breadcrumbs () {
@@ -150,7 +150,7 @@ export default {
       this.wait = this.$api.inspections.loadInspection(parseInt(this.inspectionId, 10))
     },
     async toggleFavoris () {
-      if (!this.hasFavoris) {
+      if (!this.isFavorite) {
         await this.$api.inspections.addFavori(this.inspection.id)
       } else {
         await this.$api.inspections.removeFavori(this.inspection.id)
