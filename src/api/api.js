@@ -197,6 +197,26 @@ export default class API {
         await this.authentication.refreshUser()
       },
 
+      ajouterConstat: async (pointDeControleId, constat) => {
+        await this.authRequestJson('post', `pointsdecontrole/${pointDeControleId}/constat`, constat)
+
+        // await this.api.evenements.create({
+        //   type: 'creation_constat',
+        //   inspectionId: inspection.id
+        // })
+        await this.inspections.refreshInspectionOuverte()
+      },
+
+      supprimerConstat: async (pointDeControleId) => {
+        await this.authRequestJson('delete', `pointsdecontrole/${pointDeControleId}/constat`)
+
+        // await this.api.evenements.create({
+        //   type: 'suppression_constat',
+        //   inspectionId: inspection.id
+        // })
+        await this.inspections.refreshInspectionOuverte()
+      },
+
       // interne
       refreshInspectionOuverte: () => {
         return this.inspections.loadInspection(this.store.state.inspectionOuverte.id)
