@@ -29,7 +29,7 @@ div(v-if="openSuite")
     v-card-actions.justify-center.pb-3
       v-btn(color="primary" @click="saveOpenSuite()" :disabled="!validEditionForm")
         v-icon(left) gavel
-        | Ajouter
+        | {{ inspection.suite ? 'Modifier' : 'Ajouter' }}
 
 .fh-inspection__suite.elevation-2.pa-3(v-else-if="inspection.suite")
   v-layout.align-center
@@ -120,7 +120,11 @@ export default {
     },
     async saveOpenSuite () {
       if (this.$refs.openSuiteForm.validate()) {
-        await this.$api.inspections.modifierSuite(this.inspection.id, this.openSuite)
+        if (this.inspection.suite) {
+          await this.$api.inspections.modifierSuite(this.inspection.id, this.openSuite)
+        } else {
+          await this.$api.inspections.creerSuite(this.inspection.id, this.openSuite)
+        }
         this.resetOpenSuite()
       }
     },

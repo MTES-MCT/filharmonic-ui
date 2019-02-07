@@ -196,7 +196,6 @@ export default class API {
         await this.authRequestJson('delete', `inspections/${idInspection}/favori`)
         await this.authentication.refreshUser()
       },
-
       ajouterConstat: async (pointDeControleId, constat) => {
         await this.authRequestJson('post', `pointsdecontrole/${pointDeControleId}/constat`, constat)
 
@@ -206,12 +205,38 @@ export default class API {
         // })
         await this.inspections.refreshInspectionOuverte()
       },
-
       supprimerConstat: async (pointDeControleId) => {
         await this.authRequestJson('delete', `pointsdecontrole/${pointDeControleId}/constat`)
 
         // await this.api.evenements.create({
         //   type: 'suppression_constat',
+        //   inspectionId: inspection.id
+        // })
+        await this.inspections.refreshInspectionOuverte()
+      },
+      creerSuite: async (inspectionId, suite) => {
+        await this.authRequestJson('post', `inspections/${inspectionId}/suite`, suite)
+
+        // await this.api.evenements.create({
+        //   type: creation ? 'creation_suite' : 'modification_suite',
+        //   inspectionId: inspection.id
+        // })
+        await this.inspections.refreshInspectionOuverte()
+      },
+      modifierSuite: async (inspectionId, suite) => {
+        await this.authRequestJson('put', `inspections/${inspectionId}/suite`, suite)
+
+        // await this.api.evenements.create({
+        //   type: creation ? 'creation_suite' : 'modification_suite',
+        //   inspectionId: inspection.id
+        // })
+        await this.inspections.refreshInspectionOuverte()
+      },
+      supprimerSuite: async (inspectionId) => {
+        await this.authRequestJson('delete', `inspections/${inspectionId}/suite`)
+
+        // await this.api.evenements.create({
+        //   type: 'suppression_suite',
         //   inspectionId: inspection.id
         // })
         await this.inspections.refreshInspectionOuverte()
