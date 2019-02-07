@@ -1,13 +1,8 @@
 import { ForbiddenError, UnknownServerError } from '@/errors'
-// import AuthenticationAPI from './authentication'
 import sessionStorage from '@/api/sessionStorage'
-// import EtablissementsAPI from './etablissements'
 import EvenementsAPI from './evenements'
-// import InspectionsAPI from './inspections'
 import LettresAPI from './lettres'
 import NotificationsAPI from './notifications'
-import ThemesAPI from './themes'
-// import UsersAPI from './users'
 
 export default class API {
   constructor (options = {}) {
@@ -18,9 +13,6 @@ export default class API {
       api: this
     })
     this.notifications = new NotificationsAPI({
-      api: this
-    })
-    this.themes = new ThemesAPI({
       api: this
     })
 
@@ -261,6 +253,18 @@ export default class API {
           })
         }
         this.store.commit('loadInspection', inspection)
+      }
+    }
+
+    this.themes = {
+      list: () => {
+        return this.authRequestJson('get', 'themes')
+      },
+      create: (theme) => {
+        return this.authRequestJson('post', 'themes', theme)
+      },
+      delete: (themeId) => {
+        return this.authRequestJson('delete', `themes/${themeId}`)
       }
     }
   }
