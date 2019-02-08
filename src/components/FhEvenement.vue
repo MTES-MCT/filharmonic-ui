@@ -1,14 +1,12 @@
 <template lang="pug">
 .fh-evenement(:class="{'fh-evenement--compact': compact}")
-  v-avatar.fh-evenement__avatar(:size="avatarSize")
-    img(:src="evenement.auteur.photoURL" :alt="evenement.auteur.name")
   v-layout.column(v-if="compact")
     div
-      .fh-evenement__auteur {{ evenement.auteur.name }}
+      .fh-evenement__auteur {{ evenement.auteur.prenom }} {{ evenement.auteur.nom }}
       .fh-evenement__message {{ message }}
     timeago.fh-evenement__date.grey--text(:datetime="evenement.created_at" :title="evenement.created_at.toLocaleString()")
   v-layout.row(v-else)
-    .fh-evenement__auteur {{ evenement.auteur.name }}
+    .fh-evenement__auteur {{ evenement.auteur.prenom }} {{ evenement.auteur.nom }}
     .fh-evenement__message {{ message }}
     timeago.fh-evenement__date(:datetime="evenement.created_at" :title="evenement.created_at.toLocaleString()")
 

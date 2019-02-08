@@ -51,7 +51,7 @@ v-app
 
     v-spacer
 
-    v-menu(transition="slide-y-transition" bottom)
+    v-menu(transition="slide-y-transition" bottom left offset-x offset-y)
       v-btn(icon slot="activator")
         v-icon apps
       v-list(v-for="app in apps", :key="app.nom")
@@ -59,7 +59,7 @@ v-app
           v-icon open_in_new
           v-list-tile-title {{ app.nom }}
 
-    v-menu(:close-on-content-click="false" offset-x offset-y v-model="showNotificationsMenu")
+    v-menu(:close-on-content-click="false" bottom left offset-x offset-y v-model="showNotificationsMenu")
       v-btn(slot="activator" v-if="notifications.length > 0" icon :title="`${notifications.length} nouvelle(s) notification(s)`")
         v-icon(color="red") notifications
       v-btn(slot="activator" v-else icon title="Aucune nouvelle notification")
@@ -133,14 +133,23 @@ export default {
       favoris: state => state.authentication.user.favoris
     })
   },
+  watch: {
+    notifications: {
+      handler: 'loadNotifications',
+      immediate: true
+    }
+  },
   async created () {
     events.bus.$on(events.Alert, this.updateAlert)
-    this.notifications = await this.$api.notifications.listNonLues()
+    this.notifications = await this.$api.notifications.list()
   },
   destroyed () {
     events.bus.$off(events.Alert, this.updateAlert)
   },
   methods: {
+    loadNotifications () {
+      this.wait = this.$api.notifications.list()
+    },
     async logout () {
       await this.$api.authentication.logout()
       this.$router.push('/login?redirect=/')
@@ -151,12 +160,12 @@ export default {
       this.showSnackbar = true
     },
     async marquerCommeLue (notificationId) {
-      await this.$api.notifications.marquerCommeLue(notificationId)
-      this.notifications = await this.$api.notifications.listNonLues()
+      await this.$api.notifications.lire([notificationId])
+      this.notifications = await this.$api.notifications.list()
     },
     async toutMarquerCommeLues () {
-      await this.$api.notifications.marquerCommeLues(this.notifications.map(notification => notification.id))
-      this.notifications = await this.$api.notifications.listNonLues()
+      await this.$api.notifications.lire(this.notifications.map(notification => notification.id))
+      this.notifications = await this.$api.notifications.list()
     }
   }
 }

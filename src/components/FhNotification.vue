@@ -2,7 +2,7 @@
 v-layout.row.align-center
   fh-evenement.flex(:evenement="notification.evenement" compact)
   v-btn(icon title="Voir l'inspection"
-        :to="`/inspections/${notification.evenement.inspectionId}`" active-class
+        :to="`/inspections/${notification.evenement.inspection_id}`" active-class
         @click="$emit('open-inspection')"
         )
     v-icon(color="primary") input

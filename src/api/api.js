@@ -2,7 +2,6 @@ import { ForbiddenError, UnknownServerError } from '@/errors'
 import sessionStorage from '@/api/sessionStorage'
 import EvenementsAPI from './evenements'
 import LettresAPI from './lettres'
-import NotificationsAPI from './notifications'
 
 export default class API {
   constructor (options = {}) {
@@ -10,9 +9,6 @@ export default class API {
       api: this
     })
     this.lettres = new LettresAPI({
-      api: this
-    })
-    this.notifications = new NotificationsAPI({
       api: this
     })
 
@@ -265,6 +261,18 @@ export default class API {
       },
       delete: (themeId) => {
         return this.authRequestJson('delete', `themes/${themeId}`)
+      }
+    }
+
+    this.notifications = {
+      list: async () => {
+        return this.authRequestJson('get', 'notifications')
+      },
+      create: async (notification) => {
+        await this.authRequestJson('post', 'notifications', notification)
+      },
+      lire: (ids) => {
+        return this.authRequestJson('post', `notifications/lire`, ids)
       }
     }
   }
