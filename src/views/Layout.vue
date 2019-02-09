@@ -123,33 +123,24 @@ export default {
         message: '',
         color: ''
       },
-      showNotificationsMenu: false,
-      notifications: []
+      showNotificationsMenu: false
     }
   },
   computed: {
     ...mapState({
       user: state => state.authentication.user,
-      favoris: state => state.authentication.user.favoris
+      favoris: state => state.authentication.user.favoris,
+      notifications: state => state.notifications
     })
-  },
-  watch: {
-    notifications: {
-      handler: 'loadNotifications',
-      immediate: true
-    }
   },
   async created () {
     events.bus.$on(events.Alert, this.updateAlert)
-    this.notifications = await this.$api.notifications.list()
+    this.$api.notifications.loadNotifications()
   },
   destroyed () {
     events.bus.$off(events.Alert, this.updateAlert)
   },
   methods: {
-    loadNotifications () {
-      this.wait = this.$api.notifications.list()
-    },
     async logout () {
       await this.$api.authentication.logout()
       this.$router.push('/login?redirect=/')
@@ -161,11 +152,9 @@ export default {
     },
     async marquerCommeLue (notificationId) {
       await this.$api.notifications.lire([notificationId])
-      this.notifications = await this.$api.notifications.list()
     },
     async toutMarquerCommeLues () {
       await this.$api.notifications.lire(this.notifications.map(notification => notification.id))
-      this.notifications = await this.$api.notifications.list()
     }
   }
 }

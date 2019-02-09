@@ -232,6 +232,7 @@ export default class API {
 
       // interne
       refreshInspectionOuverte: () => {
+        this.notifications.refreshNotifications()
         return this.inspections.loadInspection(this.store.state.inspectionOuverte.id)
       },
       loadInspection: async inspectionId => {
@@ -270,9 +271,18 @@ export default class API {
       },
       create: async (notification) => {
         await this.authRequestJson('post', 'notifications', notification)
+        await this.notifications.refreshNotifications()
       },
-      lire: (ids) => {
-        return this.authRequestJson('post', `notifications/lire`, ids)
+      lire: async (ids) => {
+        await this.authRequestJson('post', `notifications/lire`, ids)
+        await this.notifications.refreshNotifications()
+      },
+      refreshNotifications: () => {
+        return this.notifications.loadNotifications()
+      },
+      loadNotifications: async () => {
+        const notifications = await this.notifications.list()
+        this.store.commit('loadNotifications', notifications)
       }
     }
   }
