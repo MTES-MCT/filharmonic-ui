@@ -186,47 +186,38 @@ export default class API {
       },
       ajouterConstat: async (pointDeControleId, constat) => {
         await this.authRequestJson('post', `pointsdecontrole/${pointDeControleId}/constat`, constat)
-
-        // await this.api.evenements.create({
-        //   type: 'creation_constat',
-        //   inspectionId: inspection.id
-        // })
         await this.inspections.refreshInspectionOuverte()
       },
       supprimerConstat: async (pointDeControleId) => {
         await this.authRequestJson('delete', `pointsdecontrole/${pointDeControleId}/constat`)
-
-        // await this.api.evenements.create({
-        //   type: 'suppression_constat',
-        //   inspectionId: inspection.id
-        // })
         await this.inspections.refreshInspectionOuverte()
       },
       creerSuite: async (inspectionId, suite) => {
         await this.authRequestJson('post', `inspections/${inspectionId}/suite`, suite)
-
-        // await this.api.evenements.create({
-        //   type: creation ? 'creation_suite' : 'modification_suite',
-        //   inspectionId: inspection.id
-        // })
         await this.inspections.refreshInspectionOuverte()
       },
       modifierSuite: async (inspectionId, suite) => {
         await this.authRequestJson('put', `inspections/${inspectionId}/suite`, suite)
-
-        // await this.api.evenements.create({
-        //   type: creation ? 'creation_suite' : 'modification_suite',
-        //   inspectionId: inspection.id
-        // })
         await this.inspections.refreshInspectionOuverte()
       },
       supprimerSuite: async (inspectionId) => {
         await this.authRequestJson('delete', `inspections/${inspectionId}/suite`)
-
-        // await this.api.evenements.create({
-        //   type: 'suppression_suite',
-        //   inspectionId: inspection.id
-        // })
+        await this.inspections.refreshInspectionOuverte()
+      },
+      publier: async (inspectionId) => {
+        await this.authRequestJson('post', `inspections/${inspectionId}/publier`)
+        await this.inspections.refreshInspectionOuverte()
+      },
+      demanderValidation: async (inspectionId) => {
+        await this.authRequestJson('post', `inspections/${inspectionId}/demandervalidation`)
+        await this.inspections.refreshInspectionOuverte()
+      },
+      rejeter: async (inspectionId) => {
+        await this.authRequestJson('post', `inspections/${inspectionId}/rejeter`)
+        await this.inspections.refreshInspectionOuverte()
+      },
+      valider: async (inspectionId) => {
+        await this.authRequestJson('post', `inspections/${inspectionId}/valider`)
         await this.inspections.refreshInspectionOuverte()
       },
 
