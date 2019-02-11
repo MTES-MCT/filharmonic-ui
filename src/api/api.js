@@ -76,7 +76,7 @@ export default class API {
     }
 
     this.etablissements = {
-      list: filter => {
+      list: (filter = {}) => {
         const search = new URLSearchParams()
         Object.keys(filter).forEach(key => {
           search.set(key, filter[key])
@@ -89,8 +89,12 @@ export default class API {
     }
 
     this.inspections = {
-      list: () => {
-        return this.authRequestJson('get', 'inspections')
+      list: (options = {}) => {
+        let queryParams = ''
+        if (options.assigned) {
+          queryParams += '?assigned=true'
+        }
+        return this.authRequestJson('get', 'inspections' + queryParams)
       },
       get: inspectionId => {
         return this.authRequestJson('get', `inspections/${inspectionId}`)

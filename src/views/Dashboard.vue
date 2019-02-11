@@ -113,24 +113,17 @@ export default {
   async created () {
     if (this.$permissions.isExploitant) {
       this.wait = Promise.all([
-        this.$api.inspections.list({
-          etablissement: true,
-          messagesNonLus: true
-        }),
+        this.$api.inspections.list(),
         this.$api.etablissements.list()
       ])
       ;[this.inspections, this.etablissements] = await this.wait
     } else {
       if (this.$permissions.isInspecteur) {
-        this.wait = this.$api.inspections.listAssigned({
-          etablissement: true,
-          messagesNonLus: true
+        this.wait = this.$api.inspections.list({
+          assigned: true
         })
       } else {
-        this.wait = this.$api.inspections.list({
-          etablissement: true,
-          messagesNonLus: true
-        })
+        this.wait = this.$api.inspections.list()
       }
       this.inspections = await this.wait
     }
