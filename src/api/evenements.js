@@ -153,25 +153,25 @@ export const evenements = {
       return `a modifié le détail de l'inspection.`
     }
   },
-  creation_pointdecontrole: {
+  creation_point_de_controle: {
     notifications: () => ['inspecteurs'],
     message (evenement) {
       return `a ajouté un point de contrôle.`
     }
   },
-  modification_pointdecontrole: {
+  modification_point_de_controle: {
     notifications: () => ['inspecteurs'],
     message (evenement) {
       return `a modifié un point de contrôle.`
     }
   },
-  suppression_pointdecontrole: {
+  suppression_point_de_controle: {
     notifications: () => ['inspecteurs'],
     message (evenement) {
       return `a supprimé un point de contrôle.`
     }
   },
-  publication_pointdecontrole: {
+  publication_point_de_controle: {
     notifications: () => ['inspecteurs'],
     message (evenement) {
       return `a publié un point de contrôle.`
