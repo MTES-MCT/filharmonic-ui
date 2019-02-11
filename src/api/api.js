@@ -62,7 +62,8 @@ export default class API {
       refreshUser: () => {
         return this.authentication.loadUser()
       },
-      logout: () => {
+      logout: async () => {
+        await this.authRequestJson('post', 'logout')
         sessionStorage.delete()
         this.store.dispatch('logout')
       }
