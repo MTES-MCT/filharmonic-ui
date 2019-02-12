@@ -44,7 +44,9 @@ export default {
     },
     async addTheme () {
       if (this.$refs.form.validate()) {
-        await this.$api.themes.create(this.newTheme)
+        await this.$api.themes.create({
+          nom: this.newTheme
+        })
         this.$refs.form.reset()
         this.newTheme = ''
         await this.loadThemes()

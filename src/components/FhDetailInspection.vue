@@ -83,8 +83,6 @@ v-container.pa-0(:class="containerClass")
     v-flex.subheading.mr-2 Thèmes
     v-flex.text-xs-right
       v-combobox(v-model="inspection.themes" :items="themes"
-                item-value="id"
-                item-text="nom"
                 chips small-chips deletable-chips dense multiple
                 :search-input.sync="themeSearch"
                 placeholder="Thèmes..."
@@ -178,7 +176,7 @@ export default {
     }
   },
   async created () {
-    [this.inspecteurs, this.themes] = await Promise.all([this.$api.users.listInspecteurs(), await this.$api.themes.list()])
+    [this.inspecteurs, this.themes] = await Promise.all([this.$api.users.listInspecteurs(), (await this.$api.themes.list()).map(t => t.nom)])
   },
   methods: {
     removeTheme (theme) {
