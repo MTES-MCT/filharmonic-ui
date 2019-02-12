@@ -28,11 +28,9 @@
           span.subheading.mr-2 Remarques&nbsp;:
           v-flex
             div {{ pointDeControle.constat.remarques }}
-        v-layout.align-center(v-if="pointDeControle.constat.echeance")
+        v-layout.align-center(v-if="pointDeControle.constat.delai")
           span.subheading.mr-2 Délai de mise en conformité :
-          v-flex
-            | Avant le&nbsp;
-            time(:datetime="pointDeControle.constat.echeance") {{ pointDeControle.constat.echeance }}
+          v-flex {{ pointDeControle.constat.delai }}
 
     .d-flex(v-if="editMode")
       v-btn(flat title="Annuler l'édition" @click="quitEditMode")
@@ -91,22 +89,10 @@
                     v-flex.sm-12
                       v-textarea(box label="Remarques" v-model="newConstat.remarques" auto-grow hideDetails rows="3" clearable)
                     v-flex.shrink(v-if="newConstat.type !== 'conforme'")
-                      v-menu(
-                        v-model="showNewConstatEcheancePicker"
-                              :close-on-content-click="false"
-                              lazy
-                              transition="scale-transition"
-                              offset-y
-                            )
-                        v-text-field(slot="activator"
-                                      v-model="newConstat.echeance"
-                                      label="Échéance"
-                                      prepend-icon="event"
-                                      readonly
-                                      hint=""
-                                      required
-                                    )
-                        v-date-picker(v-model="newConstat.echeance" @input="showNewConstatEcheancePicker = false" no-title)
+                      v-select(:items="delais"
+                               v-model="newConstat.delai"
+                               box label="Délai"
+                              )
 
               v-card-actions.justify-center.pb-3
                 v-btn(color="primary" @click="ajouterConstat()")
@@ -155,9 +141,13 @@ export default {
       newConstat: {
         type: 'conforme'
       },
-      showNewConstatEcheancePicker: false,
       notEmpty: [
         v => !!v || 'Il faut renseigner une valeur'
+      ],
+      delais: [
+        '1 mois',
+        '3 mois',
+        '6 mois'
       ]
     }
   },
