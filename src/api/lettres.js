@@ -16,7 +16,7 @@ Unité Départementale du Rhône
 </div>
 
 <br>
-Affaire suivie par : ${this.api.store.state.authentication.user.name}<br>
+Affaire suivie par : ${this.api.store.state.authentication.user.prenom} ${this.api.store.state.authentication.user.nom}<br>
 Cellule TESSP<br>
 Tél. : 04 72 44 00 00<br>
 Télécopie : 04 72 44 00 00<br>
@@ -35,7 +35,7 @@ Je vous prie d'agréer, Monsieur le directeur, l'expression de ma considération
     <strong>L'inspecteur des installations classées</strong><br>
     <br>
     <br>
-    <strong>${this.api.store.state.authentication.user.name}</strong>
+    <strong>${this.api.store.state.authentication.user.prenom} ${this.api.store.state.authentication.user.nom}</strong>
     </div>
 <br>
 <strong>Monsieur le directeur</strong><br>
@@ -47,8 +47,8 @@ ${inspection.etablissement.adresse}<br>
   }
 
   genererLettreAnnonce (inspection) {
-    const pointsDeControle = inspection.pointsDeControle.map(pointDeControle => {
-      return ` - <strong>${pointDeControle.sujet}</strong> (${pointDeControle.referencesReglementaires.join(', ')})<br>`
+    const pointsDeControle = inspection.points_de_controle.map(pointDeControle => {
+      return ` - <strong>${pointDeControle.sujet}</strong> (${pointDeControle.references_reglementaires.join(', ')})<br>`
     }).join('')
     return `
 <div style="text-align: justify">

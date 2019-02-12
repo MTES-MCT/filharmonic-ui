@@ -1,13 +1,9 @@
 import { ForbiddenError, UnknownServerError } from '@/errors'
 import sessionStorage from '@/api/sessionStorage'
-import EvenementsAPI from './evenements'
 import LettresAPI from './lettres'
 
 export default class API {
   constructor (options = {}) {
-    this.evenements = new EvenementsAPI({
-      api: this
-    })
     this.lettres = new LettresAPI({
       api: this
     })
@@ -161,6 +157,10 @@ export default class API {
         await this.authRequestJson('post', `inspections/${inspectionId}/commentaires`, commentaire)
         await this.inspections.refreshInspectionOuverte()
       },
+      create: async (inspection) => {
+        const body = await this.authRequestJson('post', 'inspections', inspection)
+        return body.id
+      },
       save: async (updatedInspection) => {
         await this.authRequestJson('put', `inspections/${updatedInspection.id}`, updatedInspection)
         await this.inspections.refreshInspectionOuverte()
@@ -247,6 +247,9 @@ export default class API {
         }
         if (inspection.evenements === undefined) {
           inspection.evenements = []
+        }
+        if (inspection.commentaires === undefined) {
+          inspection.commentaires = []
         }
         this.store.commit('loadInspection', inspection)
       }
