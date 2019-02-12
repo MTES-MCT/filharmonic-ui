@@ -19,7 +19,7 @@ div(v-if="openSuite")
             v-radio(v-for="(typeSuite, key) in typesSuite" :key="key"
                     :label="typeSuite.label" :value="key"
                     )
-          v-checkbox(v-model="openSuite.penalEngage" label="Suites pénales engagées")
+          v-checkbox(v-model="openSuite.penal_engage" label="Suites pénales engagées")
         v-textarea.mt-3(box label="Synthèse" auto-grow hideDetails rows="3" clearable
                         v-model="openSuite.synthese"
                         required
@@ -49,7 +49,7 @@ div(v-if="openSuite")
           @click="supprimerSuite()"
           )
       v-icon(color="red") delete
-  v-layout.align-center.mb-2(v-if="inspection.suite.penalEngage")
+  v-layout.align-center.mb-2(v-if="inspection.suite.penal_engage")
     v-icon.mr-2 report_problem
     strong Suites pénales engagées
   v-layout.align-center
@@ -109,7 +109,7 @@ export default {
       this.openSuite = {
         type: 'observation',
         synthese: 'Cette visite à permis de relever des points faisant l’objet d’observations. L’exploitant devra fournir selon les délais mentionnés dans le présent rapport, les éléments permettant de justifier de la mise en œuvre des actions correctives nécessaires pour les lever.',
-        penalEngage: false
+        penal_engage: false
       }
     },
     resetOpenSuite () {
