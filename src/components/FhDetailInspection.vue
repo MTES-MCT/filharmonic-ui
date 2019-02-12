@@ -176,7 +176,9 @@ export default {
     }
   },
   async created () {
-    [this.inspecteurs, this.themes] = await Promise.all([this.$api.users.listInspecteurs(), (await this.$api.themes.list()).map(t => t.nom)])
+    if (!this.readonly) {
+      [this.inspecteurs, this.themes] = await Promise.all([this.$api.users.listInspecteurs(), (await this.$api.themes.list()).map(t => t.nom)])
+    }
   },
   methods: {
     removeTheme (theme) {
