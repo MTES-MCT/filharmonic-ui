@@ -15,8 +15,8 @@ v-list-tile(:to="`/inspections/${inspection.id}`")
     v-list-tile-sub-title
       v-chip(v-for="(theme, index) in inspection.themes" :key="index" small) {{ theme }}
 
-  v-layout.justify-end(v-if="inspection.messagesNonLus")
-    fh-icone-nouveaux-messages(:messages="inspection.messagesNonLus" big)
+  v-layout.justify-end(v-if="inspection.nb_messages_non_lus")
+    fh-icone-nouveaux-messages(:messages="inspection.nb_messages_non_lus" big)
 
 </template>
 

@@ -92,8 +92,31 @@ export default class API {
         }
         return this.authRequestJson('get', 'inspections' + queryParams)
       },
-      get: inspectionId => {
-        return this.authRequestJson('get', `inspections/${inspectionId}`)
+      get: async inspectionId => {
+        const inspection = await this.authRequestJson('get', `inspections/${inspectionId}`)
+
+        if (inspection.points_de_controle === undefined) {
+          inspection.points_de_controle = []
+        } else {
+          inspection.points_de_controle.forEach(pointDeControle => {
+            if (pointDeControle.messages === undefined) {
+              pointDeControle.messages = []
+            }
+          })
+        }
+        if (inspection.evenements === undefined) {
+          inspection.evenements = []
+        }
+        if (inspection.commentaires === undefined) {
+          inspection.commentaires = []
+        }
+        const filtreAutreMessages = this.store.getters.isExploitant ? message => message.auteur.profile !== 'exploitant' : message => message.auteur.profile === 'exploitant'
+        inspection.points_de_controle.forEach(pointDeControle => {
+          pointDeControle.messagesNonLus = pointDeControle.messages
+            .filter(filtreAutreMessages)
+            .reduce((accMessages, message) => accMessages + (message.lu ? 0 : 1), 0)
+        })
+        return inspection
       },
       ajouterPieceJointe: async pieceJointeData => {
         const formData = new FormData()
@@ -236,21 +259,6 @@ export default class API {
           throw new TypeError(`expected number, got: \`${typeof inspectionId}\``)
         }
         const inspection = await this.inspections.get(inspectionId)
-        if (inspection.points_de_controle === undefined) {
-          inspection.points_de_controle = []
-        } else {
-          inspection.points_de_controle.forEach(pointDeControle => {
-            if (pointDeControle.messages === undefined) {
-              pointDeControle.messages = []
-            }
-          })
-        }
-        if (inspection.evenements === undefined) {
-          inspection.evenements = []
-        }
-        if (inspection.commentaires === undefined) {
-          inspection.commentaires = []
-        }
         this.store.commit('loadInspection', inspection)
       }
     }
