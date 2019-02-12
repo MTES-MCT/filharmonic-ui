@@ -44,10 +44,10 @@ fh-page(:wait="wait")
               v-icon local_printshop
             //- un peu compliqué car les v-dialog ne s'intègrent pas facilement avec les v-list-tile
             v-list.py-0
-              v-list-tile(@click="showLettreAnnonce = true")
+              v-list-tile(@click.stop="showLettreAnnonce = true")
                 v-list-tile-title Générer la lettre d'annonce
                 fh-lettre-annonce(:inspection="inspection" :show-dialog="showLettreAnnonce" @close="showLettreAnnonce = false")
-              v-list-tile(@click="showLettreSuites = true")
+              v-list-tile(@click.stop="showLettreSuites = true")
                 v-list-tile-title Générer la lettre de suites
                 fh-lettre-suites(:inspection="inspection" :show-dialog="showLettreSuites" @close="showLettreSuites = false")
 
