@@ -38,13 +38,13 @@ export default {
         type: 'courant',
         annonce: true,
         origine: 'plan_de_controle',
-        circonstances: '',
-        detailCirconstances: '',
+        circonstance: '',
+        detail_circonstance: '',
         inspecteurs: [
-          this.$store.state.authentication.user.id
+          this.$store.state.authentication.user
         ],
         themes: [],
-        etablissementId: this.etablissementId,
+        etablissement_id: parseInt(this.etablissementId, 10),
         etablissement: null // fetched on init
       },
       validForm: false
