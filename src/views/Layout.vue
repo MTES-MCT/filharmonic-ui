@@ -51,7 +51,7 @@ v-app
 
     v-spacer
 
-    v-menu(transition="slide-y-transition" bottom left offset-x offset-y)
+    v-menu(transition="slide-y-transition" bottom left offset-y)
       v-btn(icon slot="activator")
         v-icon apps
       v-list(v-for="app in apps", :key="app.nom")
@@ -59,7 +59,7 @@ v-app
           v-icon open_in_new
           v-list-tile-title {{ app.nom }}
 
-    v-menu(:close-on-content-click="false" bottom left offset-x offset-y v-model="showNotificationsMenu")
+    v-menu(:close-on-content-click="false" bottom left offset-y v-model="showNotificationsMenu")
       v-btn(slot="activator" v-if="notifications.length > 0" icon :title="`${notifications.length} nouvelle(s) notification(s)`")
         v-icon(color="red") notifications
       v-btn(slot="activator" v-else icon title="Aucune nouvelle notification")
@@ -79,7 +79,7 @@ v-app
     v-menu(
       :close-on-content-click="false"
       :nudge-width="200"
-      offset-x offset-y)
+      bottom left offset-y)
       v-btn(icon slot="activator")
         v-icon person
       v-card

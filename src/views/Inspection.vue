@@ -39,7 +39,7 @@ fh-page(:wait="wait")
           v-btn(icon large @click="toggleFavoris()" :title="isFavorite ? 'Retirer des favoris' : 'Mettre en favoris'" v-if="!$permissions.isExploitant")
             v-icon {{ isFavorite ? 'star' : 'star_border' }}
 
-          v-menu(offset-y v-if="peutGenererDocuments")
+          v-menu(bottom left offset-y v-if="peutGenererDocuments")
             v-btn(slot="activator" icon large title="Générer des documents")
               v-icon local_printshop
             //- un peu compliqué car les v-dialog ne s'intègrent pas facilement avec les v-list-tile

@@ -40,7 +40,7 @@
       v-btn(depressed color="success" title="Mettre à jour" @click="modifierPointDeControle" :disabled="!validPointDeControleEditeForm")
         v-icon(medium) check
 
-    v-menu.d-flex(bottom offset-y transition="slide-y-transition" v-if="peutEditer")
+    v-menu.d-flex(bottom left offset-y transition="slide-y-transition" v-if="peutEditer")
       v-btn.fh-fill-height(slot="activator" flat title="Éditer/supprimer")
         v-icon settings
       v-layout.column
