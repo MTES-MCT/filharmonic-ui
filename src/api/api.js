@@ -245,6 +245,9 @@ export default class API {
             }
           })
         }
+        if (inspection.evenements === undefined) {
+          inspection.evenements = []
+        }
         this.store.commit('loadInspection', inspection)
       }
     }

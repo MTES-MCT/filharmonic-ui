@@ -3,7 +3,7 @@ v-container
   p Voici l'activité survenue pour cette inspection.
   v-btn(icon @click="toggleSort()" :class="{'fh-toggle--active': sortAscending}" title="Inverser le tri")
     v-icon sort
-  fh-evenement(v-for="evenement in activiteSorted" :key="evenement.id" :evenement="evenement")
+  fh-evenement(v-for="evenement in evenementsSorted" :key="evenement.id" :evenement="evenement")
 </template>
 
 <script>
@@ -25,9 +25,9 @@ export default {
     }
   },
   computed: {
-    activiteSorted () {
+    evenementsSorted () {
       const sortDirection = this.sortAscending ? 1 : -1
-      return this.inspection.activite.slice().sort((a, b) => (a.created_at < b.created_at ? -1 : 1) * sortDirection)
+      return this.inspection.evenements.slice().sort((a, b) => (a.created_at < b.created_at ? -1 : 1) * sortDirection)
     }
   },
   methods: {
