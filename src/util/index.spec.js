@@ -8,7 +8,9 @@ describe('util', () => {
       },
       prop: 2,
       boolean: true,
-      date: new Date('2018-12-03')
+      date: new Date('2018-12-03'),
+      nullprop: null,
+      undefinedprop: undefined
     }
     const clone = _.cloneDeep(source)
     source.nested.prop = 'modified'
@@ -26,6 +28,8 @@ describe('util', () => {
     expect(clone.prop).toEqual(2)
     expect(clone.boolean).toEqual(true)
     expect(clone.null).toBeUndefined()
+    expect(clone.nullprop).toBeNull()
+    expect(clone.undefinedprop).toBeUndefined()
     expect(clone.date).toEqual(new Date('2018-12-03'))
   })
 

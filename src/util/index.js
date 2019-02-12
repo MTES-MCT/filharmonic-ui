@@ -11,7 +11,7 @@ export function slow (func, ms = 100) {
 
 export function cloneDeep (source) {
   const objectType = typeof source
-  if (objectType === 'string' || objectType === 'number' || objectType === 'boolean' || objectType === null || objectType === undefined) {
+  if (objectType === 'string' || objectType === 'number' || objectType === 'boolean' || source === null || source === undefined) {
     return source
   } else if (source instanceof Array) {
     return source.map(cloneDeep)
