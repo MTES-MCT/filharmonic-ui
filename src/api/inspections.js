@@ -25,10 +25,10 @@ export const allowedStates = {
   }
 }
 
-export function isBeforeState(actualState, targetState) {
+export function isBeforeState (actualState, targetState) {
   return allowedStates[actualState].order < allowedStates[targetState].order
 }
-export function isAfterState(actualState, targetState) {
+export function isAfterState (actualState, targetState) {
   return allowedStates[actualState].order > allowedStates[targetState].order
 }
 
