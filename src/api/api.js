@@ -23,6 +23,9 @@ export default class API {
             if (!userInfos.hasOwnProperty('favoris')) {
               userInfos.favoris = []
             }
+            userInfos.favoris.forEach(inspection => {
+              inspection.etablissement = new Etablissement(inspection.etablissement)
+            })
             return {
               valid: true,
               user: userInfos
@@ -46,6 +49,9 @@ export default class API {
           if (!authenticationInfos.user.hasOwnProperty('favoris')) {
             authenticationInfos.user.favoris = []
           }
+          authenticationInfos.user.favoris.forEach(inspection => {
+            inspection.etablissement = new Etablissement(inspection.etablissement)
+          })
           this.store.commit('login', authenticationInfos.user)
         }
       },
@@ -54,6 +60,9 @@ export default class API {
         if (!user.hasOwnProperty('favoris')) {
           user.favoris = []
         }
+        user.favoris.forEach(inspection => {
+          inspection.etablissement = new Etablissement(inspection.etablissement)
+        })
         this.store.commit('login', user)
       },
       refreshUser: () => {
