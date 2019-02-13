@@ -1,6 +1,7 @@
 import { ForbiddenError, UnknownServerError } from '@/errors'
 import sessionStorage from '@/api/sessionStorage'
 import LettresAPI from './lettres'
+import { Etablissement } from './models'
 
 export default class API {
   constructor (options = {}) {
@@ -72,29 +73,36 @@ export default class API {
     }
 
     this.etablissements = {
-      list: (filter = {}) => {
+      list: async (filter = {}) => {
         const search = new URLSearchParams()
         Object.keys(filter).forEach(key => {
           search.set(key, filter[key])
         })
-        return this.authRequestJson('get', 'etablissements?' + search.toString())
+        const etablissements = await this.authRequestJson('get', 'etablissements?' + search.toString())
+        return etablissements.map(e => new Etablissement(e))
       },
-      get: etablissementId => {
-        return this.authRequestJson('get', `etablissements/${etablissementId}`)
+      get: async etablissementId => {
+        const etablissement = await this.authRequestJson('get', `etablissements/${etablissementId}`)
+        return new Etablissement(etablissement)
       }
     }
 
     this.inspections = {
-      list: (options = {}) => {
+      list: async (options = {}) => {
         let queryParams = ''
         if (options.assigned) {
           queryParams += '?assigned=true'
         }
-        return this.authRequestJson('get', 'inspections' + queryParams)
+        const inspections = await this.authRequestJson('get', 'inspections' + queryParams)
+        inspections.forEach(inspection => {
+          inspection.etablissement = new Etablissement(inspection.etablissement)
+        })
+        return inspections
       },
       get: async inspectionId => {
         const inspection = await this.authRequestJson('get', `inspections/${inspectionId}`)
 
+        inspection.etablissement = new Etablissement(inspection.etablissement)
         if (inspection.points_de_controle === undefined) {
           inspection.points_de_controle = []
         } else {
