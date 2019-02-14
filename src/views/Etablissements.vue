@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import * as _ from '@/util'
+
 export default {
   data () {
     return {
@@ -48,17 +50,27 @@ export default {
       }
     }
   },
+  created () {
+    this.filter = _.cloneDeep(this.$store.state.rechercheEtablissements.filter)
+    this.etablissements = this.$store.state.rechercheEtablissements.results
+    this.showResults = this.etablissements.length > 0
+  },
   methods: {
     resetForm () {
       this.filter = {}
       this.showResults = false
+      this.$store.commit('saveRechercheEtablissements', {
+        filter: {},
+        results: []
+      })
     },
     async listEtablissements () {
       this.showResults = true
       this.etablissements = await this.$api.etablissements.list(this.filter)
-      if (!this.etablissement) {
-        this.errorNotFound = true
-      }
+      this.$store.commit('saveRechercheEtablissements', _.cloneDeep({
+        filter: this.filter,
+        results: this.etablissements
+      }))
     }
   }
 }

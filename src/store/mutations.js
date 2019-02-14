@@ -10,5 +10,11 @@ export default {
       valid: true,
       user: userInfos
     }
+  },
+  saveRechercheEtablissements (state, { filter, results }) {
+    state.rechercheEtablissements = {
+      filter,
+      results
+    }
   }
 }
