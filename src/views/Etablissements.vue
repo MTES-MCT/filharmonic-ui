@@ -24,13 +24,14 @@
         v-subheader Résultats
         v-list-tile(v-if="etablissements.length === 0") Aucun résultat
         template(v-else)
-          v-list-tile(:to="`/etablissements/${etablissement.id}`" v-for="etablissement in etablissements" :key="etablissement.id")
-            v-list-tile-action
-              v-icon location_city
-            v-list-tile-content
-              v-list-tile-title {{ etablissement.raison }}
-              v-list-tile-sub-title {{ etablissement.adresse }}
-          v-divider
+          template(v-for="etablissement in etablissements")
+            v-list-tile(:to="`/etablissements/${etablissement.id}`" :key="etablissement.id")
+              v-list-tile-action
+                v-icon location_city
+              v-list-tile-content
+                v-list-tile-title {{ etablissement.raison }}
+                v-list-tile-sub-title {{ etablissement.adresse }}
+            v-divider
 
 </template>
 
