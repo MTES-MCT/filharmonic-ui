@@ -16,22 +16,25 @@
               v-model="filter.s3ic"
               label="Code S3IC")
             v-btn(
-              @click="listEtablissements"
+              @click="listEtablissements()"
               color="primary") Rechercher
             v-btn(@click="resetForm") Effacer
 
-      v-list(two-line v-if="showResults")
-        v-subheader Résultats
-        v-list-tile(v-if="etablissements.length === 0") Aucun résultat
+      v-list(two-line v-if="results")
+        v-list-tile(v-if="results.etablissements.length === 0") Aucun résultat
         template(v-else)
-          template(v-for="etablissement in etablissements")
+          v-subheader
+            | {{ results.total }} résultat
+            span(v-if="results.etablissements.length > 1") s
+          v-pagination.fh-pagination(:value="filter.page" @input="changePage" :length="totalPages")
+          template(v-for="etablissement in results.etablissements")
+            v-divider
             v-list-tile(:to="`/etablissements/${etablissement.id}`" :key="etablissement.id")
               v-list-tile-action
                 v-icon location_city
               v-list-tile-content
                 v-list-tile-title {{ etablissement.raison }}
                 v-list-tile-sub-title {{ etablissement.adresse }}
-            v-divider
 
 </template>
 
@@ -41,37 +44,63 @@ import * as _ from '@/util'
 export default {
   data () {
     return {
-      showResults: false,
-      etablissements: [],
+      results: null,
       filter: {
         s3ic: '',
         nom: '',
-        adresse: ''
+        adresse: '',
+        page: 1
       }
     }
   },
+  computed: {
+    totalPages () {
+      return this.results ? Math.ceil(this.results.total / 50) : 1
+    }
+  },
   created () {
-    this.filter = _.cloneDeep(this.$store.state.rechercheEtablissements.filter)
-    this.etablissements = this.$store.state.rechercheEtablissements.results
-    this.showResults = this.etablissements.length > 0
+    const previousSearch = this.$store.state.rechercheEtablissements
+    if (previousSearch) {
+      this.filter = _.cloneDeep(previousSearch.filter)
+      this.results = previousSearch.results
+    }
   },
   methods: {
     resetForm () {
-      this.filter = {}
-      this.showResults = false
-      this.$store.commit('saveRechercheEtablissements', {
-        filter: {},
-        results: []
-      })
+      this.results = null
+      this.$store.commit('saveRechercheEtablissements', null)
+      this.filter = {
+        page: 1
+      }
     },
-    async listEtablissements () {
-      this.showResults = true
-      this.etablissements = await this.$api.etablissements.list(this.filter)
+    async listEtablissements (keepPage = false) {
+      if (!keepPage) {
+        this.filter.page = 1
+      }
+      this.results = await this.$api.etablissements.list(this.filter)
       this.$store.commit('saveRechercheEtablissements', _.cloneDeep({
         filter: this.filter,
-        results: this.etablissements
+        results: this.results
       }))
+    },
+    changePage (newPage) {
+      this.filter.page = newPage
+      this.listEtablissements(true)
     }
   }
 }
 </script>
+
+<style lang="stylus">
+.fh-pagination
+  position sticky
+  background-color rgb(250, 250, 250)
+  top 64px
+  padding-top 10px
+  padding-bottom 10px
+  z-index 1
+  width 100%
+
+  @media (max-width: 960px) // breakpoint vuetify
+    top 48px
+</style>

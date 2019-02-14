@@ -87,8 +87,9 @@ export default class API {
         Object.keys(filter).forEach(key => {
           search.set(key, filter[key])
         })
-        const etablissements = await this.authRequestJson('get', 'etablissements?' + search.toString())
-        return etablissements.map(e => new Etablissement(e))
+        const results = await this.authRequestJson('get', 'etablissements?' + search.toString())
+        results.etablissements = results.etablissements.map(e => new Etablissement(e))
+        return results
       },
       get: async etablissementId => {
         const etablissement = await this.authRequestJson('get', `etablissements/${etablissementId}`)

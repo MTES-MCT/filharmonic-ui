@@ -6,9 +6,6 @@ export function createInitialStoreState (authenticationInfos) {
     // utilisé si l'utilisateur navigue sur une page d'inspection
     inspectionOuverte: null,
     notifications: [],
-    rechercheEtablissements: {
-      filter: {},
-      results: []
-    }
+    rechercheEtablissements: null
   }
 }

@@ -11,10 +11,7 @@ export default {
       user: userInfos
     }
   },
-  saveRechercheEtablissements (state, { filter, results }) {
-    state.rechercheEtablissements = {
-      filter,
-      results
-    }
+  saveRechercheEtablissements (state, rechercheEtablissements) {
+    state.rechercheEtablissements = rechercheEtablissements
   }
 }
