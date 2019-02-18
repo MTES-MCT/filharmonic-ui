@@ -7,13 +7,13 @@
         v-card-text
           v-form(ref="form" lazy-validation)
             v-text-field(
-              v-model="filter.nom"
-              label="Nom usuel ou raison sociale")
+              v-model="filter.nom" @keydown.enter="listEtablissements()"
+              label="Nom usuel ou raison sociale" autofocus)
             v-text-field(
-              v-model="filter.adresse"
+              v-model="filter.adresse" @keydown.enter="listEtablissements()"
               label="Localisation par commune ou code postal")
             v-text-field(
-              v-model="filter.s3ic"
+              v-model="filter.s3ic" @keydown.enter="listEtablissements()"
               label="Code S3IC")
             v-btn(
               @click="listEtablissements()"
