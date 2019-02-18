@@ -63,21 +63,15 @@ v-container.pa-0(:class="containerClass")
     v-flex.subheading.mr-2 Inspecteurs
     v-flex.text-xs-right(v-if="readonly")
       v-chip(v-for="inspecteur in inspection.inspecteurs" :key="inspecteur.id" small)
-        | {{ inspecteur.prenom }} {{ inspecteur.nom }}
+        | {{ inspecteur.fullname }}
     v-flex(v-else)
       v-autocomplete(v-model="inspection.inspecteurs" :items="inspecteurs"
-                    chips dense multiple hide-selected
-                    item-text="id" return-object
+                    chips deletable-chips dense multiple hide-selected
+                    item-text="fullname" return-object
                     placeholder="Inspecteurs..."
                     required :rules="inspecteursRules"
                     :readonly="readonly"
                     )
-        template(slot="selection" slot-scope="data")
-          v-chip(:close="!readonly" @input="removeInspecteur(data.item.id)")
-            | {{ data.item.prenom }} {{ data.item.nom }}
-        template(slot="item" slot-scope="data")
-          v-list-tile-content
-            v-list-tile-title(v-html="`${data.item.prenom} ${data.item.nom}`")
 
   v-layout.align-center
     v-flex.subheading.mr-2 Thèmes

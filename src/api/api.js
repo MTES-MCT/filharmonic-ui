@@ -1,7 +1,7 @@
 import { ForbiddenError, UnknownServerError } from '@/errors'
 import sessionStorage from '@/api/sessionStorage'
 import LettresAPI from './lettres'
-import { Etablissement } from './models'
+import { Etablissement, User } from './models'
 
 export default class API {
   constructor (options = {}) {
@@ -76,8 +76,9 @@ export default class API {
     }
 
     this.users = {
-      listInspecteurs: () => {
-        return this.authRequestJson('get', 'inspecteurs')
+      listInspecteurs: async () => {
+        const inspecteurs = await this.authRequestJson('get', 'inspecteurs')
+        return inspecteurs.map(i => new User(i))
       }
     }
 
@@ -112,6 +113,7 @@ export default class API {
       get: async inspectionId => {
         const inspection = await this.authRequestJson('get', `inspections/${inspectionId}`)
 
+        inspection.inspecteurs = inspection.inspecteurs.map(i => new User(i))
         inspection.etablissement = new Etablissement(inspection.etablissement)
         if (inspection.points_de_controle === undefined) {
           inspection.points_de_controle = []
