@@ -2,6 +2,9 @@ export default {
   loadInspection (state, inspection) {
     state.inspectionOuverte = inspection
   },
+  loadInspectionsFavorites (state, inspectionsFavorites) {
+    state.inspectionsFavorites = inspectionsFavorites
+  },
   loadNotifications (state, notifications) {
     state.notifications = notifications
   },

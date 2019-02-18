@@ -20,12 +20,7 @@ export default class API {
               })
             const userInfos = await res.json()
             this.setAuthToken(token)
-            if (!userInfos.hasOwnProperty('favoris')) {
-              userInfos.favoris = []
-            }
-            userInfos.favoris.forEach(inspection => {
-              inspection.etablissement = new Etablissement(inspection.etablissement)
-            })
+            await this.inspections.refreshInspectionsFavorites()
             return {
               valid: true,
               user: userInfos
@@ -38,35 +33,16 @@ export default class API {
         return null
       },
       login: async (ticket) => {
-        const res = await this.request('post', 'login',
-          {
-            ticket
-          })
+        const res = await this.request('post', 'login', {
+          ticket
+        })
         const authenticationInfos = await res.json()
         if (authenticationInfos) {
           sessionStorage.save(authenticationInfos.token)
           this.setAuthToken(authenticationInfos.token)
-          if (!authenticationInfos.user.hasOwnProperty('favoris')) {
-            authenticationInfos.user.favoris = []
-          }
-          authenticationInfos.user.favoris.forEach(inspection => {
-            inspection.etablissement = new Etablissement(inspection.etablissement)
-          })
           this.store.commit('login', authenticationInfos.user)
+          await this.inspections.refreshInspectionsFavorites()
         }
-      },
-      loadUser: async () => {
-        const user = await this.authRequestJson('get', 'user')
-        if (!user.hasOwnProperty('favoris')) {
-          user.favoris = []
-        }
-        user.favoris.forEach(inspection => {
-          inspection.etablissement = new Etablissement(inspection.etablissement)
-        })
-        this.store.commit('login', user)
-      },
-      refreshUser: () => {
-        return this.authentication.loadUser()
       },
       logout: async () => {
         await this.authRequestJson('post', 'logout')
@@ -226,11 +202,11 @@ export default class API {
       },
       addFavori: async idInspection => {
         await this.authRequestJson('post', `inspections/${idInspection}/favori`)
-        await this.authentication.refreshUser()
+        await this.inspections.refreshInspectionsFavorites()
       },
       removeFavori: async idInspection => {
         await this.authRequestJson('delete', `inspections/${idInspection}/favori`)
-        await this.authentication.refreshUser()
+        await this.inspections.refreshInspectionsFavorites()
       },
       ajouterConstat: async (pointDeControleId, constat) => {
         await this.authRequestJson('post', `pointsdecontrole/${pointDeControleId}/constat`, constat)
@@ -267,6 +243,13 @@ export default class API {
       valider: async (inspectionId) => {
         await this.authRequestJson('post', `inspections/${inspectionId}/valider`)
         await this.inspections.refreshInspectionOuverte()
+      },
+      refreshInspectionsFavorites: async () => {
+        const inspectionsFavorites = await this.authRequestJson('get', 'inspectionsfavorites')
+        inspectionsFavorites.forEach(inspection => {
+          inspection.etablissement = new Etablissement(inspection.etablissement)
+        })
+        this.store.commit('loadInspectionsFavorites', inspectionsFavorites)
       },
 
       // interne

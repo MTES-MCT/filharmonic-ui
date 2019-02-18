@@ -1,5 +1,5 @@
 <template lang="pug">
-v-app
+v-app(v-if="user")
   v-snackbar(v-model="showSnackbar" top :color="snackbar.color" :timeout="4000")
     | {{ snackbar.message }}
     v-btn(icon @click="showSnackbar = false")
@@ -129,7 +129,7 @@ export default {
   computed: {
     ...mapState({
       user: state => state.authentication.user,
-      favoris: state => state.authentication.user.favoris,
+      favoris: state => state.inspectionsFavorites,
       notifications: state => state.notifications
     })
   },

@@ -102,7 +102,7 @@ export default {
   computed: {
     ...mapState({
       inspection: state => state.inspectionOuverte,
-      favoris: state => state.authentication.user.favoris
+      favoris: state => state.inspectionsFavorites
     }),
     isFavorite () {
       return this.favoris.filter(favori => favori.id === this.inspection.id).length > 0
