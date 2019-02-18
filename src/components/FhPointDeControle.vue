@@ -162,19 +162,19 @@ export default {
       return !this.$permissions.isExploitant || this.pointDeControle.publie
     },
     peutEditer () {
-      return !this.$permissions.isExploitant && isBeforeState(this.etatInspection, 'attente_validation') && !this.editMode
+      return this.$permissions.isInspecteur && isBeforeState(this.etatInspection, 'attente_validation') && !this.editMode
     },
     peutPublier () {
-      return !this.$permissions.isExploitant && !this.pointDeControle.publie && isBeforeState(this.etatInspection, 'attente_validation')
+      return this.$permissions.isInspecteur && !this.pointDeControle.publie && isBeforeState(this.etatInspection, 'attente_validation')
     },
     peutAjouterConstat () {
-      return !this.$permissions.isExploitant && this.etatInspection === 'en_cours' && !this.pointDeControle.constat && !this.showNewConstatForm
+      return this.$permissions.isInspecteur && this.etatInspection === 'en_cours' && !this.pointDeControle.constat && !this.showNewConstatForm
     },
     peutVoirConstat () {
       return this.pointDeControle.constat && (!this.$permissions.isExploitant || this.etatInspection === 'valide')
     },
     peutSupprimerConstat () {
-      return this.pointDeControle.constat && !this.$permissions.isExploitant && this.etatInspection === 'en_cours'
+      return this.pointDeControle.constat && this.$permissions.isInspecteur && this.etatInspection === 'en_cours'
     }
   },
   methods: {

@@ -127,16 +127,16 @@ export default {
       }
     },
     peutPublier () {
-      return !this.$permissions.isExploitant && this.inspection.etat === 'preparation'
+      return this.$permissions.isInspecteur && this.inspection.etat === 'preparation'
     },
     peutDemanderValidation () {
-      return !this.$permissions.isExploitant && this.inspection.etat === 'en_cours' && this.inspection.suite
+      return this.$permissions.isInspecteur && this.inspection.etat === 'en_cours' && this.inspection.suite
     },
     peutValider () {
       return this.$permissions.isApprobateur && this.inspection.etat === 'attente_validation'
     },
     peutGenererDocuments () {
-      return !this.$permissions.isExploitant
+      return this.$permissions.isInspecteur
     }
   },
   watch: {

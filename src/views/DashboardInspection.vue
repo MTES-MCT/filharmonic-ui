@@ -73,10 +73,10 @@ export default {
       return this.inspection.etat === 'preparation' || this.inspection.etat === 'en_cours'
     },
     peutAjouterPointDeControle () {
-      return !this.$permissions.isExploitant && this.inspectionModifiable && !this.inspection.suite && !this.showNewPointDeControleForm
+      return this.$permissions.isInspecteur && this.inspectionModifiable && !this.inspection.suite && !this.showNewPointDeControleForm
     },
     peutModifierSuites () {
-      return !this.$permissions.isExploitant && this.inspectionModifiable
+      return this.$permissions.isInspecteur && this.inspectionModifiable
     },
     peutVoirSuites () {
       return this.inspection.etat !== 'preparation' && (!this.$permissions.isExploitant || this.inspection.etat === 'valide')

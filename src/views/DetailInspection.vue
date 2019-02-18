@@ -34,7 +34,7 @@ export default {
   },
   computed: {
     peutEditer () {
-      return !this.$permissions.isExploitant && (this.inspection.etat === 'preparation' || this.inspection.etat === 'en_cours')
+      return this.$permissions.isInspecteur && (this.inspection.etat === 'preparation' || this.inspection.etat === 'en_cours')
     }
   }
 }

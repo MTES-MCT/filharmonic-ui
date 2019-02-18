@@ -76,7 +76,7 @@ export default {
       return this.pointDeControleId === -1
     },
     peutAjouterMessage () {
-      return this.commentairesGeneraux || isBeforeState(this.etatInspection, 'attente_validation')
+      return this.commentairesGeneraux || (isBeforeState(this.etatInspection, 'attente_validation') && !this.$permissions.isApprobateur)
     }
   },
   methods: {
