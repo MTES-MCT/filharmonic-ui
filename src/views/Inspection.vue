@@ -44,10 +44,10 @@ fh-page(:wait="wait")
               v-icon local_printshop
             //- un peu compliqué car les v-dialog ne s'intègrent pas facilement avec les v-list-tile
             v-list.py-0
-              v-list-tile(@click.stop="showLettreAnnonce = true")
+              v-list-tile(@click.stop="showLettreAnnonce = true" v-if="peutGenererLettreAnnonce")
                 v-list-tile-title Générer la lettre d'annonce
                 fh-lettre-annonce(:inspection="inspection" :show-dialog="showLettreAnnonce" @close="showLettreAnnonce = false")
-              v-list-tile(@click.stop="showLettreSuites = true")
+              v-list-tile(@click.stop="showLettreSuites = true" v-if="peutGenererLettreSuite")
                 v-list-tile-title Générer la lettre de suites
                 fh-lettre-suites(:inspection="inspection" :show-dialog="showLettreSuites" @close="showLettreSuites = false")
 
@@ -74,6 +74,7 @@ fh-page(:wait="wait")
 
 <script>
 import { mapState } from 'vuex'
+import { isBeforeState } from '@/api/inspections'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhLettreAnnonce from '@/components/FhLettreAnnonce.vue'
 import FhLettreSuites from '@/components/FhLettreSuites.vue'
@@ -136,7 +137,13 @@ export default {
       return this.$permissions.isApprobateur && this.inspection.etat === 'attente_validation'
     },
     peutGenererDocuments () {
-      return this.$permissions.isInspecteur
+      return this.$permissions.isInspecteur && (this.peutGenererLettreAnnonce || this.peutGenererLettreSuite)
+    },
+    peutGenererLettreAnnonce () {
+      return this.$permissions.isInspecteur && isBeforeState(this.inspection.etat, 'attente_validation') && this.inspection.points_de_controle.length > 0
+    },
+    peutGenererLettreSuite () {
+      return this.$permissions.isInspecteur && this.inspection.etat === 'valide'
     }
   },
   watch: {
