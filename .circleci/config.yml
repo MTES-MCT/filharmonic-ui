@@ -76,7 +76,8 @@ jobs:
     steps:
       - attach_workspace:
           at: '~'
-      - run: $(yarn global bin)/yarn audit
+      # yarn can't ignore devDependencies https://github.com/yarnpkg/yarn/issues/6632
+      - run: $(yarn global bin)/yarn audit || true
 
   build:
     executor: node
