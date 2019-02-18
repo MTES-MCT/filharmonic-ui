@@ -351,7 +351,7 @@ export default class API {
 
     // asserts that the response is ok
     if (!res.ok) {
-      const errorMessage = await res.json().message
+      const errorMessage = (await res.json()).message
       // TODO check if the error is known
       if (res.status === 401) {
         throw new ForbiddenError({
@@ -360,8 +360,7 @@ export default class API {
         })
       }
       throw new UnknownServerError({
-        message: 'Oops! Something seems wrong with the server',
-        additionnalMessage: errorMessage
+        message: errorMessage
       })
     }
     return res
