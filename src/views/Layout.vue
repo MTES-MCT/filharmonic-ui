@@ -136,6 +136,7 @@ export default {
   async created () {
     events.bus.$on(events.Alert, this.updateAlert)
     this.$api.notifications.loadNotifications()
+    this.$api.inspections.refreshInspectionsFavorites()
   },
   destroyed () {
     events.bus.$off(events.Alert, this.updateAlert)

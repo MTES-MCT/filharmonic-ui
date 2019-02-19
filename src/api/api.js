@@ -20,10 +20,9 @@ export default class API {
               })
             const userInfos = await res.json()
             this.setAuthToken(token)
-            await this.inspections.refreshInspectionsFavorites()
             return {
               valid: true,
-              user: userInfos
+              user: new User(userInfos)
             }
           } catch (err) {
             console.log('failed authentication', err) // eslint-disable-line no-console
@@ -40,8 +39,7 @@ export default class API {
         if (authenticationInfos) {
           sessionStorage.save(authenticationInfos.token)
           this.setAuthToken(authenticationInfos.token)
-          this.store.commit('login', authenticationInfos.user)
-          await this.inspections.refreshInspectionsFavorites()
+          this.store.commit('login', new User(authenticationInfos.user))
         }
       },
       logout: async () => {
