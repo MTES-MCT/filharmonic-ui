@@ -19,6 +19,8 @@ v-btn(v-else flat @click="triggerDownload")
 </template>
 
 <script>
+import * as util from '@/util'
+
 export default {
   name: 'FhAttachment',
   props: {
@@ -63,10 +65,7 @@ export default {
     },
     async triggerDownload () {
       const url = await this.$api.inspections.getPieceJointe(this.attachment.id)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = this.attachment.nom
-      link.click()
+      util.downloadFile(url, this.attachment.nom)
     }
   }
 }

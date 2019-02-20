@@ -162,6 +162,29 @@ export default class API {
         const blob = await res.blob()
         return URL.createObjectURL(blob)
       },
+      genererLettreAnnonce: async inspectionId => {
+        const res = await fetch(`/api/inspections/${inspectionId}/lettreannonce`, {
+          method: 'get',
+          headers: {
+            'Authorization': this.authToken,
+            'Accept': '*/*'
+          }
+        })
+        if (!res.ok) {
+          if (res.status === 401) {
+            throw new ForbiddenError({
+              message: 'Unauthorized'
+              // additionnalMessage: errorMessage
+            })
+          }
+          throw new UnknownServerError({
+            message: 'Oops! Something seems wrong with the server'
+            // additionnalMessage: errorMessage
+          })
+        }
+        const blob = await res.blob()
+        return URL.createObjectURL(blob)
+      },
       lireMessage: async messageId => {
         await this.authRequestJson('post', `messages/${messageId}/lire`)
         await this.inspections.refreshInspectionOuverte()

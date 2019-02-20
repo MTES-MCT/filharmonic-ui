@@ -50,3 +50,15 @@ export function debounce (func, wait) {
   }
   return wrapper
 }
+
+export function downloadFile (url, nom) {
+  const link = document.createElement('a')
+  document.body.appendChild(link)
+  link.type = 'hidden'
+  link.href = url
+  link.download = nom
+  link._target = '_blank'
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+}

@@ -44,9 +44,8 @@ fh-page(:wait="wait")
               v-icon local_printshop
             //- un peu compliqué car les v-dialog ne s'intègrent pas facilement avec les v-list-tile
             v-list.py-0
-              v-list-tile(@click.stop="showLettreAnnonce = true" v-if="peutGenererLettreAnnonce")
+              v-list-tile(@click="genererLettreAnnonce" v-if="peutGenererLettreAnnonce")
                 v-list-tile-title Générer la lettre d'annonce
-                fh-lettre-annonce(:inspection="inspection" :show-dialog="showLettreAnnonce" @close="showLettreAnnonce = false")
               v-list-tile(@click.stop="showLettreSuites = true" v-if="peutGenererLettreSuite")
                 v-list-tile-title Générer la lettre de suites
                 fh-lettre-suites(:inspection="inspection" :show-dialog="showLettreSuites" @close="showLettreSuites = false")
@@ -79,6 +78,7 @@ import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhLettreAnnonce from '@/components/FhLettreAnnonce.vue'
 import FhLettreSuites from '@/components/FhLettreSuites.vue'
 import BasePage from '@/views/mixins/BasePage.js'
+import * as util from '@/util'
 
 export default {
   components: {
@@ -95,7 +95,6 @@ export default {
   },
   data () {
     return {
-      showLettreAnnonce: false,
       showLettreSuites: false
     }
   },
@@ -174,6 +173,10 @@ export default {
     },
     async valider () {
       await this.$api.inspections.valider(this.inspection.id)
+    },
+    async genererLettreAnnonce () {
+      const url = await this.$api.inspections.genererLettreAnnonce(this.inspection.id)
+      util.downloadFile(url, 'lettre-annonce.odt')
     }
   }
 }
