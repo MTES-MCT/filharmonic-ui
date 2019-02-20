@@ -116,7 +116,9 @@ export default {
         this.$api.inspections.list(),
         this.$api.etablissements.list()
       ])
-      ;[this.inspections, this.etablissements] = await this.wait
+      const result = await this.wait
+      this.inspections = result[0]
+      this.etablissements = result[1].etablissements
     } else {
       if (this.$permissions.isInspecteur) {
         this.wait = this.$api.inspections.list({
