@@ -14,6 +14,8 @@ describe('Login view', () => {
     const wrapper = mount(Login, {
       router
     })
-    expect(wrapper.text()).toContain('Fil\'HarmonicConnexion via le portail Cerbère')
+    const text = wrapper.text()
+    expect(text).toContain("Fil'Harmonic")
+    expect(text).toContain('Connexion via le portail Cerbère')
   })
 })
