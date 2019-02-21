@@ -3,7 +3,7 @@ div
   .app-loading(v-if="state === 'loading'")
   .fh-page__error(v-if="state === 'forbidden_error'")
     v-icon.fh-page__error-icon(color="grey") remove_circle
-    p Vous n'avez pas les autorisation nécessaires pour accéder à cette page.
+    p Vous n'avez pas les autorisations nécessaires pour accéder à cette page.
     p {{ message }}
   .fh-page__error(v-if="state === 'error'")
     v-icon.fh-page__error-icon(color="grey") error

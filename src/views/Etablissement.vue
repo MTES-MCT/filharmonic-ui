@@ -41,10 +41,7 @@ export default {
     }
   },
   async created () {
-    this.wait = this.$api.etablissements.get(this.etablissementId, {
-      inspections: true,
-      responsables: true
-    })
+    this.wait = this.$api.etablissements.get(this.etablissementId)
     this.etablissement = await this.wait
   }
 }
