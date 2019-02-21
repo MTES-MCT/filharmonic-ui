@@ -1,4 +1,4 @@
-import { ForbiddenError, UnknownServerError, ApplicationError } from '@/errors'
+import { ForbiddenError, UnknownServerError, ApplicationError, UnauthorizedError } from '@/errors'
 import sessionStorage from '@/api/sessionStorage'
 import LettresAPI from './lettres'
 import { Etablissement, User } from './models'
@@ -40,7 +40,7 @@ export default class API {
         }
       },
       logout: async () => {
-        await this.authRequestJson('post', 'logout')
+        await this.authRequest('post', 'logout')
         sessionStorage.delete()
         this.store.dispatch('logout')
       }
@@ -317,7 +317,12 @@ export default class API {
           message: errorMessage
         })
       }
-      if (res.status === 401 || res.status === 403) {
+      if (res.status === 401) {
+        throw new UnauthorizedError({
+          message: errorMessage
+        })
+      }
+      if (res.status === 403) {
         throw new ForbiddenError({
           message: errorMessage
         })

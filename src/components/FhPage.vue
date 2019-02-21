@@ -18,7 +18,7 @@ div
 </template>
 
 <script>
-import { ApplicationError, ForbiddenError } from '@/errors'
+import { ApplicationError, ForbiddenError, UnknownServerError } from '@/errors'
 
 /*
 Ce composant permet à toutes les pages d'afficher un spinner pendant le chargement
@@ -47,6 +47,8 @@ export default {
       if (err instanceof ApplicationError) {
         if (err instanceof ForbiddenError) {
           this.state = 'forbidden_error'
+        } else if (err instanceof UnknownServerError) {
+          this.state = 'technical_error'
         } else {
           this.state = 'error'
         }

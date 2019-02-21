@@ -9,6 +9,13 @@ export class ApplicationError extends Error {
   }
 }
 
+export class UnauthorizedError extends ApplicationError {
+  constructor (options) {
+    super(options)
+    this.name = 'UnauthorizedError'
+  }
+}
+
 export class ForbiddenError extends ApplicationError {
   constructor (options) {
     super(options)

@@ -16,7 +16,7 @@ import App from './App.vue'
 import { createRouter } from './router'
 import { createStore } from './store'
 import './registerServiceWorker'
-import { ApplicationError } from './errors'
+import { ApplicationError, UnauthorizedError } from './errors'
 
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
@@ -31,39 +31,62 @@ if (process.env.NODE_ENV === 'production') {
     })
   }
 }
-
 Vue.config.productionTip = false
-function errorHandler (error) {
-  if (!(error instanceof ApplicationError)) {
-    console.error(error.stack) // eslint-disable-line no-console
-  }
-  events.bus.$emit(events.Alert, 'error', error.message)
-}
-Vue.config.errorHandler = errorHandler
-window.addEventListener('error', errorEventHandler => {
-  event.preventDefault()
-  errorHandler(event.error)
-})
-window.addEventListener('unhandledrejection', errorEventHandler => {
-  event.preventDefault()
-  errorHandler(event.reason)
-})
 
-;(async function () {
-  try {
-    const api = new API()
-    const store = await createStore({
-      api
+class Application {
+  async init () {
+    this.api = new API()
+    this.store = await createStore({
+      api: this.api
     })
-    Vue.use(APIPlugin, { api })
+    Vue.use(APIPlugin, {
+      api: this.api
+    })
     Vue.use(ConfirmPlugin)
-    Vue.use(PermissionsPlugin, { store })
+    Vue.use(PermissionsPlugin, {
+      store: this.store
+    })
+    this.router = createRouter(this.store)
+
+    this.setupErrorHandler()
+
     new Vue({
-      router: createRouter(store),
-      store,
+      router: this.router,
+      store: this.store,
       render: h => h(App)
     }).$mount('#app')
     document.body.classList.remove('app-loading')
+  }
+
+  setupErrorHandler () {
+    Vue.config.errorHandler = err => {
+      this.errorHandler(err)
+    }
+    window.addEventListener('error', event => {
+      event.preventDefault()
+      this.errorHandler(event.error)
+    })
+    window.addEventListener('unhandledrejection', event => {
+      event.preventDefault()
+      this.errorHandler(event.reason)
+    })
+  }
+
+  async errorHandler (error) {
+    if (!(error instanceof ApplicationError)) {
+      console.error(error.stack) // eslint-disable-line no-console
+    }
+    events.bus.$emit(events.Alert, 'error', error.message)
+    if (error instanceof UnauthorizedError) {
+      await this.api.authentication.logout()
+      this.router.push('/login?redirect=/')
+    }
+  }
+}
+
+;(async function () {
+  try {
+    await (new Application().init())
   } catch (err) {
     console.error('Failed to start application', err) // eslint-disable-line no-console
   }
