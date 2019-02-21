@@ -42,7 +42,7 @@ export default {
         await this.$api.authentication.login(ticket)
         this.$router.push('/')
       } catch (e) {
-        this.error = "L'authentification a échoué. Erreur: " + e.message
+        this.error = `L'authentification a échoué. ${e.message}`
       }
     }
   }

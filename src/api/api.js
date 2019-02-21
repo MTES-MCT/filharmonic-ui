@@ -1,4 +1,4 @@
-import { ForbiddenError, UnknownServerError } from '@/errors'
+import { ForbiddenError, UnknownServerError, ApplicationError } from '@/errors'
 import sessionStorage from '@/api/sessionStorage'
 import LettresAPI from './lettres'
 import { Etablissement, User } from './models'
@@ -14,11 +14,9 @@ export default class API {
         const token = sessionStorage.load()
         if (token) {
           try {
-            const res = await this.request('post', 'authenticate',
-              {
-                token
-              })
-            const userInfos = await res.json()
+            const userInfos = await this.requestJson('post', 'authenticate', {
+              token
+            })
             this.setAuthToken(token)
             return {
               valid: true,
@@ -32,10 +30,9 @@ export default class API {
         return null
       },
       login: async (ticket) => {
-        const res = await this.request('post', 'login', {
+        const authenticationInfos = await this.requestJson('post', 'login', {
           ticket
         })
-        const authenticationInfos = await res.json()
         if (authenticationInfos) {
           sessionStorage.save(authenticationInfos.token)
           this.setAuthToken(authenticationInfos.token)
@@ -117,73 +114,14 @@ export default class API {
         formData.append('file', pieceJointeData.file)
         formData.append('filename', pieceJointeData.filename)
         formData.append('size', pieceJointeData.size)
-        const res = await fetch(`/api/piecesjointes`, {
-          method: 'post',
-          body: formData,
-          headers: {
-            'Authorization': this.authToken,
-            'Accept': '*/*'
-          }
-        })
-        if (!res.ok) {
-          if (res.status === 401) {
-            throw new ForbiddenError({
-              message: 'Unauthorized'
-              // additionnalMessage: errorMessage
-            })
-          }
-          throw new UnknownServerError({
-            message: 'Oops! Something seems wrong with the server'
-            // additionnalMessage: errorMessage
-          })
-        }
-        return (await res.json()).id
+        const res = await this.authFormDataRequestJson('post', 'piecesjointes', formData)
+        return res.id
       },
-      getPieceJointe: async pieceJointeId => {
-        const res = await fetch(`/api/piecesjointes/${pieceJointeId}`, {
-          method: 'get',
-          headers: {
-            'Authorization': this.authToken,
-            'Accept': '*/*'
-          }
-        })
-        if (!res.ok) {
-          if (res.status === 401) {
-            throw new ForbiddenError({
-              message: 'Unauthorized'
-              // additionnalMessage: errorMessage
-            })
-          }
-          throw new UnknownServerError({
-            message: 'Oops! Something seems wrong with the server'
-            // additionnalMessage: errorMessage
-          })
-        }
-        const blob = await res.blob()
-        return URL.createObjectURL(blob)
+      getPieceJointe: pieceJointeId => {
+        return this.authRequestBlob('get', `piecesjointes/${pieceJointeId}`)
       },
       genererLettreAnnonce: async inspectionId => {
-        const res = await fetch(`/api/inspections/${inspectionId}/lettreannonce`, {
-          method: 'get',
-          headers: {
-            'Authorization': this.authToken,
-            'Accept': '*/*'
-          }
-        })
-        if (!res.ok) {
-          if (res.status === 401) {
-            throw new ForbiddenError({
-              message: 'Unauthorized'
-              // additionnalMessage: errorMessage
-            })
-          }
-          throw new UnknownServerError({
-            message: 'Oops! Something seems wrong with the server'
-            // additionnalMessage: errorMessage
-          })
-        }
-        const blob = await res.blob()
-        return URL.createObjectURL(blob)
+        return this.authRequestBlob('get', `inspections/${inspectionId}/lettreannonce`)
       },
       lireMessage: async messageId => {
         await this.authRequestJson('post', `messages/${messageId}/lire`)
@@ -325,50 +263,78 @@ export default class API {
     this.authToken = token
   }
 
+  async authFormDataRequestJson (method, url, body) {
+    const res = await this.authRequest(method, url, body)
+    await this.handleErrors(res)
+    await this.ensureJsonResponse(res)
+    return res.json()
+  }
+
+  async authRequestBlob (method, url, body) {
+    const res = await this.authRequest(method, url, body)
+    await this.handleErrors(res)
+    return URL.createObjectURL(await res.blob())
+  }
+
   async authRequestJson (method, url, body, headers = {}) {
-    const response = await this.authRequest(method, url, body, headers)
-    return response.json()
+    headers.Authorization = this.authToken
+    return this.requestJson(method, url, body, headers)
+  }
+
+  async requestJson (method, url, body, headers = {}) {
+    const res = await this.request(method, url, body, {
+      'Content-Type': 'application/json',
+      ...headers
+    })
+    await this.handleErrors(res)
+    await this.ensureJsonResponse(res)
+    return res.json()
   }
 
   async authRequest (method, url, body, headers = {}) {
-    headers['Authorization'] = this.authToken
+    headers.Authorization = this.authToken
     return this.request(method, url, body, headers)
   }
 
-  async request (method, url, body, headers = {}) {
-    const res = await fetch(`/api/${url}`, {
+  request (method, url, body, headers) {
+    return fetch(`/api/${url}`, {
       method: method,
-      body: body ? JSON.stringify(body) : null,
+      body: body ? (body instanceof FormData ? body : JSON.stringify(body)) : null,
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
+        Accept: '*/*',
         ...headers
       }
     })
+  }
 
-    // asserts that the response is json
-    const contentType = res.headers.get('content-type')
-    if (contentType && !contentType.startsWith('application/json')) {
-      throw new UnknownServerError({
-        message: 'Oops! Something seems wrong with the server (returned no JSON data)',
-        additionnalMessage: await res.text()
-      })
-    }
-
-    // asserts that the response is ok
+  // asserts that the response is ok
+  async handleErrors (res) {
     if (!res.ok) {
-      const errorMessage = (await res.json()).message
-      // TODO check if the error is known
-      if (res.status === 401) {
+      await this.ensureJsonResponse(res)
+      const errorMessage = (await res.json()).message || 'Une erreur est survenue'
+      if (res.status === 400) {
+        throw new ApplicationError({
+          message: errorMessage
+        })
+      }
+      if (res.status === 401 || res.status === 403) {
         throw new ForbiddenError({
-          message: 'Unauthorized',
-          additionnalMessage: errorMessage
+          message: errorMessage
         })
       }
       throw new UnknownServerError({
         message: errorMessage
       })
     }
-    return res
+  }
+
+  async ensureJsonResponse (res) {
+    const contentType = res.headers.get('content-type')
+    if (!contentType || !contentType.startsWith('application/json')) {
+      throw new UnknownServerError({
+        message: `Il semble y avoir un problème de configuration du serveur. Veuillez contacter l'administrateur.`,
+        additionnalMessage: await res.text()
+      })
+    }
   }
 }
