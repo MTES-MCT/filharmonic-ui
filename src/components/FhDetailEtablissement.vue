@@ -23,6 +23,9 @@
               v-flex Activité principale
               v-flex.text-xs-right {{ etablissement.activite }}
             v-layout
+              v-flex Régime
+              v-flex.text-xs-right {{ regimeEtablissement }}
+            v-layout
               v-flex IED-MTD
               v-flex.text-xs-right {{ etablissement.iedmtd ? 'Oui' : 'Non' }}
             v-layout
@@ -53,6 +56,17 @@ export default {
   data () {
     return {
       panelExpansion: null
+    }
+  },
+  computed: {
+    regimeEtablissement () {
+      switch (this.etablissement.regime) {
+        case 'aucun': return 'Aucun'
+        case 'autorisation': return 'Autorisation'
+        case 'declaration': return 'Déclaration'
+        case 'enregistrement': return 'Enregistrement'
+        default: throw new Error(`Regime inconnu : '${this.etablissement.regime}'`)
+      }
     }
   },
   created () {
