@@ -90,7 +90,8 @@ v-app(v-if="user")
               v-list-tile-sub-title {{ user.profile | capitalize }}
         v-divider
         v-card-actions
-          v-btn(@click="logout()" color="primary") Déconnexion
+          v-btn(@click="logout(false)" color="primary") Déconnexion
+          v-btn(v-if="isDevMode" @click="logout(true)" color="primary") Déconnexion SSO
 
   v-content
     router-view
@@ -131,7 +132,10 @@ export default {
       user: state => state.authentication.user,
       favoris: state => state.inspectionsFavorites,
       notifications: state => state.notifications
-    })
+    }),
+    isDevMode () {
+      return process.env.NODE_ENV === 'development'
+    }
   },
   async created () {
     events.bus.$on(events.Alert, this.updateAlert)
@@ -142,8 +146,8 @@ export default {
     events.bus.$off(events.Alert, this.updateAlert)
   },
   methods: {
-    async logout () {
-      await this.$api.authentication.logout()
+    async logout (cerbereLogout) {
+      await this.$api.authentication.logout(cerbereLogout)
       this.$router.push('/login?redirect=/')
     },
     updateAlert (messageType, message) {

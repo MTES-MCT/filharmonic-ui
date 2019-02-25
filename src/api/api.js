@@ -39,9 +39,14 @@ export default class API {
           this.store.commit('login', new User(authenticationInfos.user))
         }
       },
-      logout: async () => {
+      logout: async (cerbereLogout = false) => {
         await this.authRequest('post', 'logout')
         sessionStorage.delete()
+        if (cerbereLogout) {
+          const iframe = document.createElement('iframe')
+          iframe.src = 'https://authentification.din.developpement-durable.gouv.fr/cas/public/logout'
+          document.body.appendChild(iframe)
+        }
         this.store.dispatch('logout')
       }
     }
