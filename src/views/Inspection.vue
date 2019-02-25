@@ -48,9 +48,8 @@ fh-page(:wait="wait")
                 v-list-tile-title Générer la lettre d'annonce
               v-list-tile(@click="genererRapport" v-if="peutGenererRapport")
                 v-list-tile-title Générer le rapport
-              v-list-tile(@click.stop="showLettreSuites = true" v-if="peutGenererLettreSuite")
-                v-list-tile-title Générer la lettre de suites
-                fh-lettre-suites(:inspection="inspection" :show-dialog="showLettreSuites" @close="showLettreSuites = false")
+              v-list-tile(@click="genererLettreSuite" v-if="peutGenererLettreSuite")
+                v-list-tile-title Générer la lettre des suites
 
           v-toolbar-items(slot="extension")
             v-btn(flat :to="`/inspections/${inspection.id}`" exact)
@@ -182,6 +181,10 @@ export default {
     async genererLettreAnnonce () {
       const url = await this.$api.inspections.genererLettreAnnonce(this.inspection.id)
       util.downloadFile(url, 'lettre-annonce.odt')
+    },
+    async genererLettreSuite () {
+      const url = await this.$api.inspections.genererLettreSuite(this.inspection.id)
+      util.downloadFile(url, 'lettre-suite.odt')
     },
     async genererRapport () {
       const url = await this.$api.inspections.genererRapport(this.inspection.id)
