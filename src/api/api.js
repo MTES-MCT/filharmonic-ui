@@ -123,6 +123,9 @@ export default class API {
       genererLettreAnnonce: async inspectionId => {
         return this.authRequestBlob('get', `inspections/${inspectionId}/lettreannonce`)
       },
+      genererRapport: async inspectionId => {
+        return this.authRequestBlob('get', `inspections/${inspectionId}/rapport`)
+      },
       lireMessage: async messageId => {
         await this.authRequestJson('post', `messages/${messageId}/lire`)
         await this.inspections.refreshInspectionOuverte()

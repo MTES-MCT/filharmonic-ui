@@ -46,6 +46,8 @@ fh-page(:wait="wait")
             v-list.py-0
               v-list-tile(@click="genererLettreAnnonce" v-if="peutGenererLettreAnnonce")
                 v-list-tile-title Générer la lettre d'annonce
+              v-list-tile(@click="genererRapport" v-if="peutGenererRapport")
+                v-list-tile-title Générer le rapport
               v-list-tile(@click.stop="showLettreSuites = true" v-if="peutGenererLettreSuite")
                 v-list-tile-title Générer la lettre de suites
                 fh-lettre-suites(:inspection="inspection" :show-dialog="showLettreSuites" @close="showLettreSuites = false")
@@ -141,6 +143,9 @@ export default {
     peutGenererLettreAnnonce () {
       return this.$permissions.isInspecteur && isBeforeState(this.inspection.etat, 'attente_validation') && this.inspection.points_de_controle.length > 0
     },
+    peutGenererRapport () {
+      return this.$permissions.isInspecteur && isBeforeState(this.inspection.etat, 'attente_validation') && this.inspection.suite
+    },
     peutGenererLettreSuite () {
       return this.$permissions.isInspecteur && this.inspection.etat === 'valide'
     }
@@ -177,6 +182,10 @@ export default {
     async genererLettreAnnonce () {
       const url = await this.$api.inspections.genererLettreAnnonce(this.inspection.id)
       util.downloadFile(url, 'lettre-annonce.odt')
+    },
+    async genererRapport () {
+      const url = await this.$api.inspections.genererRapport(this.inspection.id)
+      util.downloadFile(url, `rapport-${this.inspection.etablissement.nom}-${this.inspection.date}.odt`)
     }
   }
 }
