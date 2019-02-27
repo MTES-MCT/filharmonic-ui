@@ -1,6 +1,8 @@
 <template lang="pug">
 v-container
-  fh-point-de-controle(v-for="pointDeControle in inspection.points_de_controle" :key="pointDeControle.id" :pointDeControle="pointDeControle" :etatInspection="inspection.etat")
+  p(v-if="showMessagePointsDeControleNonModifiables") Les points de contrôle ne sont pas modifiables tant qu'une suite est présente.
+
+  fh-point-de-controle(v-for="pointDeControle in inspection.points_de_controle" :key="pointDeControle.id" :pointDeControle="pointDeControle" :etatInspection="inspection.etat" :readonly="!peutModifierPointsDeControle")
 
   v-slide-y-transition(hide-on-leave)
     v-card.my-3.elevation-4(v-if="showNewPointDeControleForm")
@@ -70,11 +72,17 @@ export default {
     }
   },
   computed: {
+    showMessagePointsDeControleNonModifiables () {
+      return this.inspection.etat === 'en_cours' && this.$permissions.isInspecteur && !this.peutModifierPointsDeControle
+    },
     inspectionModifiable () {
       return this.inspection.etat === 'preparation' || this.inspection.etat === 'en_cours'
     },
+    peutModifierPointsDeControle () {
+      return this.inspectionModifiable && !this.inspection.suite
+    },
     peutAjouterPointDeControle () {
-      return this.$permissions.isInspecteur && this.inspectionModifiable && !this.inspection.suite && !this.showNewPointDeControleForm
+      return this.peutModifierPointsDeControle && !this.showNewPointDeControleForm
     },
     peutModifierSuites () {
       return this.$permissions.isInspecteur && this.inspectionModifiable

@@ -129,6 +129,10 @@ export default {
     etatInspection: {
       type: String,
       required: true
+    },
+    readonly: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -162,7 +166,7 @@ export default {
       return !this.$permissions.isExploitant || this.pointDeControle.publie
     },
     peutEditer () {
-      return this.$permissions.isInspecteur && isBeforeState(this.etatInspection, 'attente_validation') && !this.editMode
+      return !this.readonly && this.$permissions.isInspecteur && isBeforeState(this.etatInspection, 'attente_validation') && !this.editMode
     },
     peutPublier () {
       return this.$permissions.isInspecteur && !this.pointDeControle.publie && isBeforeState(this.etatInspection, 'attente_validation')
