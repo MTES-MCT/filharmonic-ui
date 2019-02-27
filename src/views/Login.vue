@@ -19,6 +19,15 @@ v-app
                   v-icon.ml-1(small color="blue") open_in_new
                 | &nbsp;pour utiliser cette application.
 
+          .mt-5(v-if="devMode")
+            v-btn(href="/login?ticket=ticket-1" color="red") Michel Exploitant1 (1)
+            v-btn(href="/login?ticket=ticket-2" color="red") Bernard Exploitant2 (2)
+            v-btn(href="/login?ticket=ticket-3" color="blue") Alain Champion (3)
+            v-btn(href="/login?ticket=ticket-4" color="blue") Corine Dupont (4)
+            v-btn(href="/login?ticket=ticket-5" color="blue") Bernard Mars (5)
+            v-btn(href="/login?ticket=ticket-6" color="green") Albert Approbe (6)
+            v-btn(href="/login?ticket=ticket-7" color="green") Gilbert Approbe (7)
+            v-btn(href="/login?ticket=ticket-8" color="blue") Hubert Inspecte (8)
 </template>
 
 <script>
@@ -30,6 +39,9 @@ export default {
     }
   },
   computed: {
+    devMode () {
+      return process.env.NODE_ENV === 'development'
+    },
     cerbereCallback () {
       return `https://authentification.din.developpement-durable.gouv.fr/cas/public/login?service=${location.origin}/login`
     }

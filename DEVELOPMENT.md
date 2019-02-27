@@ -23,6 +23,15 @@ Puis démarrer le serveur de développement.
 yarn run serve
 ```
 
+### Dev Mode
+
+Le dev mode permet d'afficher un bouton "Déconnexion SSO" dans le menu.
+
+Pour activer le dev mode, exécuter la commande ci-dessous dans la console, puis recharger la page.
+```js
+localStorage.setItem('fh-devmode', 1)
+```
+
 ### Modèle de données
 
 ![Modèle de données](http://www.plantuml.com/plantuml/proxy?idx=0&src=https://raw.githubusercontent.com/MTES-MCT/filharmonic-ui/master/doc/data_model.puml&cachebust=5)
