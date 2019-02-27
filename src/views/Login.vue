@@ -14,10 +14,10 @@ v-app
                 .red--text.mt-3(v-if="error") {{ error }}
 
                 .mt-3
-                  | Si vous ne disposez pas de compte Cerbère, vous pouvez&nbsp;
-                  a(:href="lienCreationCompteCerbere") créer un compte Cerbère
+                  | Si vous ne disposez pas de compte Cerbère, vous devez&nbsp;
+                  a(:href="lienCreationCompteCerbere") créer un compte
                     v-icon.ml-1(small color="blue") open_in_new
-                  | .
+                  | &nbsp;pour utiliser cette application.
 
 </template>
 
