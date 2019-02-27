@@ -18,10 +18,15 @@ export const allowedStates = {
     order: 3
   },
   // après acceptation de la demande de validation
-  valide: {
+  traitement_non_conformites: {
+    label: 'Traitement des non-conformités',
+    color: 'red',
+    order: 4
+  },
+  clos: {
     label: 'Validé',
     color: 'green',
-    order: 4
+    order: 5
   }
 }
 

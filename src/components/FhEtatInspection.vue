@@ -7,7 +7,9 @@ v-stepper(v-if="stepper")
     v-divider
     v-stepper-step(step="3" :complete="stateInfos.order >= 3") En attente de validation
     v-divider
-    v-stepper-step(step="4" :complete="stateInfos.order >= 4") Validé
+    v-stepper-step(step="4" :complete="stateInfos.order >= 4") Traitement des non-conformités
+    v-divider
+    v-stepper-step(step="5" :complete="stateInfos.order >= 5") Validé
 v-chip(:color="stateInfos.color" text-color="white" :small="small" v-else) {{ stateInfos.label }}
 </template>
 

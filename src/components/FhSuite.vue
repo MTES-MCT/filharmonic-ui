@@ -60,10 +60,11 @@ div(v-if="openSuite")
 div(v-else)
   div(v-if="!$permissions.isExploitant")
       p Les suites sont décidées lorsque tous les points de contrôle sont soldés par des constats.
-      p(v-if="inspection.points_de_controle.length === 0") Il faut ajouter au moins un point de contrôle avant de définir une suite.
+      p(v-if="nombrePointsDeControle === 0") Il faut ajouter au moins un point de contrôle avant de définir une suite.
+      p(v-if="nombrePointsDeControleAPublierRestants > 0") Il reste {{ nombrePointsDeControleAPublierRestants }} {{ nombrePointsDeControleAPublierRestants | pluralize('point') }} de contrôle à publier avant de pouvoir ajouter une suite.
       p(v-if="nombreConstatsRestants > 0") Il reste {{ nombreConstatsRestants }} {{ nombreConstatsRestants | pluralize('constat') }} à établir avant de pouvoir ajouter une suite.
 
-  v-btn(color="secondary" v-if="modifiable" :disabled="inspection.points_de_controle.length === 0 || nombreConstatsRestants > 0" @click="prepareAndShowEditionForm()")
+  v-btn(color="secondary" v-if="modifiable" :disabled="!peutAjouterSuite" @click="prepareAndShowEditionForm()")
     v-icon(left) gavel
     | Ajouter une suite
 </template>
@@ -100,8 +101,17 @@ export default {
     typeSuiteInspection () {
       return this.inspection.suite ? typesSuite[this.inspection.suite.type] : {}
     },
+    nombrePointsDeControle () {
+      return this.inspection.points_de_controle.length
+    },
+    nombrePointsDeControleAPublierRestants () {
+      return this.inspection.points_de_controle.filter(p => !p.publie).length
+    },
     nombreConstatsRestants () {
       return this.inspection.points_de_controle.filter(p => !p.constat).length
+    },
+    peutAjouterSuite () {
+      return this.modifiable && this.nombrePointsDeControle > 0 && this.nombrePointsDeControleAPublierRestants === 0 && this.nombreConstatsRestants === 0
     }
   },
   methods: {

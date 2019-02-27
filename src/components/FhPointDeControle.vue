@@ -106,7 +106,7 @@
 </template>
 
 <script>
-import { isBeforeState, typesConstats } from '@/api/inspections'
+import { isAfterState, isBeforeState, typesConstats } from '@/api/inspections'
 import FhIconeNouveauxMessages from '@/components/FhIconeNouveauxMessages.vue'
 import FhMessages from '@/components/FhMessages.vue'
 import FhPointDeControleForm from '@/components/FhPointDeControleForm.vue'
@@ -171,7 +171,7 @@ export default {
       return this.$permissions.isInspecteur && this.etatInspection === 'en_cours' && !this.pointDeControle.constat && !this.showNewConstatForm
     },
     peutVoirConstat () {
-      return this.pointDeControle.constat && (!this.$permissions.isExploitant || this.etatInspection === 'valide')
+      return this.pointDeControle.constat && (!this.$permissions.isExploitant || isAfterState(this.etatInspection, 'attente_validation'))
     },
     peutSupprimerConstat () {
       return this.pointDeControle.constat && this.$permissions.isInspecteur && this.etatInspection === 'en_cours'

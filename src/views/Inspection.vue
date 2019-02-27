@@ -74,7 +74,7 @@ fh-page(:wait="wait")
 
 <script>
 import { mapState } from 'vuex'
-import { isBeforeState } from '@/api/inspections'
+import { isAfterState, isBeforeState } from '@/api/inspections'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhLettreAnnonce from '@/components/FhLettreAnnonce.vue'
 import FhLettreSuites from '@/components/FhLettreSuites.vue'
@@ -146,7 +146,7 @@ export default {
       return this.$permissions.isInspecteur && isBeforeState(this.inspection.etat, 'attente_validation') && this.inspection.suite
     },
     peutGenererLettreSuite () {
-      return this.$permissions.isInspecteur && this.inspection.etat === 'valide'
+      return this.$permissions.isInspecteur && isAfterState(this.inspection.etat, 'attente_validation')
     }
   },
   watch: {

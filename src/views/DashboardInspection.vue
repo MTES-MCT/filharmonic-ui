@@ -31,6 +31,7 @@ v-container
 </template>
 
 <script>
+import { isAfterState } from '@/api/inspections'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhPointDeControle from '@/components/FhPointDeControle.vue'
@@ -79,7 +80,7 @@ export default {
       return this.$permissions.isInspecteur && this.inspectionModifiable
     },
     peutVoirSuites () {
-      return this.inspection.etat !== 'preparation' && (!this.$permissions.isExploitant || this.inspection.etat === 'valide')
+      return this.inspection.etat !== 'preparation' && (!this.$permissions.isExploitant || isAfterState(this.inspection.etat, 'attente_validation'))
     }
   },
   methods: {

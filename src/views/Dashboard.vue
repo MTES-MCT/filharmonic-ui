@@ -13,37 +13,53 @@ fh-page(:wait="wait")
 
         v-tab.fh-tab(v-if="!$permissions.isApprobateur")
           | En cours&nbsp;
-          .fh-badge {{ inspectionsOuvertes.length }}
+          .fh-badge {{ inspectionsEnCours.length }}
         v-tab.fh-tab(v-if="!$permissions.isExploitant")
           | En attente de validation&nbsp;
           .fh-badge {{ inspectionsAttenteValidation.length }}
         v-tab.fh-tab(v-if="$permissions.isApprobateur")
           | En cours&nbsp;
-          .fh-badge {{ inspectionsOuvertes.length }}
-        v-tab.fh-tab
+          .fh-badge {{ inspectionsEnCours.length }}
+        v-tab.fh-tab(v-if="!$permissions.isApprobateur")
+          | Traitement des non-conformités&nbsp;
+          .fh-badge {{ inspectionsTraitementNonConformites.length }}
+        v-tab.fh-tab(v-if="!$permissions.isApprobateur")
           | Clos&nbsp;
-          .fh-badge {{ inspectionsTerminees.length }}
+          .fh-badge {{ inspectionsCloses.length }}
+        v-tab.fh-tab(v-if="$permissions.isApprobateur")
+          | Validées&nbsp;
+          .fh-badge {{ inspectionsValidees.length }}
 
         v-tab-item(v-if="!$permissions.isApprobateur")
-          v-list(v-if="inspectionsOuvertes.length == 0")
+          v-list(v-if="inspectionsEnCours.length == 0")
             v-list-tile Aucune inspection
           v-list.py-0(v-else two-line)
-            fh-inspection-item(v-for="inspection in inspectionsOuvertes" :key="inspection.id" :inspection="inspection")
+            fh-inspection-item(v-for="inspection in inspectionsEnCours" :key="inspection.id" :inspection="inspection")
         v-tab-item(v-if="!$permissions.isExploitant")
           v-list(v-if="inspectionsAttenteValidation.length == 0")
             v-list-tile Aucune inspection
           v-list.py-0(v-else two-line)
             fh-inspection-item(v-for="inspection in inspectionsAttenteValidation" :key="inspection.id" :inspection="inspection")
         v-tab-item(v-if="$permissions.isApprobateur")
-          v-list(v-if="inspectionsOuvertes.length == 0")
+          v-list(v-if="inspectionsEnCours.length == 0")
             v-list-tile Aucune inspection
           v-list.py-0(v-else two-line)
-            fh-inspection-item(v-for="inspection in inspectionsOuvertes" :key="inspection.id" :inspection="inspection")
-        v-tab-item
-          v-list(v-if="inspectionsTerminees.length == 0")
+            fh-inspection-item(v-for="inspection in inspectionsEnCours" :key="inspection.id" :inspection="inspection")
+        v-tab-item(v-if="!$permissions.isApprobateur")
+          v-list(v-if="inspectionsTraitementNonConformites.length == 0")
             v-list-tile Aucune inspection
           v-list.py-0(v-else two-line)
-            fh-inspection-item(v-for="inspection in inspectionsTerminees" :key="inspection.id" :inspection="inspection")
+            fh-inspection-item(v-for="inspection in inspectionsTraitementNonConformites" :key="inspection.id" :inspection="inspection")
+        v-tab-item(v-if="!$permissions.isApprobateur")
+          v-list(v-if="inspectionsCloses.length == 0")
+            v-list-tile Aucune inspection
+          v-list.py-0(v-else two-line)
+            fh-inspection-item(v-for="inspection in inspectionsCloses" :key="inspection.id" :inspection="inspection")
+        v-tab-item(v-if="$permissions.isApprobateur")
+          v-list(v-if="inspectionsValidees.length == 0")
+            v-list-tile Aucune inspection
+          v-list.py-0(v-else two-line)
+            fh-inspection-item(v-for="inspection in inspectionsValidees" :key="inspection.id" :inspection="inspection")
 
       v-layout.row.align-center.mt-4(v-if="$permissions.isExploitant")
         h2 Établissements
@@ -95,10 +111,9 @@ export default {
           _.normalize(inspection.etablissement.adresse).includes(normalizedFilter)
       })
     },
-    inspectionsOuvertes () {
-      // il faudrait sans doute mieux gérer des états internes et externes
+    inspectionsEnCours () {
       if (this.$permissions.isExploitant) {
-        return this.inspectionsFiltrees.filter(inspection => inspection.etat !== 'valide')
+        return this.inspectionsFiltrees.filter(inspection => inspection.etat === 'en_cours' || inspection.etat === 'attente_validation')
       } else {
         return this.inspectionsFiltrees.filter(inspection => nomsEtatsEnCours.includes(inspection.etat))
       }
@@ -106,8 +121,14 @@ export default {
     inspectionsAttenteValidation () {
       return this.inspectionsFiltrees.filter(inspection => inspection.etat === 'attente_validation')
     },
-    inspectionsTerminees () {
-      return this.inspectionsFiltrees.filter(inspection => inspection.etat === 'valide')
+    inspectionsTraitementNonConformites () {
+      return this.inspectionsFiltrees.filter(inspection => inspection.etat === 'traitement_non_conformites')
+    },
+    inspectionsCloses () {
+      return this.inspectionsFiltrees.filter(inspection => inspection.etat === 'close')
+    },
+    inspectionsValidees () {
+      return this.inspectionsFiltrees.filter(inspection => inspection.etat === 'traitement_non_conformites' || inspection.etat === 'close')
     }
   },
   async created () {
