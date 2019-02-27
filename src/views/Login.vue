@@ -4,20 +4,20 @@ v-app
     v-container.fluid.fill-height
       v-layout.align-center.justify-center.wrap
         v-flex.xs12.sm11.md8.lg6.text-xs-center
-            v-card.elevation-12
-              v-toolbar(dark color="primary")
-                v-toolbar-title.flex.display-1 Fil'Harmonic
-              v-card-text
-                .subheading Utilisez votre compte Cerbère pour vous connecter à Fil'Harmonic.
+          v-card.elevation-12
+            v-toolbar(dark color="primary")
+              v-toolbar-title.flex.display-1 Fil'Harmonic
+            v-card-text
+              .subheading Utilisez votre compte Cerbère pour vous connecter à Fil'Harmonic.
 
-                v-btn.mt-3(:href="cerbereCallback" color="primary") Connexion via le portail Cerbère
-                .red--text.mt-3(v-if="error") {{ error }}
+              v-btn.mt-3(:href="cerbereCallback" color="primary") Connexion via le portail Cerbère
+              .red--text.mt-3(v-if="error") {{ error }}
 
-                .mt-3
-                  | Si vous ne disposez pas de compte Cerbère, vous devez&nbsp;
-                  a(:href="lienCreationCompteCerbere") créer un compte
-                    v-icon.ml-1(small color="blue") open_in_new
-                  | &nbsp;pour utiliser cette application.
+              .mt-3
+                | Si vous ne disposez pas de compte Cerbère, vous devez&nbsp;
+                a(:href="lienCreationCompteCerbere") créer un compte
+                  v-icon.ml-1(small color="blue") open_in_new
+                | &nbsp;pour utiliser cette application.
 
 </template>
 
