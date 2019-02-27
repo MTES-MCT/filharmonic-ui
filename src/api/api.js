@@ -9,6 +9,7 @@ export default class API {
       api: this
     })
 
+    this.devMode = !!localStorage.getItem('fh-devmode') || false
     this.authentication = {
       authenticate: async () => {
         const token = sessionStorage.load()
