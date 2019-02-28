@@ -39,11 +39,14 @@ export default {
     ...mapGetters([
       'user'
     ]),
+    commentaire () {
+      return typeof this.message.interne === 'undefined'
+    },
     color () {
-      return this.message.interne ? 'grey' : (this.message.lu ? 'primary' : 'red')
+      return this.commentaire || this.message.interne ? 'grey' : (this.message.lu ? 'primary' : 'red')
     },
     icon () {
-      return this.message.interne ? 'message' : (this.message.lu ? 'drafts' : 'markunread')
+      return this.commentaire || this.message.interne ? 'message' : (this.message.lu ? 'drafts' : 'markunread')
     },
     peutLireMessage () {
       return !this.message.lu && this.user.profile !== this.message.auteur.profile && !this.$permissions.isApprobateur

@@ -68,7 +68,15 @@
   v-expand-transition
     v-card.elevation-0.fh-point-de-controle__body(v-if="showMessages")
       v-card-text
-        fh-messages.elevation-0(:pointDeControleId="pointDeControle.id" :etatInspection="etatInspection" :messages="pointDeControle.messages")
+        v-card
+          v-expansion-panel(:value="deplierMessagesEnCours")
+            v-expansion-panel-content
+              v-toolbar(flat dense slot="header")
+                v-toolbar-title.subheading Messages
+              v-card-text
+                v-timeline
+                  fh-message(v-for="message in messagesEnCours" :key="message.id" :message="message")
+                fh-new-message(v-if="peutAjouterMessageEnCours" @new-message="addMessage")
 
         div(v-if="!pointDeControle.constat")
           v-slide-y-transition(hide-on-leave)
@@ -103,12 +111,20 @@
             v-icon(left) gavel
             | Ajouter un constat
 
+        template(v-if="showTraitementNonConformites")
+          v-alert(:value="true" type="error" outline)
+            h3 Traitement des non-conformités
+          v-timeline
+            fh-message(v-for="message in messagesTraitementNonConformites" :key="message.id" :message="message")
+          fh-new-message(v-if="peutAjouterMessageTraitementNonConformites" @new-message="addMessage")
+
 </template>
 
 <script>
 import { isAfterState, isBeforeState, typesConstats } from '@/api/inspections'
 import FhIconeNouveauxMessages from '@/components/FhIconeNouveauxMessages.vue'
-import FhMessages from '@/components/FhMessages.vue'
+import FhMessage from '@/components/FhMessage.vue'
+import FhNewMessage from '@/components/FhNewMessage.vue'
 import FhPointDeControleForm from '@/components/FhPointDeControleForm.vue'
 import FhToolbar from '@/components/FhToolbar.vue'
 import * as _ from '@/util'
@@ -117,7 +133,8 @@ export default {
   name: 'FhPointDeControle',
   components: {
     FhIconeNouveauxMessages,
-    FhMessages,
+    FhMessage,
+    FhNewMessage,
     FhPointDeControleForm,
     FhToolbar
   },
@@ -159,6 +176,9 @@ export default {
     editMode () {
       return this.pointDeControleEdite !== null
     },
+    deplierMessagesEnCours () {
+      return this.etatInspection !== 'traitement_non_conformites' ? 0 : -1
+    },
     typeConstatPointDeControle () {
       return this.pointDeControle.constat ? typesConstats[this.pointDeControle.constat.type] : {}
     },
@@ -171,6 +191,15 @@ export default {
     peutPublier () {
       return this.$permissions.isInspecteur && !this.pointDeControle.publie && isBeforeState(this.etatInspection, 'attente_validation')
     },
+    peutAjouterMessageEnCours () {
+      return isBeforeState(this.etatInspection, 'attente_validation') && !this.$permissions.isApprobateur
+    },
+    constatNonConforme () {
+      return this.pointDeControle.constat && this.pointDeControle.constat.type !== 'conforme'
+    },
+    peutAjouterMessageTraitementNonConformites () {
+      return this.etatInspection === 'traitement_non_conformites' && this.constatNonConforme && !this.$permissions.isApprobateur
+    },
     peutAjouterConstat () {
       return this.$permissions.isInspecteur && this.etatInspection === 'en_cours' && !this.pointDeControle.constat && !this.showNewConstatForm
     },
@@ -179,6 +208,15 @@ export default {
     },
     peutSupprimerConstat () {
       return this.pointDeControle.constat && this.$permissions.isInspecteur && this.etatInspection === 'en_cours'
+    },
+    messagesEnCours () {
+      return this.pointDeControle.messages.filter(m => !m.etape_traitement_non_conformites)
+    },
+    messagesTraitementNonConformites () {
+      return this.pointDeControle.messages.filter(m => m.etape_traitement_non_conformites)
+    },
+    showTraitementNonConformites () {
+      return isAfterState(this.etatInspection, 'attente_validation') && this.constatNonConforme
     }
   },
   methods: {
@@ -222,6 +260,9 @@ export default {
       if (await this.$confirm('Êtes-vous sûr de vouloir supprimer ce constat ?')) {
         await this.$api.inspections.supprimerConstat(this.pointDeControle.id)
       }
+    },
+    async addMessage (message) {
+      await this.$api.inspections.ajouterMessage(this.pointDeControle.id, message)
     }
   }
 }
