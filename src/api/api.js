@@ -219,6 +219,10 @@ export default class API {
         await this.authRequestJson('post', `inspections/${inspectionId}/valider`)
         await this.inspections.refreshInspectionOuverte()
       },
+      clore: async (inspectionId) => {
+        await this.authRequestJson('post', `inspections/${inspectionId}/clore`)
+        await this.inspections.refreshInspectionOuverte()
+      },
       refreshInspectionsFavorites: async () => {
         const inspectionsFavorites = await this.authRequestJson('get', 'inspectionsfavorites')
         inspectionsFavorites.forEach(inspection => {

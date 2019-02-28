@@ -30,7 +30,7 @@ export const evenements = {
       return `a validé une inspection.`
     }
   },
-  Cloture_inspection: {
+  cloture_inspection: {
     notifications: () => ['inspecteurs', 'exploitants'],
     message (evenement) {
       return `a clos une inspection.`

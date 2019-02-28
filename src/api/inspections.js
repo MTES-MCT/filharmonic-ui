@@ -24,7 +24,7 @@ export const allowedStates = {
     order: 4
   },
   close: {
-    label: 'Validé',
+    label: 'Clos',
     color: 'green',
     order: 5
   }

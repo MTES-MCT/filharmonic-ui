@@ -35,6 +35,13 @@ fh-page(:wait="wait")
                             )
             v-icon(left) done
             | Valider
+          v-btn.white--text(v-if="peutClore"
+                            color="green"
+                            title="Clore l'inspection"
+                            @click="clore()"
+                            )
+            v-icon(left) done
+            | Clore
 
           v-btn(icon large @click="toggleFavoris()" :title="isFavorite ? 'Retirer des favoris' : 'Mettre en favoris'" v-if="!$permissions.isExploitant")
             v-icon {{ isFavorite ? 'star' : 'star_border' }}
@@ -136,6 +143,12 @@ export default {
     peutValider () {
       return this.$permissions.isApprobateur && this.inspection.etat === 'attente_validation'
     },
+    hasConstatsNonResolus () {
+      return this.inspection.points_de_controle.some(p => p.constat.type !== 'conforme' && !p.constat.date_resolution)
+    },
+    peutClore () {
+      return this.$permissions.isInspecteur && this.inspection.etat === 'traitement_non_conformites' && !this.hasConstatsNonResolus
+    },
     peutGenererDocuments () {
       return this.$permissions.isInspecteur && (this.peutGenererLettreAnnonce || this.peutGenererLettreSuite)
     },
@@ -177,6 +190,9 @@ export default {
     },
     async valider () {
       await this.$api.inspections.valider(this.inspection.id)
+    },
+    async clore () {
+      await this.$api.inspections.clore(this.inspection.id)
     },
     async genererLettreAnnonce () {
       const url = await this.$api.inspections.genererLettreAnnonce(this.inspection.id)
