@@ -105,10 +105,12 @@
                     v-flex.sm-12
                       v-textarea(box label="Remarques" v-model="newConstat.remarques" auto-grow hideDetails rows="3" clearable)
                     v-flex.shrink(v-if="newConstat.type !== 'conforme'")
-                      v-select(:items="delais"
-                               v-model="newConstat.delai"
-                               box label="Délai"
-                              )
+                      h4 Délai
+                      v-layout.row.mt-1
+                        v-text-field(type="number" v-model="newConstat.delai_nombre"
+                                     label="Délai" box single-line style="width: 80px")
+                        v-select.ml-1(v-model="newConstat.delai_unite" :items="unitesDelai"
+                                      label="Unité" box single-line style="width: 100px")
 
               v-card-actions.justify-center.pb-3
                 v-btn(color="primary" @click="ajouterConstat()")
@@ -169,15 +171,16 @@ export default {
       showNewConstatForm: false,
       typesConstats,
       newConstat: {
-        type: 'conforme'
+        type: 'conforme',
+        delai_nombre: 3,
+        delai_unite: 'mois'
       },
       notEmpty: [
         v => !!v || 'Il faut renseigner une valeur'
       ],
-      delais: [
-        '1 mois',
-        '3 mois',
-        '6 mois'
+      unitesDelai: [
+        'jours',
+        'mois'
       ]
     }
   },
@@ -260,7 +263,9 @@ export default {
     },
     resetNewConstat () {
       this.newConstat = {
-        type: 'conforme'
+        type: 'conforme',
+        delai_nombre: 3,
+        delai_unite: 'mois'
       }
       this.showNewConstatForm = false
     },
