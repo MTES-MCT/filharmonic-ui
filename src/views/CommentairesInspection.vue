@@ -3,7 +3,8 @@ v-container
   p Ces commentaires ne sont visibles que par les inspecteurs.
   v-timeline
     fh-message(v-for="message in inspection.commentaires" :key="message.id" :message="message")
-  fh-new-message(v-if="peutAjouterCommentaire" @new-message="addCommentaire" commentaire)
+  .text-xs-center
+    fh-new-message(v-if="peutAjouterCommentaire" @new-message="addCommentaire" commentaire)
 </template>
 
 <script>

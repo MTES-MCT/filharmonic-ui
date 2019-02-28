@@ -83,7 +83,8 @@
               v-card-text
                 v-timeline
                   fh-message(v-for="message in messagesEnCours" :key="message.id" :message="message")
-                fh-new-message(v-if="peutAjouterMessageEnCours" @new-message="addMessage")
+                .text-xs-center
+                  fh-new-message(v-if="peutAjouterMessageEnCours" @new-message="addMessage")
 
         div(v-if="!pointDeControle.constat")
           v-slide-y-transition(hide-on-leave)
@@ -123,7 +124,8 @@
             h3 Traitement des non-conformités
           v-timeline
             fh-message(v-for="message in messagesTraitementNonConformites" :key="message.id" :message="message")
-          fh-new-message(v-if="peutAjouterMessageTraitementNonConformites" @new-message="addMessage")
+          .text-xs-center
+            fh-new-message(v-if="peutAjouterMessageTraitementNonConformites" @new-message="addMessage")
 
 </template>
 
