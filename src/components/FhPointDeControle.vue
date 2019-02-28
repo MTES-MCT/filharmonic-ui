@@ -73,7 +73,7 @@
           | Supprimer
 
   v-expand-transition
-    v-card.elevation-0.fh-point-de-controle__body(v-if="showMessages")
+    v-card.elevation-0.fh-point-de-controle__body(v-show="showMessages")
       v-card-text
         v-card
           v-expansion-panel(:value="deplierMessagesEnCours")
