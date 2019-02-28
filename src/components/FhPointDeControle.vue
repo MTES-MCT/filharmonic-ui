@@ -32,6 +32,13 @@
           span.subheading.mr-2 Délai de mise en conformité :
           v-flex {{ pointDeControle.constat.delai }}
 
+        p.green--text(v-if="pointDeControle.constat.date_resolution")
+          strong
+            | Résolu le {{ new Date(pointDeControle.constat.date_resolution).toLocaleString() }}
+        v-btn(v-if="peutResoudreConstat" color="green" dark @click="resoudreConstat")
+          v-icon(left small) check_circle_outline
+          | Résoudre
+
     .d-flex(v-if="editMode")
       v-btn(flat title="Annuler l'édition" @click="quitEditMode")
         v-icon(medium) clear
@@ -209,6 +216,9 @@ export default {
     peutSupprimerConstat () {
       return this.pointDeControle.constat && this.$permissions.isInspecteur && this.etatInspection === 'en_cours'
     },
+    peutResoudreConstat () {
+      return this.etatInspection === 'traitement_non_conformites' && this.constatNonConforme && !this.pointDeControle.constat.date_resolution && this.$permissions.isInspecteur
+    },
     messagesEnCours () {
       return this.pointDeControle.messages.filter(m => !m.etape_traitement_non_conformites)
     },
@@ -263,6 +273,9 @@ export default {
     },
     async addMessage (message) {
       await this.$api.inspections.ajouterMessage(this.pointDeControle.id, message)
+    },
+    async resoudreConstat () {
+      await this.$api.inspections.resoudreConstat(this.pointDeControle.id)
     }
   }
 }

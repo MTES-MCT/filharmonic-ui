@@ -187,6 +187,10 @@ export default class API {
         await this.authRequestJson('delete', `pointsdecontrole/${pointDeControleId}/constat`)
         await this.inspections.refreshInspectionOuverte()
       },
+      resoudreConstat: async (pointDeControleId) => {
+        await this.authRequestJson('post', `pointsdecontrole/${pointDeControleId}/constat/resoudre`)
+        await this.inspections.refreshInspectionOuverte()
+      },
       creerSuite: async (inspectionId, suite) => {
         await this.authRequestJson('post', `inspections/${inspectionId}/suite`, suite)
         await this.inspections.refreshInspectionOuverte()

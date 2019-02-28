@@ -30,6 +30,12 @@ export const evenements = {
       return `a validé une inspection.`
     }
   },
+  Cloture_inspection: {
+    notifications: () => ['inspecteurs', 'exploitants'],
+    message (evenement) {
+      return `a clos une inspection.`
+    }
+  },
 
   // événements liés à une inspection
   modification_inspection: {
@@ -72,6 +78,12 @@ export const evenements = {
     notifications: () => ['inspecteurs'],
     message (evenement) {
       return `a supprimé un constat.`
+    }
+  },
+  resolution_constat: {
+    notifications: () => ['inspecteurs', 'exploitants'],
+    message (evenement) {
+      return `a résolu un constat.`
     }
   },
   creation_suite: {
