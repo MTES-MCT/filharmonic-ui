@@ -28,13 +28,9 @@ fh-page(:wait="wait")
                             )
             v-icon(left) cancel
             | Rejeter
-          v-btn.white--text(v-if="peutValider"
-                            color="green"
-                            title="Accepter la demande de validation"
-                            @click="valider()"
-                            )
-            v-icon(left) done
-            | Valider
+
+          fh-popup-validation(v-if="peutValider" @validate="valider")
+
           v-btn.white--text(v-if="peutClore"
                             color="green"
                             title="Clore l'inspection"
@@ -85,6 +81,7 @@ import { isAfterState, isBeforeState } from '@/api/inspections'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhLettreAnnonce from '@/components/FhLettreAnnonce.vue'
 import FhLettreSuites from '@/components/FhLettreSuites.vue'
+import FhPopupValidation from '@/components/FhPopupValidation.vue'
 import BasePage from '@/views/mixins/BasePage.js'
 import * as util from '@/util'
 
@@ -92,18 +89,14 @@ export default {
   components: {
     FhEtatInspection,
     FhLettreAnnonce,
-    FhLettreSuites
+    FhLettreSuites,
+    FhPopupValidation
   },
   mixins: [BasePage],
   props: {
     inspectionId: {
       type: String,
       required: true
-    }
-  },
-  data () {
-    return {
-      showLettreSuites: false
     }
   },
   computed: {
@@ -188,8 +181,8 @@ export default {
     async rejeter () {
       await this.$api.inspections.rejeter(this.inspection.id)
     },
-    async valider () {
-      await this.$api.inspections.valider(this.inspection.id)
+    async valider (rapport) {
+      await this.$api.inspections.valider(this.inspection.id, rapport)
     },
     async clore () {
       await this.$api.inspections.clore(this.inspection.id)

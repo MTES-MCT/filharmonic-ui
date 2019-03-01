@@ -1,6 +1,10 @@
 <template lang="pug">
 v-container
-  v-alert.ma-2(v-if="inspection.date_validation" :value="true" type="success") Cette inspection a été validée le {{ new Date(inspection.date_validation).toLocaleDateString() }}.
+  v-alert.ma-2(v-if="inspection.date_validation" :value="true" type="success")
+    | Cette inspection a été validée le {{ new Date(inspection.date_validation).toLocaleDateString() }}.
+    v-btn.ml-4(v-if="inspection.rapport" small @click="downloadRapport")
+      v-icon(left) cloud_download
+      | Télécharger le rapport
   v-layout.row.wrap.grid-list-lg
     v-flex.xs12.md6.pa-2
       v-card
@@ -20,6 +24,7 @@ v-container
 <script>
 import FhDetailInspection from '@/components/FhDetailInspection.vue'
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
+import * as util from '@/util'
 
 export default {
   components: {
@@ -35,6 +40,12 @@ export default {
   computed: {
     peutEditer () {
       return this.$permissions.isInspecteur && (this.inspection.etat === 'preparation' || this.inspection.etat === 'en_cours')
+    }
+  },
+  methods: {
+    async downloadRapport () {
+      const url = await this.$api.inspections.getRapport(this.inspection.id)
+      util.downloadFile(url, this.inspection.rapport.nom)
     }
   }
 }

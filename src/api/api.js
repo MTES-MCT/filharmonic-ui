@@ -127,12 +127,15 @@ export default class API {
         return this.authRequestBlob('get', `piecesjointes/${pieceJointeId}`)
       },
       genererLettreAnnonce: async inspectionId => {
-        return this.authRequestBlob('get', `inspections/${inspectionId}/lettreannonce`)
+        return this.authRequestBlob('get', `inspections/${inspectionId}/generer/lettreannonce`)
       },
       genererLettreSuite: async inspectionId => {
-        return this.authRequestBlob('get', `inspections/${inspectionId}/lettresuite`)
+        return this.authRequestBlob('get', `inspections/${inspectionId}/generer/lettresuite`)
       },
       genererRapport: async inspectionId => {
+        return this.authRequestBlob('get', `inspections/${inspectionId}/generer/rapport`)
+      },
+      getRapport: inspectionId => {
         return this.authRequestBlob('get', `inspections/${inspectionId}/rapport`)
       },
       lireMessage: async messageId => {
@@ -215,8 +218,12 @@ export default class API {
         await this.authRequestJson('post', `inspections/${inspectionId}/rejeter`)
         await this.inspections.refreshInspectionOuverte()
       },
-      valider: async (inspectionId) => {
-        await this.authRequestJson('post', `inspections/${inspectionId}/valider`)
+      valider: async (inspectionId, rapportFile) => {
+        const formData = new FormData()
+        formData.append('file', rapportFile)
+        formData.append('filename', rapportFile.name)
+        formData.append('size', rapportFile.size)
+        await this.authFormDataRequestJson('post', `inspections/${inspectionId}/valider`, formData)
         await this.inspections.refreshInspectionOuverte()
       },
       clore: async (inspectionId) => {
