@@ -1,6 +1,6 @@
 <template lang="pug">
 v-container
-  v-alert.ma-2(v-if="inspection.approbation" :value="true" type="success") Cette inspection a été validée le {{ inspection.approbation.date.toLocaleDateString() }} par {{ inspection.approbation.approbateur.name }}.
+  v-alert.ma-2(v-if="inspection.date_validation" :value="true" type="success") Cette inspection a été validée le {{ new Date(inspection.date_validation).toLocaleDateString() }}.
   v-layout.row.wrap.grid-list-lg
     v-flex.xs12.md6.pa-2
       v-card

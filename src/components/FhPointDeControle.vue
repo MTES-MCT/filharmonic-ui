@@ -28,14 +28,22 @@
           span.subheading.mr-2 Remarques&nbsp;:
           v-flex
             div {{ pointDeControle.constat.remarques }}
-        v-layout.align-center(v-if="pointDeControle.constat.delai")
+        v-layout.align-center(v-if="pointDeControle.constat.delai_unite")
           span.subheading.mr-2 Délai de mise en conformité :
-          v-flex {{ pointDeControle.constat.delai }}
+          v-flex {{ pointDeControle.constat.delai_nombre }} {{ pointDeControle.constat.delai_unite }}
 
-        p.green--text(v-if="pointDeControle.constat.date_resolution")
+        template(v-if="pointDeControle.constat.echeance_resolution")
+          p.red--text.mt-2(v-if="$permissions.isExploitant && !pointDeControle.constat.date_resolution")
+            strong
+              | Vous avez jusqu'au {{ new Date(pointDeControle.constat.echeance_resolution).toLocaleDateString() }} pour apporter des preuves concernant la résolution de ce point.
+          v-layout.mt-2.align-center(v-else)
+            span.subheading.mr-2 Échéance de mise en conformité :
+            v-flex {{ new Date(pointDeControle.constat.echeance_resolution).toLocaleDateString() }}
+
+        p.green--text.mt-2(v-if="pointDeControle.constat.date_resolution")
           strong
             | Résolu le {{ new Date(pointDeControle.constat.date_resolution).toLocaleString() }}
-        v-btn(v-if="peutResoudreConstat" color="green" dark @click="resoudreConstat")
+        v-btn.mt-2(v-if="peutResoudreConstat" color="green" dark @click="resoudreConstat")
           v-icon(left small) check_circle_outline
           | Résoudre
 
