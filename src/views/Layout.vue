@@ -80,7 +80,7 @@ v-app(v-if="user")
       :close-on-content-click="false"
       :nudge-width="200"
       bottom left offset-y)
-      v-btn(icon slot="activator")
+      v-btn(icon slot="activator" title="Mon compte")
         v-icon person
       v-card
         v-list

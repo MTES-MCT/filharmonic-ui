@@ -43,7 +43,7 @@
         p.green--text.mt-2(v-if="pointDeControle.constat.date_resolution")
           strong
             | Résolu le {{ new Date(pointDeControle.constat.date_resolution).toLocaleString() }}
-        v-btn.mt-2(v-if="peutResoudreConstat" color="green" dark @click="resoudreConstat")
+        v-btn.mt-2(v-if="peutResoudreConstat" color="green" dark @click="resoudreConstat" title="Résoudre la non-conformité")
           v-icon(left small) check_circle_outline
           | Résoudre
 
@@ -94,7 +94,7 @@
                 .text-xs-center
                   fh-new-message(v-if="peutAjouterMessageEnCours" @new-message="addMessage")
 
-        div(v-if="!pointDeControle.constat")
+        .fh-constat(v-if="!pointDeControle.constat")
           v-slide-y-transition(hide-on-leave)
             v-card.my-3.elevation-4(v-if="showNewConstatForm")
               v-toolbar(flat color="secondary" dense dark)

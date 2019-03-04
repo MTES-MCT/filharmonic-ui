@@ -1,5 +1,5 @@
 <template lang="pug">
-div(v-if="openSuite")
+.fh-suite(v-if="openSuite")
   v-card.my-3.elevation-4
     v-toolbar(flat color="secondary" dense dark)
       v-toolbar-title {{ inspection.suite ? 'Modification de la suite' : 'Nouvelle suite' }}

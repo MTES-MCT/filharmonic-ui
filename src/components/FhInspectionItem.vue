@@ -1,5 +1,5 @@
 <template lang="pug">
-v-list-tile(:to="`/inspections/${inspection.id}`")
+v-list-tile.fh-inspection-item(:to="`/inspections/${inspection.id}`")
   .fh-inspection-item__etat
     fh-etat-inspection(:etat="inspection.etat")
 

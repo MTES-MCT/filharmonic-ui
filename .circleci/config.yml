@@ -5,6 +5,36 @@ executors:
     docker:
       - image: circleci/node:10.13.0-browsers
     working_directory: ~/project/filharmonic-ui
+  nodee2e:
+    docker:
+      - image: circleci/node:10.13.0-browsers
+      - image: betagouv/filharmonic-api
+        entrypoint: /bin/sh
+        command: |
+            -c "
+            for i in `seq 1 20`;
+            do
+              nc -z localhost 5432 && echo Success && break
+              echo -n .
+              sleep 1
+            done
+            if [ $i -eq 10 ]; then
+              echo Failed waiting for Postgres && exit 1
+            fi
+            filharmonic-api"
+        environment:
+          FILHARMONIC_MODE: test
+      - image: circleci/postgres:11.1-alpine
+        environment:
+          POSTGRES_USER: filharmonic
+          POSTGRES_PASS: filharmonic
+          POSTGRES_DB: filharmonic
+      - image: minio/minio:RELEASE.2019-01-23T23-18-58Z
+        command: server /data
+        environment:
+          MINIO_ACCESS_KEY: filharmonic
+          MINIO_SECRET_KEY: filharmonic
+    working_directory: ~/project/filharmonic-ui
 
 jobs:
   install-dependencies:
@@ -54,10 +84,20 @@ jobs:
       - run: yarn run test:unit
 
   test-e2e:
-    executor: node
+    executor: nodee2e
     steps:
       - attach_workspace:
           at: '~'
+      - run:
+          name: Waiting for API to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5000 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for API && exit 1
       - run: yarn run test:e2e --headless
       - store_artifacts:
           path: tests/e2e/videos
