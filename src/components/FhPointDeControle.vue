@@ -1,5 +1,5 @@
 <template lang="pug">
-.fh-point-de-controle.elevation-1(v-if="showPointDeControle")
+.fh-point-de-controle.elevation-1(:id="`pdc${pointDeControle.id}`")
   fh-toolbar(:class="{'fh-point-de-controle--brouillon': !pointDeControle.publie}")
     v-btn(flat title="Déplier/replier" @click="toggleShowMessages()")
       v-icon.fh-toggle-icon(large :class="{'fh-toggle-icon--reverse': showMessages}") keyboard_arrow_down
@@ -169,6 +169,10 @@ export default {
     readonly: {
       type: Boolean,
       default: false
+    },
+    deplier: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -241,6 +245,9 @@ export default {
     showTraitementNonConformites () {
       return isAfterState(this.etatInspection, 'attente_validation') && this.constatNonConforme
     }
+  },
+  created () {
+    this.showMessages = this.deplier
   },
   methods: {
     quitEditMode () {

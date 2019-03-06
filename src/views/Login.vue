@@ -42,17 +42,25 @@ export default {
     devMode () {
       return process.env.NODE_ENV === 'development'
     },
+    redirectURL () {
+      return new URLSearchParams(window.location.search).get('redirect')
+    },
     cerbereCallback () {
-      return `https://authentification.din.developpement-durable.gouv.fr/cas/public/login?service=${location.origin}/login`
+      let callbackURL = `https://authentification.din.developpement-durable.gouv.fr/cas/public/login?service=${location.origin}/login`
+      if (this.redirectURL) {
+        callbackURL += `%3Fredirect=${this.redirectURL}`
+      }
+      return callbackURL
     }
   },
   async created () {
     const params = new URLSearchParams(window.location.search)
     const ticket = params.get('ticket')
+    const redirectURL = params.get('redirect')
     if (ticket) {
       try {
         await this.$api.authentication.login(ticket)
-        this.$router.push('/')
+        this.$router.push(redirectURL || '/')
       } catch (e) {
         this.error = `L'authentification a échoué. ${e.message}`
       }

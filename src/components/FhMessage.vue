@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-timeline-item(fill-dot :color="color" :icon="icon" :left="message.auteur.profile !== 'exploitant'" :right="message.auteur.profile === 'exploitant'")
+  v-timeline-item(:id="`m${message.id}`" fill-dot :color="color" :icon="icon" :left="message.auteur.profile !== 'exploitant'" :right="message.auteur.profile === 'exploitant'")
     span(slot="opposite")
       | {{ message.auteur.prenom }} {{ message.auteur.nom }}&nbsp;
       timeago(:datetime="message.date" :title="message.date.toLocaleString()")

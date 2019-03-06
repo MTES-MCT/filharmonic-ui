@@ -6,7 +6,9 @@ v-container
 
   p(v-if="showMessagePointsDeControleNonModifiables") Les points de contrôle ne sont pas modifiables tant qu'une suite est présente.
 
-  fh-point-de-controle(v-for="pointDeControle in inspection.points_de_controle" :key="pointDeControle.id" :pointDeControle="pointDeControle" :etatInspection="inspection.etat" :readonly="!peutModifierPointsDeControle")
+  fh-point-de-controle(v-for="pointDeControle in inspection.points_de_controle" :key="pointDeControle.id"
+                      :pointDeControle="pointDeControle" :etatInspection="inspection.etat"
+                      :readonly="!peutModifierPointsDeControle" :deplier="pointDeControle.id === pointDeControleDeplieId")
 
   v-slide-y-transition(hide-on-leave)
     v-card.my-3.elevation-4(v-if="showNewPointDeControleForm")
@@ -62,6 +64,8 @@ export default {
     return {
       validNewPointDeControleForm: false,
       showNewPointDeControleForm: false,
+      pointDeControleDeplieId: null,
+      messageDeplieId: null,
       newPointDeControle: {
         sujet: '',
         references_reglementaires: [
@@ -93,6 +97,35 @@ export default {
     },
     peutVoirSuites () {
       return this.inspection.etat !== 'preparation' && (!this.$permissions.isExploitant || isAfterState(this.inspection.etat, 'attente_validation'))
+    }
+  },
+  created () {
+    const matchMessage = /#pdc([0-9]+)-m([0-9]+)/.exec(this.$route.hash)
+    if (matchMessage) {
+      this.pointDeControleDeplieId = parseInt(matchMessage[1], 10)
+      this.messageDepliedId = parseInt(matchMessage[2], 10)
+    }
+    const matchPointDeControle = /#pdc([0-9]+)/.exec(this.$route.hash)
+    if (matchPointDeControle) {
+      this.pointDeControleDeplieId = parseInt(matchPointDeControle[1], 10)
+    }
+  },
+  mounted () {
+    if (this.messageDepliedId) {
+      try {
+        // attente que la transition dépliage termine
+        setTimeout(() => {
+          this.$vuetify.goTo(`#m${this.messageDepliedId}`, {
+            offset: 300
+          })
+        }, 300)
+      } catch (e) {}
+    } else if (this.pointDeControleDeplieId) {
+      try {
+        this.$vuetify.goTo(`#pdc${this.pointDeControleDeplieId}`, {
+          offset: 300
+        })
+      } catch (e) {}
     }
   },
   methods: {
