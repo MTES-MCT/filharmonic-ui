@@ -9,7 +9,7 @@ fh-page(:wait="wait")
         v-flex.text-xs-right
           v-text-field.d-inline-flex(v-model="$filter" label="Filtre établissement" clearable) Filtre
 
-      v-tabs.elevation-1.mt-4(grow)
+      v-tabs.elevation-1.mt-4(grow v-model="activeTab")
 
         v-tab.fh-tab(v-if="!$permissions.isApprobateur")
           | En cours&nbsp;
@@ -85,6 +85,9 @@ export default {
   mixins: [BasePage],
   data () {
     return {
+      isNavigationChanging: false,
+      isTabChanging: false,
+      activeTab: null,
       inspections: [],
       etablissements: [],
       filter: ''
@@ -129,6 +132,25 @@ export default {
     },
     inspectionsValidees () {
       return this.inspectionsFiltrees.filter(inspection => inspection.etat === 'traitement_non_conformites' || inspection.etat === 'close')
+    }
+  },
+  watch: {
+    activeTab (newValue, oldValue) {
+      if (!this.isNavigationChanging) {
+        this.isTabChanging = true
+        this.$router.push(`?tab=${newValue}`)
+      }
+      this.isNavigationChanging = false
+    },
+    '$route.query.tab': {
+      handler: function (newValue, oldValue) {
+        if (!this.isTabChanging) {
+          this.isNavigationChanging = true
+          this.activeTab = parseInt(newValue, 10)
+        }
+        this.isTabChanging = false
+      },
+      immediate: true
     }
   },
   async created () {
