@@ -4,7 +4,7 @@ describe("Création d'une inspection", () => {
   it('Visits the app root url', () => {
     // Login inspecteur 3
     cy.visit('/')
-    cy.contains('div', "Connexion")
+    cy.contains('div', 'Connexion')
     cy.visit('/login?ticket=ticket-3')
 
     // Recherche des établissements
@@ -31,7 +31,7 @@ describe("Création d'une inspection", () => {
     cy.contains("Créer l'inspection").click()
 
     // Ajout d'un point de contrôle
-    cy.contains("Ajouter un point de contrôle").click()
+    cy.contains('Ajouter un point de contrôle').click()
     cy.get('input[aria-label="Sujet"]').type('Point de contrôle 1')
     cy.get('input[aria-label="Référence réglementaire"]').type('Référence réglementaire 1')
     cy.contains('Nouvelle référence réglementaire').click()
@@ -76,7 +76,7 @@ describe("Création d'une inspection", () => {
     cy.contains('Points de contrôle').click()
 
     // Ajout d'un 2e point de contrôle
-    cy.contains("Ajouter un point de contrôle").click()
+    cy.contains('Ajouter un point de contrôle').click()
     cy.get('input[aria-label="Sujet"]').type('Point de contrôle 2')
     cy.get('input[aria-label="Référence réglementaire"]').type('Référence réglementaire 2')
     cy.contains('Ajouter').click()
@@ -97,7 +97,7 @@ describe("Création d'une inspection", () => {
     cy.contains('button', 'Déconnexion').click()
 
     // Login exploitant 1
-    cy.contains('div', "Connexion")
+    cy.contains('div', 'Connexion')
     cy.visit('/login?ticket=ticket-1')
 
     // Sélection de l'inspection
@@ -120,7 +120,7 @@ describe("Création d'une inspection", () => {
     cy.contains('button', 'Déconnexion').click()
 
     // Login inspecteur 3
-    cy.contains('div', "Connexion")
+    cy.contains('div', 'Connexion')
     cy.visit('/login?ticket=ticket-3')
 
     // Sélection de l'inspection
@@ -151,7 +151,7 @@ describe("Création d'une inspection", () => {
     cy.contains('button', 'Déconnexion').click()
 
     // Login approbateur 6
-    cy.contains('div', "Connexion")
+    cy.contains('div', 'Connexion')
     cy.visit('/login?ticket=ticket-6')
 
     // Sélection de l'inspection en attente de validation
@@ -166,7 +166,7 @@ describe("Création d'une inspection", () => {
     // Logout
     cy.get('button[title="Mon compte"]').click()
     cy.contains('button', 'Déconnexion').click()
-    cy.contains('div', "Connexion")
+    cy.contains('div', 'Connexion')
 
     // Login exploitant 1
     cy.visit('/login?ticket=ticket-1')
