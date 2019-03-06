@@ -17,6 +17,9 @@ v-list-tile.fh-inspection-item(:to="`/inspections/${inspection.id}`")
 
   v-layout.justify-end(v-if="inspection.nb_messages_non_lus")
     fh-icone-nouveaux-messages(:messages="inspection.nb_messages_non_lus" big)
+  v-icon.ml-2(v-if="inspection.validation_rejetee && !$permissions.isExploitant"
+          medium color="red" title="La demande de validation a été rejetée"
+          ) warning
 
 </template>
 

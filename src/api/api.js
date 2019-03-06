@@ -214,8 +214,10 @@ export default class API {
         await this.authRequestJson('post', `inspections/${inspectionId}/demandervalidation`)
         await this.inspections.refreshInspectionOuverte()
       },
-      rejeter: async (inspectionId) => {
-        await this.authRequestJson('post', `inspections/${inspectionId}/rejeter`)
+      rejeter: async (inspectionId, motif) => {
+        await this.authRequestJson('post', `inspections/${inspectionId}/rejeter`, {
+          motif_rejet_validation: motif
+        })
         await this.inspections.refreshInspectionOuverte()
       },
       valider: async (inspectionId, rapportFile) => {

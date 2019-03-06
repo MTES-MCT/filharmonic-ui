@@ -21,13 +21,7 @@ fh-page(:wait="wait")
                             )
             v-icon(left) done
             | Demander une validation
-          v-btn.white--text(v-if="peutValider"
-                            color="red"
-                            title="Rejeter la demande de validation"
-                            @click="rejeter()"
-                            )
-            v-icon(left) cancel
-            | Rejeter
+          fh-popup-rejet-validation(v-if="peutValider" @submit="rejeter")
 
           fh-popup-validation(v-if="peutValider" @validate="valider")
 
@@ -82,6 +76,7 @@ import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhLettreAnnonce from '@/components/FhLettreAnnonce.vue'
 import FhLettreSuites from '@/components/FhLettreSuites.vue'
 import FhPopupValidation from '@/components/FhPopupValidation.vue'
+import FhPopupRejetValidation from '@/components/FhPopupRejetValidation.vue'
 import BasePage from '@/views/mixins/BasePage.js'
 import * as util from '@/util'
 
@@ -90,7 +85,8 @@ export default {
     FhEtatInspection,
     FhLettreAnnonce,
     FhLettreSuites,
-    FhPopupValidation
+    FhPopupValidation,
+    FhPopupRejetValidation
   },
   mixins: [BasePage],
   props: {
@@ -178,8 +174,8 @@ export default {
     async demanderValidation () {
       await this.$api.inspections.demanderValidation(this.inspection.id)
     },
-    async rejeter () {
-      await this.$api.inspections.rejeter(this.inspection.id)
+    async rejeter (motif) {
+      await this.$api.inspections.rejeter(this.inspection.id, motif)
     },
     async valider (rapport) {
       await this.$api.inspections.valider(this.inspection.id, rapport)
