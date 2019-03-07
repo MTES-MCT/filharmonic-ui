@@ -115,7 +115,7 @@
                     v-flex.shrink(v-if="newConstat.type !== 'conforme'")
                       h4 Délai
                       v-layout.row.mt-1
-                        v-text-field(type="number" v-model="newConstat.delai_nombre"
+                        v-text-field(type="number" v-model.number="newConstat.delai_nombre"
                                      label="Délai" box single-line style="width: 80px")
                         v-select.ml-1(v-model="newConstat.delai_unite" :items="unitesDelai"
                                       label="Unité" box single-line style="width: 100px")
