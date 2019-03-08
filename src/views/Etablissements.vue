@@ -15,8 +15,8 @@
             v-text-field(
               v-model="filter.s3ic" @keydown.enter="listEtablissements()"
               label="Code S3IC")
-            v-btn(
-              @click="listEtablissements()"
+            fh-btn(
+              :action="listEtablissements"
               color="primary") Rechercher
             v-btn(@click="resetForm") Effacer
 
@@ -42,9 +42,13 @@
 </template>
 
 <script>
+import FhBtn from '@/components/FhBtn.vue'
 import * as _ from '@/util'
 
 export default {
+  components: {
+    FhBtn
+  },
   data () {
     return {
       results: null,

@@ -8,32 +8,32 @@ fh-page(:wait="wait")
           fh-etat-inspection(:etat="inspection.etat" small)
           v-spacer
 
-          v-btn(v-if="peutPublier"
+          fh-btn(v-if="peutPublier"
                 title="Publier"
                 color="primary"
-                @click="publier()"
+                :action="publier"
                 )
             v-icon(left) public
             | Publier
-          v-btn.white--text(v-if="peutDemanderValidation"
+          fh-btn.white--text(v-if="peutDemanderValidation"
                             color="green"
-                            @click="demanderValidation()"
+                            :action="demanderValidation"
                             )
             v-icon(left) done
             | Demander une validation
           fh-popup-rejet-validation(v-if="peutValider" @submit="rejeter")
 
-          fh-popup-validation(v-if="peutValider" @validate="valider")
+          fh-popup-validation(v-if="peutValider" @submit="valider")
 
-          v-btn.white--text(v-if="peutClore"
+          fh-btn.white--text(v-if="peutClore"
                             color="green"
                             title="Clore l'inspection"
-                            @click="clore()"
+                            :action="clore"
                             )
             v-icon(left) done
             | Clore
 
-          v-btn(icon large @click="toggleFavoris()" :title="isFavorite ? 'Retirer des favoris' : 'Mettre en favoris'" v-if="!$permissions.isExploitant")
+          fh-btn(icon large :action="toggleFavoris" :title="isFavorite ? 'Retirer des favoris' : 'Mettre en favoris'" v-if="!$permissions.isExploitant")
             v-icon {{ isFavorite ? 'star' : 'star_border' }}
 
           v-menu(bottom left offset-y v-if="peutGenererDocuments")
@@ -72,6 +72,7 @@ fh-page(:wait="wait")
 <script>
 import { mapState } from 'vuex'
 import { isAfterState, isBeforeState } from '@/api/inspections'
+import FhBtn from '@/components/FhBtn.vue'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhLettreAnnonce from '@/components/FhLettreAnnonce.vue'
 import FhLettreSuites from '@/components/FhLettreSuites.vue'
@@ -82,6 +83,7 @@ import * as util from '@/util'
 
 export default {
   components: {
+    FhBtn,
     FhEtatInspection,
     FhLettreAnnonce,
     FhLettreSuites,
@@ -174,11 +176,21 @@ export default {
     async demanderValidation () {
       await this.$api.inspections.demanderValidation(this.inspection.id)
     },
-    async rejeter (motif) {
-      await this.$api.inspections.rejeter(this.inspection.id, motif)
+    async rejeter ({ data: motif, done }) {
+      try {
+        await this.$api.inspections.rejeter(this.inspection.id, motif)
+        done(true)
+      } finally {
+        done()
+      }
     },
-    async valider (rapport) {
-      await this.$api.inspections.valider(this.inspection.id, rapport)
+    async valider ({ data: rapport, done }) {
+      try {
+        await this.$api.inspections.valider(this.inspection.id, rapport)
+        done(true)
+      } finally {
+        done()
+      }
     },
     async clore () {
       await this.$api.inspections.clore(this.inspection.id)

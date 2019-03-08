@@ -2,15 +2,17 @@
 v-container.grid-list-lg.inspection-form
   v-form(ref="form" v-model="validForm" lazy-validation)
     fh-detail-inspection(:inspection="updatedInspection")
-    v-btn(block @click="saveInspection" :disabled="!validForm" color="primary") Sauvegarder
+    fh-btn(block :action="saveInspection" :disableif="!validForm" color="primary") Sauvegarder
 </template>
 
 <script>
+import FhBtn from '@/components/FhBtn.vue'
 import FhDetailInspection from '@/components/FhDetailInspection.vue'
 import * as _ from '@/util'
 
 export default {
   components: {
+    FhBtn,
     FhDetailInspection
   },
   props: {
@@ -27,6 +29,9 @@ export default {
   },
   created () {
     this.updatedInspection = _.cloneDeep(this.inspection)
+    delete this.updatedInspection.points_de_controle
+    delete this.updatedInspection.etablissement
+    delete this.updatedInspection.suite
   },
   methods: {
     async saveInspection () {

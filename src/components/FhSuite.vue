@@ -27,7 +27,7 @@
                         )
 
     v-card-actions.justify-center.pb-3
-      v-btn(color="primary" @click="saveOpenSuite()" :disabled="!validEditionForm")
+      fh-btn(color="primary" :action="saveOpenSuite" :disableif="!validEditionForm")
         v-icon(left) gavel
         | {{ inspection.suite ? 'Modifier' : 'Ajouter' }}
 
@@ -44,9 +44,9 @@
           @click="editSuite()"
           )
       v-icon edit
-    v-btn(v-if="modifiable"
+    fh-btn(v-if="modifiable"
           icon large title="Supprimer la suite"
-          @click="supprimerSuite()"
+          :action="supprimerSuite"
           )
       v-icon(color="red") delete
   v-layout.align-center.mb-2(v-if="inspection.suite.penal_engage")
@@ -70,11 +70,15 @@ div(v-else)
 </template>
 
 <script>
+import FhBtn from '@/components/FhBtn.vue'
 import { typesSuite } from '@/api/inspections'
 import * as _ from '@/util'
 
 export default {
   name: 'FhSuite',
+  components: {
+    FhBtn
+  },
   props: {
     inspection: {
       type: Object,

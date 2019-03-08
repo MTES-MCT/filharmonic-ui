@@ -25,7 +25,7 @@ v-container
             fh-point-de-controle-form(:pointDeControle="newPointDeControle")
 
       v-card-actions.justify-center.pb-3
-        v-btn(color="primary" @click="saveNewPointDeControle()" :disabled="!validNewPointDeControleForm")
+        fh-btn(color="primary" :action="saveNewPointDeControle" :disableif="!validNewPointDeControleForm")
           v-icon(left) done
           | Ajouter
 
@@ -40,6 +40,7 @@ v-container
 
 <script>
 import { isAfterState } from '@/api/inspections'
+import FhBtn from '@/components/FhBtn.vue'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhPointDeControle from '@/components/FhPointDeControle.vue'
@@ -48,6 +49,7 @@ import FhSuite from '@/components/FhSuite.vue'
 
 export default {
   components: {
+    FhBtn,
     FhEtatInspection,
     FhMessage,
     FhPointDeControle,

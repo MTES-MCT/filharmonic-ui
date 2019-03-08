@@ -16,24 +16,33 @@ v-dialog(v-model="showDialog" width="500")
     v-divider
     v-card-actions
       v-spacer
-      v-btn(@click="submit()" color="primary" title="Rejeter")
+      v-btn(@click="submit" color="primary" title="Rejeter" :loading="loading" :disabled="loading")
         v-icon(left) done
         | Rejeter
 </template>
 
 <script>
-
 export default {
   name: 'FhPopupRejetValidation',
   data () {
     return {
       showDialog: false,
+      loading: false,
       motifRejet: ''
     }
   },
   methods: {
     submit () {
-      this.$emit('submit', this.motifRejet)
+      this.loading = true
+      this.$emit('submit', {
+        data: this.motifRejet,
+        done: (closeDialog = false) => {
+          this.loading = false
+          if (closeDialog) {
+            this.showDialog = false
+          }
+        }
+      })
     }
   }
 }

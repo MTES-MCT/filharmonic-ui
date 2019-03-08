@@ -19,18 +19,18 @@ v-dialog(v-model="showDialog" width="500")
     v-divider
     v-card-actions
       v-spacer
-      v-btn(@click="valider()" :disabled="!rapport" color="primary" title="Valider")
+      v-btn(@click="submit" :disabled="!rapport || loading" color="primary" title="Valider" :loading="loading")
         v-icon(left) done
         | Valider
 </template>
 
 <script>
-
 export default {
   name: 'FhPopupValidation',
   data () {
     return {
       showDialog: false,
+      loading: false,
       rapport: null
     }
   },
@@ -46,8 +46,17 @@ export default {
       this.rapport = files[0]
       e.target.value = ''
     },
-    valider () {
-      this.$emit('validate', this.rapport)
+    submit () {
+      this.loading = true
+      this.$emit('submit', {
+        data: this.rapport,
+        done: (closeDialog = false) => {
+          this.loading = false
+          if (closeDialog) {
+            this.showDialog = false
+          }
+        }
+      })
     }
   }
 }

@@ -10,10 +10,11 @@ fh-page(:wait="wait")
 
         v-form(ref="form" v-model="validForm" lazy-validation)
           fh-detail-inspection(:inspection="inspection")
-          v-btn(block @click="createInspection" :disabled="!validForm" color="primary") Créer l'inspection
+          fh-btn(block :action="createInspection" :disableif="!validForm" color="primary") Créer l'inspection
 </template>
 
 <script>
+import FhBtn from '@/components/FhBtn.vue'
 import FhDetailEtablissement from '@/components/FhDetailEtablissement.vue'
 import FhDetailInspection from '@/components/FhDetailInspection.vue'
 import BasePage from '@/views/mixins/BasePage'
@@ -21,6 +22,7 @@ import { ForbiddenError } from '@/errors.js'
 
 export default {
   components: {
+    FhBtn,
     FhDetailInspection,
     FhDetailEtablissement
   },

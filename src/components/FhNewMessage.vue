@@ -17,20 +17,22 @@ v-dialog(v-model="dialogNewMessage" width="500")
     v-divider
     v-card-actions
       v-spacer
-      v-btn(icon title="Ajouter une pièce jointe" @click="openAttachmentPopup")
+      v-btn(icon title="Ajouter une pièce jointe" @click="openAttachmentPopup" :loading="loadingAttachments")
         v-icon attach_file
-      input(ref="file" type="file" @change="onFilesChange" multiple hidden)
-      v-btn(icon @click="addMessage" :disabled="!newMessage" color="primary" title="Envoyer")
+      input(ref="file" type="file" @change="onFilesChange" multiple hidden loading)
+      fh-btn(icon :action="addMessage" :disableif="!newMessage || loadingAttachments" color="primary" title="Envoyer")
         v-icon send
 </template>
 
 <script>
 import FhAttachment from '@/components/FhAttachment.vue'
+import FhBtn from '@/components/FhBtn.vue'
 
 export default {
   name: 'FhNewMessage',
   components: {
-    FhAttachment
+    FhAttachment,
+    FhBtn
   },
   props: {
     commentaire: {
@@ -43,7 +45,8 @@ export default {
       newMessage: '',
       interne: true,
       pieces_jointes: [],
-      dialogNewMessage: false
+      dialogNewMessage: false,
+      loadingAttachments: false
     }
   },
   computed: {
@@ -75,21 +78,26 @@ export default {
       webkitRelativePath: ""
     }
     */
-    addAttachment (...files) {
-      files.forEach(async (file, index) => {
-        const pieceJointeId = await this.$api.inspections.ajouterPieceJointe({
-          file: file,
-          filename: file.name,
-          type: file.type,
-          size: file.size
-        })
-        this.pieces_jointes.push({
-          id: pieceJointeId,
-          nom: file.name,
-          type: file.type,
-          taille: file.size
-        })
-      })
+    async addAttachment (...files) {
+      this.loadingAttachments = true
+      try {
+        await Promise.all(files.map(async (file, index) => {
+          const pieceJointeId = await this.$api.inspections.ajouterPieceJointe({
+            file: file,
+            filename: file.name,
+            type: file.type,
+            size: file.size
+          })
+          this.pieces_jointes.push({
+            id: pieceJointeId,
+            nom: file.name,
+            type: file.type,
+            taille: file.size
+          })
+        }))
+      } finally {
+        this.loadingAttachments = false
+      }
     },
     onFilesChange (e) {
       const files = e.target.files || e.dataTransfer.files

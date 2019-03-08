@@ -4,9 +4,8 @@ export default {
   install (Vue, options = {}) {
     const dialog = new (Vue.extend(FhConfirmDialog))()
     dialog.$mount(document.body.appendChild(document.createElement('div')))
-
-    function confirm (message) {
-      dialog.$root.$emit('confirm', message)
+    function confirm (message, actionFn) {
+      dialog.$root.$emit('confirm', message, actionFn)
       return new Promise(resolve => {
         dialog.$root.$on('confirmed', resolve)
       })

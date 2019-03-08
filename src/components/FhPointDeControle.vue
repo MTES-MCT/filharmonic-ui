@@ -43,14 +43,14 @@
         p.green--text.mt-2(v-if="pointDeControle.constat.date_resolution")
           strong
             | Résolu le {{ new Date(pointDeControle.constat.date_resolution).toLocaleString() }}
-        v-btn.mt-2(v-if="peutResoudreConstat" color="green" dark @click="resoudreConstat" title="Résoudre la non-conformité")
-          v-icon(left small) check_circle_outline
+        fh-btn.mt-2.white--text(v-if="peutResoudreConstat" color="green" :action="resoudreConstat" title="Résoudre la non-conformité")
+          v-icon(left) check_circle_outline
           | Résoudre
 
     .d-flex(v-if="editMode")
-      v-btn(flat title="Annuler l'édition" @click="quitEditMode")
+      v-btn(flat title="Annuler l'édition" @click="quitEditMode" :disabled="modificationPointDeControleEnCours")
         v-icon(medium) clear
-      v-btn(depressed color="success" title="Mettre à jour" @click="modifierPointDeControle" :disabled="!validPointDeControleEditeForm")
+      fh-btn(depressed color="success" title="Mettre à jour" :action="modifierPointDeControle" :disableif="!validPointDeControleEditeForm")
         v-icon(medium) check
 
     v-menu.d-flex(bottom left offset-y transition="slide-y-transition" v-if="peutEditer")
@@ -62,9 +62,9 @@
                   )
           v-icon(left) edit
           | Modifier
-        v-btn.ma-0(v-if="peutPublier"
+        fh-btn.ma-0(v-if="peutPublier"
                   depressed large title="Publier le point de contrôle"
-                  @click="publierPointDeControle"
+                  :action="publierPointDeControle"
                   )
           v-icon(left) visibility
           | Publier
@@ -121,7 +121,7 @@
                                       label="Unité" box single-line style="width: 100px")
 
               v-card-actions.justify-center.pb-3
-                v-btn(color="primary" @click="ajouterConstat()")
+                fh-btn(color="primary" :action="ajouterConstat")
                   v-icon(left) gavel
                   | Sauvegarder le constat
 
@@ -141,6 +141,7 @@
 
 <script>
 import { isAfterState, isBeforeState, typesConstats } from '@/api/inspections'
+import FhBtn from '@/components/FhBtn.vue'
 import FhIconeNouveauxMessages from '@/components/FhIconeNouveauxMessages.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhNewMessage from '@/components/FhNewMessage.vue'
@@ -151,6 +152,7 @@ import * as _ from '@/util'
 export default {
   name: 'FhPointDeControle',
   components: {
+    FhBtn,
     FhIconeNouveauxMessages,
     FhMessage,
     FhNewMessage,
@@ -179,6 +181,7 @@ export default {
     return {
       pointDeControleEdite: null,
       validPointDeControleEditeForm: true,
+      modificationPointDeControleEnCours: false,
       showMessages: false,
       showNewConstatForm: false,
       typesConstats,
@@ -261,17 +264,23 @@ export default {
     },
     async modifierPointDeControle () {
       if (this.$refs.pointDeControleEditeForm.validate()) {
-        await this.$api.inspections.modifierPointDeControle(this.pointDeControle.id, this.pointDeControleEdite)
-        this.quitEditMode()
+        this.modificationPointDeControleEnCours = true
+        try {
+          await this.$api.inspections.modifierPointDeControle(this.pointDeControle.id, this.pointDeControleEdite)
+          this.quitEditMode()
+        } finally {
+          this.modificationPointDeControleEnCours = false
+        }
       }
     },
     async publierPointDeControle () {
       await this.$api.inspections.publierPointDeControle(this.pointDeControle.id)
     },
-    async supprimerPointDeControle () {
-      if (await this.$confirm('Êtes-vous sûr de vouloir supprimer ce point de contrôle ?')) {
+    supprimerPointDeControle () {
+      this.$confirm('Êtes-vous sûr de vouloir supprimer ce point de contrôle ?', async () => {
+        await new Promise(resolve => setTimeout(resolve, 1000))
         await this.$api.inspections.supprimerPointDeControle(this.pointDeControle.id)
-      }
+      })
     },
     async toggleShowMessages () {
       this.showMessages = !this.showMessages
@@ -288,10 +297,10 @@ export default {
       await this.$api.inspections.ajouterConstat(this.pointDeControle.id, this.newConstat)
       this.resetNewConstat()
     },
-    async supprimerConstat () {
-      if (await this.$confirm('Êtes-vous sûr de vouloir supprimer ce constat ?')) {
+    supprimerConstat () {
+      this.$confirm('Êtes-vous sûr de vouloir supprimer ce constat ?', async () => {
         await this.$api.inspections.supprimerConstat(this.pointDeControle.id)
-      }
+      })
     },
     async addMessage (message) {
       await this.$api.inspections.ajouterMessage(this.pointDeControle.id, message)
