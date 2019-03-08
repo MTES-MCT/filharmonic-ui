@@ -1,9 +1,5 @@
 <template lang="pug">
 v-app(v-if="user")
-  v-snackbar(v-model="showSnackbar" top :color="snackbar.color" :timeout="4000")
-    | {{ snackbar.message }}
-    v-btn(icon @click="showSnackbar = false")
-      v-icon close
   v-navigation-drawer(:clipped="$vuetify.breakpoint.lgAndUp" v-model="drawer" fixed app)
 
     v-list.py-0
@@ -100,12 +96,6 @@ v-app(v-if="user")
 <script>
 import { mapState } from 'vuex'
 import FhNotification from '@/components/FhNotification.vue'
-import events from '@/events'
-
-const snackbarColor = {
-  error: 'red',
-  success: 'green'
-}
 
 export default {
   components: {
@@ -119,11 +109,6 @@ export default {
         { url: 'https://monicpe.developpement-durable.gouv.fr/', nom: 'MonICPE' },
         { url: 'http://www.installationsclassees.developpement-durable.gouv.fr/rechercheICForm.php', nom: 'Base des installations classées' }
       ],
-      showSnackbar: false,
-      snackbar: {
-        message: '',
-        color: ''
-      },
       showNotificationsMenu: false
     }
   },
@@ -135,22 +120,13 @@ export default {
     })
   },
   async created () {
-    events.bus.$on(events.Alert, this.updateAlert)
     this.$api.notifications.loadNotifications()
     this.$api.inspections.refreshInspectionsFavorites()
-  },
-  destroyed () {
-    events.bus.$off(events.Alert, this.updateAlert)
   },
   methods: {
     async logout (cerbereLogout) {
       await this.$api.authentication.logout(cerbereLogout)
       this.$router.push('/login?redirect=/')
-    },
-    updateAlert (messageType, message) {
-      this.snackbar.color = snackbarColor[messageType]
-      this.snackbar.message = message
-      this.showSnackbar = true
     },
     async marquerCommeLue (notificationId) {
       await this.$api.notifications.lire([notificationId])
