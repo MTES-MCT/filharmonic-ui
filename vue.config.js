@@ -1,3 +1,4 @@
+const path = require('path')
 module.exports = {
   productionSourceMap: false,
   devServer: {
@@ -16,6 +17,14 @@ module.exports = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
       'Access-Control-Allow-Headers': 'X-Requested-With, content-type, authorization'
+    }
+  },
+  css: {
+    loaderOptions: {
+      stylus: {
+        // loads the custom vuetify variables for each component
+        import: path.resolve(__dirname, 'src/styles/vuetify-theme.styl')
+      }
     }
   }
 }
