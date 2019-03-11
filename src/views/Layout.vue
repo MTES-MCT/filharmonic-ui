@@ -3,7 +3,7 @@ v-app(v-if="user")
   v-navigation-drawer(:clipped="$vuetify.breakpoint.lgAndUp" v-model="drawer" fixed app)
 
     v-list.py-0
-      v-list-tile(to="/" title="Tableau de bord")
+      v-list-tile(to="/?tab=0" title="Tableau de bord")
         v-list-tile-action
           v-icon dashboard
         v-list-tile-content

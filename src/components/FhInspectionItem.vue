@@ -20,7 +20,10 @@ v-list-tile.fh-inspection-item(:to="`/inspections/${inspection.id}`")
   v-icon.ml-2(v-if="inspection.validation_rejetee && !$permissions.isExploitant"
           medium color="red" title="La demande de validation a été rejetée"
           ) warning
-
+  v-badge(v-if="inspection.nb_non_conformites_a_resoudre > 0" color="red" overlap)
+    template(v-slot:badge)
+      | {{ inspection.nb_non_conformites_a_resoudre }}
+    v-icon.ml-2(large title="Il reste des constats non conformes encore non résolus") assignment_late
 </template>
 
 <script>

@@ -1,7 +1,8 @@
 <template lang="pug">
-v-icon.ml-4(v-if="messages"
-            :medium="big" color="primary" :title="title"
-            ) feedback
+v-badge(v-if="messages" color="primary" overlap)
+  template(v-slot:badge)
+    | {{ messages }}
+  v-icon.ml-2(:large="big" :title="title") mail
 </template>
 
 <script>
