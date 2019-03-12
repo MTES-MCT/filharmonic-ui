@@ -45,6 +45,21 @@ v-app(v-if="user")
                 | ,&nbsp;
                 i {{ inspection.etablissement.adresse }}
 
+      v-list-tile(href="https://docs.google.com/presentation/d/1RdHWb16SVFx84g99TcEA16-eaMHvp3tBPxu1nTaBBsA/edit" target="_blank")
+        v-list-tile-action
+          v-icon help
+        v-list-tile-content
+          v-list-tile-title
+            | Documentation
+            v-icon.ml-2(right small) open_in_new
+
+      v-list-tile(href="mailto:contact@filharmonic.beta.gouv.fr?subject=A propos de Fil'harmonic")
+        v-list-tile-action
+          v-icon contact_support
+        v-list-tile-content
+          v-list-tile-title
+            | Contacter l'équipe
+
   v-toolbar(:clipped-left="$vuetify.breakpoint.lgAndUp" color="blue darken-3" dark app fixed)
     v-toolbar-side-icon(@click.stop="drawer = !drawer")
     v-toolbar-title.ml-0.pl-3(style="width: 300px")
