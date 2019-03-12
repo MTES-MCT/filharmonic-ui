@@ -36,17 +36,28 @@ fh-page(:wait="wait")
           fh-btn(icon large :action="toggleFavoris" :title="isFavorite ? 'Retirer des favoris' : 'Mettre en favoris'" v-if="!$permissions.isExploitant")
             v-icon {{ isFavorite ? 'star' : 'star_border' }}
 
-          v-menu(bottom left offset-y v-if="peutGenererDocuments")
-            v-btn(slot="activator" icon large title="Générer des documents")
-              v-icon local_printshop
-            //- un peu compliqué car les v-dialog ne s'intègrent pas facilement avec les v-list-tile
+          v-menu(bottom left offset-y v-if="$permissions.isInspecteur")
+            v-btn(slot="activator" icon large title="Afficher le menu")
+              v-icon more_vert
             v-list.py-0
+              v-list-tile(@click="showPopupCreationCanevas = true" v-if="peutEnregistrerEnCanevas")
+                v-list-tile-avatar
+                  v-icon save
+                v-list-tile-title Enregistrer en canevas
               v-list-tile(@click="genererLettreAnnonce" v-if="peutGenererLettreAnnonce")
+                v-list-tile-avatar
+                  v-icon local_printshop
                 v-list-tile-title Générer la lettre d'annonce
               v-list-tile(@click="genererRapport" v-if="peutGenererRapport")
+                v-list-tile-avatar
+                  v-icon local_printshop
                 v-list-tile-title Générer le rapport
               v-list-tile(@click="genererLettreSuite" v-if="peutGenererLettreSuite")
+                v-list-tile-avatar
+                  v-icon local_printshop
                 v-list-tile-title Générer la lettre des suites
+          fh-popup-creation-canevas(v-if="peutEnregistrerEnCanevas" :show-dialog="showPopupCreationCanevas"
+                                    @close="showPopupCreationCanevas = false" @submit="enregistrerEnCanevas")
 
           v-toolbar-items(slot="extension")
             v-btn(flat :to="`/inspections/${inspection.id}`" exact)
@@ -78,6 +89,7 @@ import FhLettreAnnonce from '@/components/FhLettreAnnonce.vue'
 import FhLettreSuites from '@/components/FhLettreSuites.vue'
 import FhPopupValidation from '@/components/FhPopupValidation.vue'
 import FhPopupRejetValidation from '@/components/FhPopupRejetValidation.vue'
+import FhPopupCreationCanevas from '@/components/FhPopupCreationCanevas.vue'
 import BasePage from '@/views/mixins/BasePage.js'
 import * as util from '@/util'
 
@@ -88,13 +100,19 @@ export default {
     FhLettreAnnonce,
     FhLettreSuites,
     FhPopupValidation,
-    FhPopupRejetValidation
+    FhPopupRejetValidation,
+    FhPopupCreationCanevas
   },
   mixins: [BasePage],
   props: {
     inspectionId: {
       type: String,
       required: true
+    }
+  },
+  data () {
+    return {
+      showPopupCreationCanevas: false
     }
   },
   computed: {
@@ -142,6 +160,9 @@ export default {
     },
     peutGenererDocuments () {
       return this.$permissions.isInspecteur && (this.peutGenererLettreAnnonce || this.peutGenererLettreSuite)
+    },
+    peutEnregistrerEnCanevas () {
+      return this.$permissions.isInspecteur
     },
     peutGenererLettreAnnonce () {
       return this.$permissions.isInspecteur && isBeforeState(this.inspection.etat, 'attente_validation') && this.inspection.points_de_controle.length > 0
@@ -194,6 +215,14 @@ export default {
     },
     async clore () {
       await this.$api.inspections.clore(this.inspection.id)
+    },
+    async enregistrerEnCanevas ({ data: canevas, done }) {
+      try {
+        await this.$api.inspections.enregistrerEnCanevas(this.inspection.id, canevas)
+        done(true)
+      } finally {
+        done()
+      }
     },
     async genererLettreAnnonce () {
       const url = await this.$api.inspections.genererLettreAnnonce(this.inspection.id)

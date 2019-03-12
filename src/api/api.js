@@ -138,6 +138,10 @@ export default class API {
       getRapport: inspectionId => {
         return this.authRequestBlob('get', `inspections/${inspectionId}/rapport`)
       },
+      enregistrerEnCanevas: async (inspectionId, canevas) => {
+        await this.authRequestJson('post', `inspections/${inspectionId}/canevas`, canevas)
+        await this.inspections.refreshInspectionOuverte()
+      },
       lireMessage: async messageId => {
         await this.authRequestJson('post', `messages/${messageId}/lire`)
         await this.inspections.refreshInspectionOuverte()
@@ -263,6 +267,15 @@ export default class API {
       },
       delete: (themeId) => {
         return this.authRequestJson('delete', `themes/${themeId}`)
+      }
+    }
+
+    this.canevas = {
+      list: () => {
+        return this.authRequestJson('get', 'canevas')
+      },
+      delete: (canevasId) => {
+        return this.authRequestJson('delete', `canevas/${canevasId}`)
       }
     }
 

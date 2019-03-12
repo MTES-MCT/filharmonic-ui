@@ -1,7 +1,7 @@
 // https://docs.cypress.io/api/introduction/api.html
 
-describe("Création d'une inspection", () => {
-  it('Visits the app root url', () => {
+describe("Fil'Harmonic", () => {
+  it("Création d'une inspection", () => {
     // Login inspecteur 3
     cy.visit('/')
     cy.contains('div', 'Connexion')
@@ -88,6 +88,12 @@ describe("Création d'une inspection", () => {
 
     // Publication de l'inspection
     cy.get('button[title="Publier"]').click()
+
+    // Enregistrer en canevas
+    cy.get('button[title="Afficher le menu"]').first().click()
+    cy.contains('.menuable__content__active a', 'Enregistrer en canevas').click()
+    cy.get('.v-dialog--active input[aria-label="Nom"]').type('Canevas test')
+    cy.get('.v-dialog--active button[title="Enregistrer"]').click()
 
     // Mettre l'inspection en favori
     cy.get('button[title="Mettre en favoris"]').click()
@@ -202,5 +208,6 @@ describe("Création d'une inspection", () => {
 
     // Clôture de l'inspection
     cy.get(`button[title="Clore l'inspection"]`).click()
+
   })
 })

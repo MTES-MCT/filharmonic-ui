@@ -10,6 +10,14 @@ fh-page(:wait="wait")
 
         v-form(ref="form" v-model="validForm" lazy-validation)
           fh-detail-inspection(:inspection="inspection")
+
+          v-layout.align-center
+            v-flex.subheading.mr-2 Canevas
+            v-flex.text-xs-right
+              v-autocomplete(v-model="inspection.canevas_id" :items="canevas"
+                            placeholder="Canevas..." item-value="id" item-text="nom" clearable
+                            )
+
           fh-btn(block :action="createInspection" :disableif="!validForm" color="primary") Créer l'inspection
 </template>
 
@@ -35,6 +43,7 @@ export default {
   },
   data () {
     return {
+      canevas: null, // fetched on init
       inspection: {
         date: '',
         type: 'courant',
@@ -47,7 +56,8 @@ export default {
         ],
         themes: [],
         etablissement_id: parseInt(this.etablissementId, 10),
-        etablissement: null // fetched on init
+        etablissement: null, // fetched on init
+        canevas_id: 0
       },
       validForm: false
     }
@@ -57,10 +67,15 @@ export default {
       this.wait = Promise.reject(new ForbiddenError('Il faut être inspecteur'))
       return
     }
-    this.wait = this.$api.etablissements.get(this.etablissementId, {
-      inspections: true
-    })
-    this.inspection.etablissement = await this.wait
+    this.wait = Promise.all([
+      this.$api.etablissements.get(this.etablissementId, {
+        inspections: true
+      }),
+      this.$api.canevas.list()
+    ])
+    const result = await this.wait
+    this.inspection.etablissement = result[0]
+    this.canevas = result[1]
   },
   methods: {
     async createInspection () {

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from '@/views/Layout.vue'
+import Canevas from '@/views/Canevas.vue'
 import Dashboard from '@/views/Dashboard.vue'
 import Etablissements from '@/views/Etablissements.vue'
 import Etablissement from '@/views/Etablissement.vue'
@@ -75,6 +76,11 @@ export function createRouter (store) {
             name: 'nouvelle-inspection',
             component: NouvelleInspection,
             props: true
+          },
+          {
+            path: '/canevas',
+            name: 'canevas',
+            component: Canevas
           },
           {
             path: '/themes',

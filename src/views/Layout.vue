@@ -19,6 +19,11 @@ v-app(v-if="user")
           v-icon bookmarks
         v-list-tile-content
           v-list-tile-title Thèmes
+      v-list-tile(to="/canevas" title="Canevas" v-if="$permissions.isInspecteur")
+        v-list-tile-action
+          v-icon assignment
+        v-list-tile-content
+          v-list-tile-title Canevas
 
       v-list-group(value="true" v-if="!$permissions.isExploitant")
         v-list-tile(slot="activator" title="Inspections favorites")
