@@ -35,7 +35,7 @@ Vue.config.productionTip = false
 
 class Application {
   async init () {
-    this.api = new API()
+    this.api = await (new API().init())
 
     this.store = await createStore({
       api: this.api

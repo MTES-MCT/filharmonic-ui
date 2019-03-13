@@ -20,7 +20,7 @@ export default class API {
               token
             })
             this.setAuthToken(token)
-            this.events = new EventsManager(userInfos.id)
+            this.events.connect(userInfos.id)
             return {
               valid: true,
               user: new User(userInfos)
@@ -39,7 +39,7 @@ export default class API {
         if (authenticationInfos) {
           sessionStorage.save(authenticationInfos.token)
           this.setAuthToken(authenticationInfos.token)
-          this.events = new EventsManager(authenticationInfos.user.id)
+          this.events.connect(authenticationInfos.user.id)
           this.store.commit('login', new User(authenticationInfos.user))
         }
       },
@@ -304,6 +304,11 @@ export default class API {
         this.store.commit('loadNotifications', notifications)
       }
     }
+  }
+
+  async init () {
+    this.events = await (new EventsManager(this.devMode).init())
+    return this
   }
 
   setAuthToken (token) {

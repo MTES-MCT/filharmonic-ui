@@ -1,30 +1,34 @@
 import events from '@/events.js'
 
 export default class EventsManager {
-  constructor (userId) {
+  constructor (devMode = false) {
+    this.devMode = devMode
     this.bus = events.bus
-    this.ws = new WebSocket('ws://' + location.host + '/api/ws')
-    this.ws.onopen = () => {
-      console.log('connecting WS')
-      this.sendEvent('connect', {
-        user_id: userId
-      })
-    }
-    this.ws.onmessage = event => {
-      this.onMessage(JSON.parse(event.data))
-    }
     this.pendingEvents = []
     this.polling = setInterval(() => {
       if (this.ws.readyState === WebSocket.OPEN) {
-        this.pendingEvents.forEach((event) => {
+        this.pendingEvents.forEach(event => {
           this.ws.send(JSON.stringify(event))
         })
         this.pendingEvents = []
       }
     }, 1000)
   }
+  async init () {
+    this.ws = new WebSocket('ws://' + location.host + '/api/ws')
+    await new Promise((resolve, reject) => {
+      this.ws.onopen = resolve
+      this.ws.onerror = reject
+    })
+    this.ws.onmessage = event => {
+      this.onMessage(JSON.parse(event.data))
+    }
+    return this
+  }
   onMessage (event) {
-    console.log(`new event ${event.type}:`, event.payload)
+    if (this.devMode) {
+      console.log(`new event ${event.type}:`, event.payload) // eslint-disable-line no-console
+    }
     this.bus.$emit(event.type, event.payload)
   }
   sendEvent (eventType, payload) {
@@ -45,10 +49,12 @@ export default class EventsManager {
       resource_id: id
     })
   }
+  connect (userId) {
+    this.sendEvent('connect', {
+      user_id: userId
+    })
+  }
   disconnect () {
-    console.log('disconnecting WS')
     this.sendEvent('disconnect', {})
-    // clearInterval(this.polling)
-    // this.ws.close()
   }
 }
