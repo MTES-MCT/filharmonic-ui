@@ -15,7 +15,7 @@ export default class EventsManager {
     }, 1000)
   }
   async init () {
-    this.ws = new WebSocket('ws://' + location.host + '/api/ws')
+    this.ws = new WebSocket((location.protocol === 'https:' ? 'wss' : 'ws') + '://' + location.host + '/api/ws')
     await new Promise((resolve, reject) => {
       this.ws.onopen = resolve
       this.ws.onerror = reject
