@@ -36,6 +36,7 @@ Vue.config.productionTip = false
 class Application {
   async init () {
     this.api = new API()
+
     this.store = await createStore({
       api: this.api
     })
@@ -64,7 +65,7 @@ class Application {
     }
     window.addEventListener('error', event => {
       event.preventDefault()
-      this.errorHandler(event.error)
+      this.errorHandler(event.error || event)
     })
     window.addEventListener('unhandledrejection', event => {
       event.preventDefault()

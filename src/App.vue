@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  v-snackbar(v-model="showSnackbar" top :color="snackbar.color" :timeout="4000")
+  v-snackbar(v-model="showSnackbar" bottom :color="snackbar.color" :timeout="4000")
     | {{ snackbar.message }}
     v-btn(icon @click="showSnackbar = false")
       v-icon close
@@ -12,7 +12,8 @@ import events from '@/events'
 
 const snackbarColor = {
   error: 'red',
-  success: 'green'
+  success: 'green',
+  info: 'primary'
 }
 
 export default {

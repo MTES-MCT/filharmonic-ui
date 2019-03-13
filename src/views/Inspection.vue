@@ -90,6 +90,7 @@ import FhLettreSuites from '@/components/FhLettreSuites.vue'
 import FhPopupValidation from '@/components/FhPopupValidation.vue'
 import FhPopupRejetValidation from '@/components/FhPopupRejetValidation.vue'
 import FhPopupCreationCanevas from '@/components/FhPopupCreationCanevas.vue'
+import events from '@/events'
 import BasePage from '@/views/mixins/BasePage.js'
 import * as util from '@/util'
 
@@ -179,6 +180,18 @@ export default {
       handler: 'loadInspection',
       immediate: true
     }
+  },
+  created () {
+    this.$api.events.subscribe('inspection', parseInt(this.inspectionId, 10))
+    this.$api.events.bus.$on('resource_updated', async ({ resource, resource_id: resourceId }) => {
+      if (resource === 'inspection' && resourceId === parseInt(this.inspectionId, 10)) {
+        await this.loadInspection()
+        this.$api.events.bus.$emit(events.Alert, 'info', `Les données de l'inspection ont été mises à jour par quelqu'un d'autre.`)
+      }
+    })
+  },
+  beforeDestroy () {
+    this.$api.events.unsubscribe('inspection', parseInt(this.inspectionId, 10))
   },
   methods: {
     loadInspection () {

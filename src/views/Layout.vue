@@ -142,6 +142,16 @@ export default {
   async created () {
     this.$api.notifications.loadNotifications()
     this.$api.inspections.refreshInspectionsFavorites()
+
+    this.$api.events.subscribe('notifications')
+    this.$api.events.bus.$on('resource_updated', ({ resource }) => {
+      if (resource === 'notifications') {
+        this.$api.notifications.loadNotifications()
+      }
+    })
+  },
+  beforeDestroy () {
+    this.$api.events.unsubscribe('notifications')
   },
   methods: {
     async logout (cerbereLogout) {

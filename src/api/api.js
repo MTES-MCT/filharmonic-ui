@@ -1,7 +1,8 @@
 import { ForbiddenError, UnknownServerError, ApplicationError, UnauthorizedError } from '@/errors'
 import sessionStorage from '@/api/sessionStorage'
-import LettresAPI from './lettres'
-import { Etablissement, User } from './models'
+import EventsManager from '@/api/events'
+import LettresAPI from '@/api/lettres'
+import { Etablissement, User } from '@/api/models'
 
 export default class API {
   constructor (options = {}) {
@@ -19,6 +20,7 @@ export default class API {
               token
             })
             this.setAuthToken(token)
+            this.events = new EventsManager(userInfos.id)
             return {
               valid: true,
               user: new User(userInfos)
@@ -37,6 +39,7 @@ export default class API {
         if (authenticationInfos) {
           sessionStorage.save(authenticationInfos.token)
           this.setAuthToken(authenticationInfos.token)
+          this.events = new EventsManager(authenticationInfos.user.id)
           this.store.commit('login', new User(authenticationInfos.user))
         }
       },
@@ -48,6 +51,8 @@ export default class API {
           iframe.src = 'https://authentification.din.developpement-durable.gouv.fr/cas/public/logout'
           document.body.appendChild(iframe)
         }
+
+        this.events.disconnect()
         this.store.dispatch('logout')
       }
     }

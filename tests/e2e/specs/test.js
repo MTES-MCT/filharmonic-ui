@@ -208,6 +208,5 @@ describe("Fil'Harmonic", () => {
 
     // Clôture de l'inspection
     cy.get(`button[title="Clore l'inspection"]`).click()
-
   })
 })
