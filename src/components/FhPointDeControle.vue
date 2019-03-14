@@ -17,40 +17,49 @@
         .fh-point-de-controle__referenceReglementaire(v-for="referenceReglementaire in pointDeControle.references_reglementaires") {{ referenceReglementaire }}
 
       .fh-point-de-controle__constat(v-if="peutVoirConstat" :style="`border-left-color: ${typeConstatPointDeControle.color}`")
-        v-layout.align-center
-          span.subheading.mr-2 Constat finalisé :
-          v-chip(small :color="typeConstatPointDeControle.color" dark text-color="white")
-            v-avatar
-              v-icon(large) {{ typeConstatPointDeControle.icon }}
-            | {{ typeConstatPointDeControle.label }}
+        v-form(v-if="editConstatMode" ref="constatEditeForm" v-model="validConstatEditeForm")
+          fh-constat-form(:constat="constatEdite")
+        template(v-else)
+          v-layout.align-center
+            span.subheading.mr-2 Constat finalisé :
+            v-chip(small :color="typeConstatPointDeControle.color" dark text-color="white")
+              v-avatar
+                v-icon(large) {{ typeConstatPointDeControle.icon }}
+              | {{ typeConstatPointDeControle.label }}
 
-        v-layout.align-center.my-2(v-if="pointDeControle.constat.remarques")
-          span.subheading.mr-2 Remarques&nbsp;:
-          v-flex
-            div {{ pointDeControle.constat.remarques }}
-        v-layout.align-center(v-if="pointDeControle.constat.delai_unite")
-          span.subheading.mr-2 Délai de mise en conformité :
-          v-flex {{ pointDeControle.constat.delai_nombre }} {{ pointDeControle.constat.delai_unite }}
+          v-layout.align-center.my-2(v-if="pointDeControle.constat.remarques")
+            span.subheading.mr-2 Remarques&nbsp;:
+            v-flex
+              div {{ pointDeControle.constat.remarques }}
+          v-layout.align-center(v-if="pointDeControle.constat.delai_unite")
+            span.subheading.mr-2 Délai de mise en conformité :
+            v-flex {{ pointDeControle.constat.delai_nombre }} {{ pointDeControle.constat.delai_unite }}
 
-        template(v-if="pointDeControle.constat.echeance_resolution")
-          p.red--text.mt-2(v-if="$permissions.isExploitant && !pointDeControle.constat.date_resolution")
+          template(v-if="pointDeControle.constat.echeance_resolution")
+            p.red--text.mt-2(v-if="$permissions.isExploitant && !pointDeControle.constat.date_resolution")
+              strong
+                | Vous avez jusqu'au {{ new Date(pointDeControle.constat.echeance_resolution).toLocaleDateString() }} pour apporter des preuves concernant la résolution de ce point.
+            v-layout.mt-2.align-center(v-else)
+              span.subheading.mr-2 Échéance de mise en conformité :
+              v-flex {{ new Date(pointDeControle.constat.echeance_resolution).toLocaleDateString() }}
+
+          p.green--text.mt-2(v-if="pointDeControle.constat.date_resolution")
             strong
-              | Vous avez jusqu'au {{ new Date(pointDeControle.constat.echeance_resolution).toLocaleDateString() }} pour apporter des preuves concernant la résolution de ce point.
-          v-layout.mt-2.align-center(v-else)
-            span.subheading.mr-2 Échéance de mise en conformité :
-            v-flex {{ new Date(pointDeControle.constat.echeance_resolution).toLocaleDateString() }}
-
-        p.green--text.mt-2(v-if="pointDeControle.constat.date_resolution")
-          strong
-            | Résolu le {{ new Date(pointDeControle.constat.date_resolution).toLocaleString() }}
-        fh-btn.mt-2.white--text(v-if="peutResoudreConstat" color="green" :action="resoudreConstat" title="Résoudre la non-conformité")
-          v-icon(left) check_circle_outline
-          | Résoudre
+              | Résolu le {{ new Date(pointDeControle.constat.date_resolution).toLocaleString() }}
+          fh-btn.mt-2.white--text(v-if="peutResoudreConstat" color="green" :action="resoudreConstat" title="Résoudre la non-conformité")
+            v-icon(left) check_circle_outline
+            | Résoudre
 
     .d-flex(v-if="editMode")
       v-btn(flat title="Annuler l'édition" @click="quitEditMode" :disabled="modificationPointDeControleEnCours")
         v-icon(medium) clear
       fh-btn(depressed color="success" title="Mettre à jour" :action="modifierPointDeControle" :disableif="!validPointDeControleEditeForm")
+        v-icon(medium) check
+
+    .d-flex(v-if="editConstatMode")
+      v-btn(flat title="Annuler l'édition" @click="quitEditConstatMode" :disabled="modificationConstatEnCours")
+        v-icon(medium) clear
+      fh-btn(depressed color="success" title="Mettre à jour" :action="modifierConstat" :disableif="!validConstatEditeForm")
         v-icon(medium) check
 
     v-menu.d-flex(bottom left offset-y transition="slide-y-transition" v-if="peutEditer")
@@ -68,7 +77,13 @@
                   )
           v-icon(left) visibility
           | Publier
-        v-btn.ma-0(v-if="peutSupprimerConstat"
+        v-btn.ma-0(v-if="peutModifierConstat"
+                  depressed large title="Modifier le constat"
+                  @click="enterEditConstatMode"
+                  )
+          v-icon(left) edit gavel
+          | Modifier le constat
+        v-btn.ma-0(v-if="peutModifierConstat"
                   depressed large title="Supprimer le constat"
                   @click="supprimerConstat"
                   )
@@ -117,7 +132,7 @@
                       v-layout.row.mt-1
                         v-text-field(type="number" v-model.number="newConstat.delai_nombre"
                                      label="Délai" box single-line style="width: 80px")
-                        v-select.ml-1(v-model="newConstat.delai_unite" :items="unitesDelai"
+                        v-select.ml-1(v-model="newConstat.delai_unite" :items="unitesDelaisConstat"
                                       label="Unité" box single-line style="width: 100px")
 
               v-card-actions.justify-center.pb-3
@@ -140,8 +155,9 @@
 </template>
 
 <script>
-import { isAfterState, isBeforeState, typesConstats } from '@/api/inspections'
+import { isAfterState, isBeforeState, typesConstats, unitesDelaisConstat } from '@/api/inspections'
 import FhBtn from '@/components/FhBtn.vue'
+import FhConstatForm from '@/components/FhConstatForm.vue'
 import FhIconeNouveauxMessages from '@/components/FhIconeNouveauxMessages.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhNewMessage from '@/components/FhNewMessage.vue'
@@ -153,6 +169,7 @@ export default {
   name: 'FhPointDeControle',
   components: {
     FhBtn,
+    FhConstatForm,
     FhIconeNouveauxMessages,
     FhMessage,
     FhNewMessage,
@@ -182,9 +199,13 @@ export default {
       pointDeControleEdite: null,
       validPointDeControleEditeForm: true,
       modificationPointDeControleEnCours: false,
+      constatEdite: null,
+      validConstatEditeForm: true,
+      modificationConstatEnCours: false,
       showMessages: false,
       showNewConstatForm: false,
       typesConstats,
+      unitesDelaisConstat,
       newConstat: {
         type: 'conforme',
         delai_nombre: 3,
@@ -192,16 +213,15 @@ export default {
       },
       notEmpty: [
         v => !!v || 'Il faut renseigner une valeur'
-      ],
-      unitesDelai: [
-        'jours',
-        'mois'
       ]
     }
   },
   computed: {
     editMode () {
       return this.pointDeControleEdite !== null
+    },
+    editConstatMode () {
+      return this.constatEdite !== null
     },
     deplierMessagesEnCours () {
       return this.etatInspection !== 'traitement_non_conformites' ? 0 : -1
@@ -213,7 +233,7 @@ export default {
       return !this.$permissions.isExploitant || this.pointDeControle.publie
     },
     peutEditer () {
-      return !this.readonly && this.$permissions.isInspecteur && isBeforeState(this.etatInspection, 'attente_validation') && !this.editMode
+      return !this.readonly && this.$permissions.isInspecteur && isBeforeState(this.etatInspection, 'attente_validation') && !this.editMode && !this.editConstatMode
     },
     peutPublier () {
       return this.$permissions.isInspecteur && !this.pointDeControle.publie && isBeforeState(this.etatInspection, 'attente_validation')
@@ -233,7 +253,7 @@ export default {
     peutVoirConstat () {
       return this.pointDeControle.constat && (!this.$permissions.isExploitant || isAfterState(this.etatInspection, 'attente_validation'))
     },
-    peutSupprimerConstat () {
+    peutModifierConstat () {
       return this.pointDeControle.constat && this.$permissions.isInspecteur && this.etatInspection === 'en_cours'
     },
     peutResoudreConstat () {
@@ -282,7 +302,7 @@ export default {
         await this.$api.inspections.supprimerPointDeControle(this.pointDeControle.id)
       })
     },
-    async toggleShowMessages () {
+    toggleShowMessages () {
       this.showMessages = !this.showMessages
     },
     resetNewConstat () {
@@ -296,6 +316,32 @@ export default {
     async ajouterConstat () {
       await this.$api.inspections.ajouterConstat(this.pointDeControle.id, this.newConstat)
       this.resetNewConstat()
+      this.showMessages = false
+      this.$vuetify.goTo(`#pdc${this.pointDeControle.id}`, {
+        offset: 300
+      })
+    },
+    quitEditConstatMode () {
+      this.constatEdite = null
+    },
+    enterEditConstatMode () {
+      this.constatEdite = _.cloneDeep({
+        type: this.pointDeControle.constat.type,
+        remarques: this.pointDeControle.constat.remarques,
+        delai_nombre: this.pointDeControle.constat.delai_nombre || 3,
+        delai_unite: this.pointDeControle.constat.delai_unite || 'mois'
+      })
+    },
+    async modifierConstat () {
+      if (this.$refs.constatEditeForm.validate()) {
+        this.modificationConstatEnCours = true
+        try {
+          await this.$api.inspections.modifierConstat(this.pointDeControle.id, this.constatEdite)
+          this.quitEditConstatMode()
+        } finally {
+          this.modificationConstatEnCours = false
+        }
+      }
     },
     supprimerConstat () {
       this.$confirm('Êtes-vous sûr de vouloir supprimer ce constat ?', async () => {

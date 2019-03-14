@@ -1,5 +1,10 @@
 // https://docs.cypress.io/api/introduction/api.html
 
+// en attendant https://github.com/cypress-io/cypress/issues/566
+const typeOptions = {
+  delay: 2
+}
+
 describe("Fil'Harmonic", () => {
   it("Création d'une inspection", () => {
     // Login inspecteur 3
@@ -9,9 +14,9 @@ describe("Fil'Harmonic", () => {
 
     // Recherche des établissements
     cy.contains('Etablissements').click()
-    cy.get('input[aria-label*="raison"]').type('Raison sociale 2')
-    cy.get('input[aria-label*="Localisation"]').type('Nantes')
-    cy.get('input[aria-label*="S3IC"]').type('451')
+    cy.get('input[aria-label*="raison"]').type('Raison sociale 2', typeOptions)
+    cy.get('input[aria-label*="Localisation"]').type('Nantes', typeOptions)
+    cy.get('input[aria-label*="S3IC"]').type('451', typeOptions)
     cy.contains('Rechercher').click()
 
     // Sélection d'un établissement
@@ -27,25 +32,25 @@ describe("Fil'Harmonic", () => {
     cy.contains('.v-select-list div[role="listitem"]', 'Produits chimiques').click()
     cy.contains('.v-select-list div[role="listitem"]', 'Incendie').click()
     cy.document().then(document => document.querySelector('.v-select--is-menu-active').__vue__.blur())
-    cy.get('textarea').type('Contexte inspection')
+    cy.get('textarea').type('Contexte inspection', typeOptions)
     cy.contains("Créer l'inspection").click()
 
     // Ajout d'un point de contrôle
     cy.contains('Ajouter un point de contrôle').click()
-    cy.get('input[aria-label="Sujet"]').type('Point de contrôle 1')
-    cy.get('input[aria-label="Référence réglementaire"]').type('Référence réglementaire 1')
+    cy.get('input[aria-label="Sujet"]').type('Point de contrôle 1', typeOptions)
+    cy.get('input[aria-label="Référence réglementaire"]').type('Référence réglementaire 1', typeOptions)
     cy.contains('Nouvelle référence réglementaire').click()
-    cy.get('input[aria-label="Référence réglementaire"]').last().type('Référence réglementaire 2')
+    cy.get('input[aria-label="Référence réglementaire"]').last().type('Référence réglementaire 2', typeOptions)
     cy.contains('Ajouter').click()
 
     // Publication du point de contrôle
     cy.get('button[title="Éditer/supprimer"]').click()
-    cy.contains('.menuable__content__active', 'Publier').click()
+    cy.contains('.menuable__content__active button', 'Publier').click()
 
     // Ajout d'un message
     cy.get('.fh-point-de-controle button[title="Déplier/replier"]').first().click()
     cy.contains('button', 'Nouveau message').click()
-    cy.get('textarea[aria-label="Message"]').type('Pourriez-vous me transmettre le dernier relevé de NOx?')
+    cy.get('textarea[aria-label="Message"]').type('Pourriez-vous me transmettre le dernier relevé de NOx?', typeOptions)
     cy.get('input[aria-label="Interne"] + div').click()
     cy.upload_file('pdf-sample.pdf', 'application/pdf', 'input[type=file]')
     cy.wait(500)
@@ -54,7 +59,7 @@ describe("Fil'Harmonic", () => {
     // Ajout d'un commentaire
     cy.contains('Commentaires').click()
     cy.contains('button', 'Nouveau commentaire').click()
-    cy.get('textarea[aria-label="Message"]').type('Problème de NOx à surveiller')
+    cy.get('textarea[aria-label="Message"]').type('Problème de NOx à surveiller', typeOptions)
     cy.upload_file('pdf-sample.pdf', 'application/pdf', 'input[type=file]')
     cy.wait(200)
     cy.get('button[title="Envoyer"]').click()
@@ -77,14 +82,14 @@ describe("Fil'Harmonic", () => {
 
     // Ajout d'un 2e point de contrôle
     cy.contains('Ajouter un point de contrôle').click()
-    cy.get('input[aria-label="Sujet"]').type('Point de contrôle 2')
-    cy.get('input[aria-label="Référence réglementaire"]').type('Référence réglementaire 2')
+    cy.get('input[aria-label="Sujet"]').type('Point de contrôle 2', typeOptions)
+    cy.get('input[aria-label="Référence réglementaire"]').type('Référence réglementaire 2', typeOptions)
     cy.contains('Ajouter').click()
     cy.wait(1000)
 
     // Publication du 2e point de contrôle
     cy.get('button[title="Éditer/supprimer"]').eq(1).click()
-    cy.contains('.menuable__content__active', 'Publier').click()
+    cy.contains('.menuable__content__active button', 'Publier').click()
 
     // Publication de l'inspection
     cy.get('button[title="Publier"]').click()
@@ -92,7 +97,7 @@ describe("Fil'Harmonic", () => {
     // Enregistrer en canevas
     cy.get('button[title="Afficher le menu"]').first().click()
     cy.contains('.menuable__content__active a', 'Enregistrer en canevas').click()
-    cy.get('.v-dialog--active input[aria-label="Nom"]').type('Canevas test')
+    cy.get('.v-dialog--active input[aria-label="Nom"]').type('Canevas test ' + new Date().getTime(), typeOptions)
     cy.get('.v-dialog--active button[title="Enregistrer"]').click()
 
     // Mettre l'inspection en favori
@@ -116,7 +121,7 @@ describe("Fil'Harmonic", () => {
 
     // Ajout d'un message
     cy.contains('button', 'Nouveau message').first().click()
-    cy.get('.v-dialog--active textarea[aria-label="Message"]').type('Voici le dernier relevé de NOx.')
+    cy.get('.v-dialog--active textarea[aria-label="Message"]').type('Voici le dernier relevé de NOx.', typeOptions)
     cy.upload_file('pdf-sample.pdf', 'application/pdf', '.v-dialog--active input[type=file]')
     cy.wait(500)
     cy.get('.v-dialog--active button[title="Envoyer"]').click()
@@ -138,11 +143,18 @@ describe("Fil'Harmonic", () => {
     cy.contains('.fh-constat button', 'Sauvegarder le constat').click()
     cy.wait(500)
 
+    // Modification du 1er constat
+    cy.get('button[title="Éditer/supprimer"]').first().click()
+    cy.wait(500)
+    cy.contains('.menuable__content__active button', 'Modifier le constat').click()
+    cy.get('.fh-point-de-controle textarea[aria-label="Remarques"]').type('Nouveau constat', typeOptions)
+    cy.get('.fh-point-de-controle button[title="Mettre à jour"]').first().click()
+
     // Ajout d'un constat non conforme sur le 2eme point de contrôle
     cy.get('.fh-point-de-controle button[title="Déplier/replier"]').last().click()
     cy.contains('Ajouter un constat').last().click()
     cy.get('.fh-constat input[aria-label="Non conforme"] + div').click()
-    cy.get('.fh-constat textarea[aria-label="Remarques"]').type('Seuil de NOx dépassé de beaucoup.')
+    cy.get('.fh-constat textarea[aria-label="Remarques"]').type('Seuil de NOx dépassé de beaucoup.', typeOptions)
     cy.contains('.fh-constat button', 'Sauvegarder le constat').click()
 
     // Ajout d'une suite
@@ -186,7 +198,7 @@ describe("Fil'Harmonic", () => {
 
     // Ajout d'un message
     cy.contains('button', 'Nouveau message').first().click()
-    cy.get('.v-dialog--active textarea[aria-label="Message"]').type('Voici la facture de réparation.')
+    cy.get('.v-dialog--active textarea[aria-label="Message"]').type('Voici la facture de réparation.', typeOptions)
     cy.upload_file('pdf-sample.pdf', 'application/pdf', '.v-dialog--active input[type=file]')
     cy.wait(500)
     cy.get('.v-dialog--active button[title="Envoyer"]').click()

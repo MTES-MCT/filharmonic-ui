@@ -58,6 +58,11 @@ export const typesConstats = {
   }
 }
 
+export const unitesDelaisConstat = [
+  'jours',
+  'mois'
+]
+
 export const typesSuite = {
   aucune: {
     label: 'Aucune',
