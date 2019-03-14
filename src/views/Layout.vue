@@ -45,7 +45,7 @@ v-app(v-if="user")
                 | ,&nbsp;
                 i {{ inspection.etablissement.adresse }}
 
-      v-list-tile(href="https://docs.google.com/presentation/d/1RdHWb16SVFx84g99TcEA16-eaMHvp3tBPxu1nTaBBsA/edit" target="_blank")
+      v-list-tile(:href="lienAideUtilisateur" target="_blank")
         v-list-tile-action
           v-icon help
         v-list-tile-content
@@ -137,7 +137,13 @@ export default {
       user: state => state.authentication.user,
       favoris: state => state.inspectionsFavorites,
       notifications: state => state.notifications
-    })
+    }),
+    lienAideUtilisateur () {
+      if (this.$permissions.isApprobateur) {
+        return 'https://docs.google.com/presentation/d/1o9jyhNut7U9DUE2ZNaivpUr2dBl9AB3Gtyp9GrXuEzk'
+      }
+      return 'https://docs.google.com/presentation/d/1RdHWb16SVFx84g99TcEA16-eaMHvp3tBPxu1nTaBBsA'
+    }
   },
   async created () {
     this.$api.notifications.loadNotifications()
