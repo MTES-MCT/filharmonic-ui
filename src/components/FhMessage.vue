@@ -16,7 +16,7 @@
                     )
                 v-icon drafts
             v-card-text(:color="color")
-              p {{ message.message }}
+              p.fh-multiline {{ message.message }}
             fh-attachment(v-for="pieceJointe in message.pieces_jointes" :key="pieceJointe.id" :attachment="pieceJointe")
 </template>
 

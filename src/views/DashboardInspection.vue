@@ -2,7 +2,7 @@
 v-container
   v-alert.ma-2.mb-4(v-if="!$permissions.isExploitant && inspection.validation_rejetee" :value="true" type="error")
     | La demande de validation a été rejetée.&nbsp;
-    span(v-if="inspection.motif_rejet_validation") Motif: {{ inspection.motif_rejet_validation }}
+    span.fh-multiline(v-if="inspection.motif_rejet_validation") Motif: {{ inspection.motif_rejet_validation }}
 
   p(v-if="showMessagePointsDeControleNonModifiables") Les points de contrôle ne sont pas modifiables tant qu'une suite est présente.
 

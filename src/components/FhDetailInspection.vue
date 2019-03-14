@@ -94,7 +94,8 @@ v-container.pa-0(:class="containerClass")
 
   v-layout.align-center(v-if="!readonly || inspection.contexte")
     v-flex.subheading.mr-2 Contexte
-    v-flex.text-xs-right(v-if="readonly" style="word-break: break-all") {{ inspection.contexte }}
+    v-spacer
+    .fh-multiline(v-if="readonly") {{ inspection.contexte }}
     v-flex(v-else)
       v-textarea(box v-model="inspection.contexte")
 
