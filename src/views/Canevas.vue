@@ -31,8 +31,20 @@ export default {
   },
   created () {
     this.loadCanevas()
+    this.$api.events.subscribe('canevas')
+    this.$api.events.bus.$on('resource_updated', this.resourceUpdatedCallback)
+  },
+  beforeDestroy () {
+    this.$api.events.unsubscribe('canevas')
+    this.$api.events.bus.$off('resource_updated', this.resourceUpdatedCallback)
   },
   methods: {
+    async resourceUpdatedCallback ({ resource }) {
+      if (resource === 'canevas') {
+        await this.loadCanevas()
+        this.$api.events.bus.$emit('alert', 'info', `Les canevas ont été mis à jour par quelqu'un d'autre.`)
+      }
+    },
     async loadCanevas () {
       this.wait = this.$api.canevas.list()
       this.listeCanevas = await this.wait

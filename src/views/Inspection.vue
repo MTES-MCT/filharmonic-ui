@@ -156,17 +156,19 @@ export default {
   },
   created () {
     this.$api.events.subscribe('inspection', parseInt(this.inspectionId, 10))
-    this.$api.events.bus.$on('resource_updated', async ({ resource, resource_id: resourceId }) => {
+    this.$api.events.bus.$on('resource_updated', this.resourceUpdatedCallback)
+  },
+  beforeDestroy () {
+    this.$api.events.unsubscribe('inspection', parseInt(this.inspectionId, 10))
+    this.$api.events.bus.$off('resource_updated', this.resourceUpdatedCallback)
+  },
+  methods: {
+    async resourceUpdatedCallback ({ resource, resource_id: resourceId }) {
       if (resource === 'inspection' && resourceId === parseInt(this.inspectionId, 10)) {
         await this.loadInspection()
         this.$api.events.bus.$emit(events.Alert, 'info', `Les données de l'inspection ont été mises à jour par quelqu'un d'autre.`)
       }
-    })
-  },
-  beforeDestroy () {
-    this.$api.events.unsubscribe('inspection', parseInt(this.inspectionId, 10))
-  },
-  methods: {
+    },
     loadInspection () {
       this.wait = this.$api.inspections.loadInspection(parseInt(this.inspectionId, 10))
     },

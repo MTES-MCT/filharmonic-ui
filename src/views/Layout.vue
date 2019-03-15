@@ -152,16 +152,18 @@ export default {
     this.$api.inspections.refreshInspectionsFavorites()
 
     this.$api.events.subscribe('notifications')
-    this.$api.events.bus.$on('resource_updated', ({ resource }) => {
-      if (resource === 'notifications') {
-        this.$api.notifications.loadNotifications()
-      }
-    })
+    this.$api.events.bus.$on('resource_updated', this.resourceUpdatedCallback)
   },
   beforeDestroy () {
     this.$api.events.unsubscribe('notifications')
+    this.$api.events.bus.$off('resource_updated', this.resourceUpdatedCallback)
   },
   methods: {
+    resourceUpdatedCallback ({ resource }) {
+      if (resource === 'notifications') {
+        this.$api.notifications.loadNotifications()
+      }
+    },
     async logout (cerbereLogout) {
       await this.$api.authentication.logout(cerbereLogout)
       this.$router.push('/login?redirect=/')

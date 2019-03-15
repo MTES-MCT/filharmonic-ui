@@ -35,8 +35,20 @@ export default {
   },
   created () {
     this.loadThemes()
+    this.$api.events.subscribe('themes')
+    this.$api.events.bus.$on('resource_updated', this.resourceUpdatedCallback)
+  },
+  beforeDestroy () {
+    this.$api.events.unsubscribe('themes')
+    this.$api.events.bus.$off('resource_updated', this.resourceUpdatedCallback)
   },
   methods: {
+    async resourceUpdatedCallback ({ resource }) {
+      if (resource === 'themes') {
+        await this.loadThemes()
+        this.$api.events.bus.$emit('alert', 'info', `Les thèmes ont été mis à jour par quelqu'un d'autre.`)
+      }
+    },
     async loadThemes () {
       this.wait = this.$api.themes.list()
       this.themes = await this.wait

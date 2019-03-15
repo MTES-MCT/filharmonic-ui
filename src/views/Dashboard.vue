@@ -159,23 +159,40 @@ export default {
     }
   },
   async created () {
-    if (this.$permissions.isExploitant) {
-      this.wait = Promise.all([
-        this.$api.inspections.list(),
-        this.$api.etablissements.list()
-      ])
-      const result = await this.wait
-      this.inspections = result[0]
-      this.etablissements = result[1].etablissements
-    } else {
-      if (this.$permissions.isInspecteur) {
-        this.wait = this.$api.inspections.list({
-          assigned: true
-        })
-      } else {
-        this.wait = this.$api.inspections.list()
+    await this.loadInspections()
+    this.$api.events.subscribe('inspections')
+    this.$api.events.bus.$on('resource_updated', this.resourceUpdatedCallback)
+  },
+  beforeDestroy () {
+    this.$api.events.unsubscribe('inspections')
+    this.$api.events.bus.$off('resource_updated', this.resourceUpdatedCallback)
+  },
+  methods: {
+    async resourceUpdatedCallback ({ resource }) {
+      if (resource === 'inspections') {
+        await this.loadInspections()
+        this.$api.events.bus.$emit('alert', 'info', 'La liste des inspections a été mise à jour.')
       }
-      this.inspections = await this.wait
+    },
+    async loadInspections () {
+      if (this.$permissions.isExploitant) {
+        this.wait = Promise.all([
+          this.$api.inspections.list(),
+          this.$api.etablissements.list()
+        ])
+        const result = await this.wait
+        this.inspections = result[0]
+        this.etablissements = result[1].etablissements
+      } else {
+        if (this.$permissions.isInspecteur) {
+          this.wait = this.$api.inspections.list({
+            assigned: true
+          })
+        } else {
+          this.wait = this.$api.inspections.list()
+        }
+        this.inspections = await this.wait
+      }
     }
   }
 }
