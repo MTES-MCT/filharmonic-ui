@@ -5,9 +5,8 @@ fh-page(:wait="wait")
       h1.display-1.font-weight-bold.mb-4 Référentiel des thèmes
       p Cette page permet de gérer les thèmes utilisables lors des inspections.
       div(v-for="theme in themes" :key="theme.id")
-        span.body-2 {{ theme.nom }}
-        v-btn(icon @click="deleteTheme(theme.id)")
-          v-icon close
+        v-chip(close @input="deleteTheme(theme.id)")
+          | {{ theme.nom }}
       v-form(ref="form" @submit.prevent="addTheme")
         v-text-field.d-inline-block(v-model="newTheme" required :rules="themesRules" label="Nouveau thème")
         v-btn(type="submit" color="primary") Créer
