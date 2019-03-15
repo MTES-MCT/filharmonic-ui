@@ -70,27 +70,20 @@ v-container.pa-0(:class="containerClass")
                     item-text="fullname" return-object
                     placeholder="Inspecteurs..."
                     required :rules="inspecteursRules"
-                    :readonly="readonly"
                     )
 
   v-layout.align-center
     v-flex.subheading.mr-2 Thèmes
-    v-flex.text-xs-right
-      v-combobox(v-model="inspection.themes" :items="themes"
-                chips small-chips deletable-chips dense multiple
-                :search-input.sync="themeSearch"
-                placeholder="Thèmes..."
-                required :rules="themesRules"
-                :readonly="readonly"
-                append-outer-icon="filter_list"
-                @click:append-outer="moreThemes = !moreThemes")
-        template(slot="selection" slot-scope="{ item, index }")
-          v-chip(v-if="index < max")
-            span {{ item }}
-          span.grey--text.caption(v-if="index === max") +{{ numberOtherThemes }} {{ others }}
-        template(v-if="!readonly" slot="no-data")
-            v-list-tile.subheading Créer le thème
-              v-chip(label small) {{ themeSearch }}
+    v-flex.text-xs-right(v-if="readonly")
+      v-chip(v-for="theme in inspection.themes" :key="theme" small)
+        | {{ theme }}
+    v-flex.text-xs-right(v-else)
+      v-autocomplete(v-model="inspection.themes" :items="themes"
+                    chips small-chips deletable-chips dense multiple hide-selected
+                    :search-input.sync="themeSearch"
+                    placeholder="Thèmes..."
+                    required :rules="themesRules"
+                    )
 
   v-layout.align-center(v-if="!readonly || inspection.contexte")
     v-flex.subheading.mr-2 Contexte
@@ -131,8 +124,7 @@ export default {
 
       // fetched on init
       inspecteurs: [],
-      themes: [],
-      moreThemes: false
+      themes: []
     }
   },
   computed: {
@@ -144,15 +136,6 @@ export default {
     },
     containerClass () {
       return `grid-list-${this.readonly ? 'sm' : 'xl'}`
-    },
-    max () {
-      return this.moreThemes ? this.inspection.themes.length : 2
-    },
-    numberOtherThemes () {
-      return this.inspection.themes.length - this.max
-    },
-    others () {
-      return this.numberOtherThemes > 1 ? 'autres' : 'autre'
     }
   },
   watch: {
@@ -188,7 +171,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus">
-
-</style>

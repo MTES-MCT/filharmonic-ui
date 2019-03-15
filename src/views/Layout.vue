@@ -14,7 +14,7 @@ v-app(v-if="user")
           v-icon location_city
         v-list-tile-content
           v-list-tile-title Etablissements
-      v-list-tile(to="/themes" title="Thèmes" v-if="$permissions.isApprobateur")
+      v-list-tile(to="/themes" title="Thèmes" v-if="!$permissions.isExploitant")
         v-list-tile-action
           v-icon bookmarks
         v-list-tile-content
