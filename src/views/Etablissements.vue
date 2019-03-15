@@ -1,43 +1,44 @@
 <template lang="pug">
-  v-container
-    v-flex.xs12.md6.pa-2
-      v-card
-        v-toolbar(flat)
-          v-toolbar-title Recherche d'établissements
-        v-card-text
-          v-form(ref="form" lazy-validation)
-            v-text-field(
-              v-model="filter.nom" @keydown.enter="listEtablissements()"
-              label="Nom usuel ou raison sociale" autofocus)
-            v-text-field(
-              v-model="filter.adresse" @keydown.enter="listEtablissements()"
-              label="Localisation par commune ou code postal")
-            v-text-field(
-              v-model="filter.s3ic" @keydown.enter="listEtablissements()"
-              label="Code S3IC")
-            fh-btn(
-              :action="listEtablissements"
-              color="primary") Rechercher
-            v-btn(@click="resetForm") Effacer
+v-container
+  h1.display-1.font-weight-bold.mb-4 Recherche d'établissements
 
-      v-list(two-line)
-        .fh-loadingbar
-          v-progress-linear.my-0(v-if="loading" indeterminate height="4")
-        template(v-if="results")
-          v-list-tile(v-if="results.etablissements.length === 0") Aucun résultat
-          template(v-else)
-            v-subheader
-              | {{ results.total }} résultat
-              span(v-if="results.etablissements.length > 1") s
-            v-pagination.fh-pagination(:value="filter.page" @input="changePage" :length="totalPages")
-            template(v-for="etablissement in results.etablissements")
-              v-divider
-              v-list-tile(:to="`/etablissements/${etablissement.id}`" :key="etablissement.id")
-                v-list-tile-action
-                  v-icon location_city
-                v-list-tile-content
-                  v-list-tile-title {{ etablissement.raison }}
-                  v-list-tile-sub-title {{ etablissement.adresse }}
+  p Cette page permet de rechercher un établissement afin de lister les inspections liées ou d'en créer de nouvelles.
+
+  v-card
+    v-card-text
+      v-form(ref="form" lazy-validation)
+        v-text-field(
+          v-model="filter.nom" @keydown.enter="listEtablissements()"
+          label="Nom usuel ou raison sociale" autofocus)
+        v-text-field(
+          v-model="filter.adresse" @keydown.enter="listEtablissements()"
+          label="Localisation par commune ou code postal")
+        v-text-field(
+          v-model="filter.s3ic" @keydown.enter="listEtablissements()"
+          label="Code S3IC")
+        fh-btn(
+          :action="listEtablissements"
+          color="primary") Rechercher
+        v-btn(@click="resetForm") Effacer
+
+  v-list(two-line)
+    .fh-loadingbar
+      v-progress-linear.my-0(v-if="loading" indeterminate height="4")
+    template(v-if="results")
+      v-list-tile(v-if="results.etablissements.length === 0") Aucun résultat
+      template(v-else)
+        v-subheader
+          | {{ results.total }} résultat
+          span(v-if="results.etablissements.length > 1") s
+        v-pagination.fh-pagination(:value="filter.page" @input="changePage" :length="totalPages")
+        template(v-for="etablissement in results.etablissements")
+          v-divider
+          v-list-tile(:to="`/etablissements/${etablissement.id}`" :key="etablissement.id")
+            v-list-tile-action
+              v-icon location_city
+            v-list-tile-content
+              v-list-tile-title {{ etablissement.raison }}
+              v-list-tile-sub-title {{ etablissement.adresse }}
 
 </template>
 

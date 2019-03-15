@@ -13,7 +13,7 @@ describe("Fil'Harmonic", () => {
     cy.visit('/login?ticket=ticket-3')
 
     // Recherche des établissements
-    cy.contains('Etablissements').click()
+    cy.contains('Établissements').click()
     cy.get('input[aria-label*="raison"]').type('Raison sociale 2', typeOptions)
     cy.get('input[aria-label*="Localisation"]').type('Nantes', typeOptions)
     cy.get('input[aria-label*="S3IC"]').type('451', typeOptions)

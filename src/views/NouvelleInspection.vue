@@ -1,24 +1,36 @@
 <template lang="pug">
 fh-page(:wait="wait")
   template(slot-scope="_")
-    v-container.grid-list-lg.inspection-form
-      div(v-if="inspection.etablissement")
-        h1.display-2 Nouvelle inspection
-        fh-detail-etablissement(:etablissement="inspection.etablissement")
+    v-container.grid-list-lg
+      v-breadcrumbs.pt-0(:items="breadcrumbs" divider=">" large)
+      h1.display-1.font-weight-bold.mb-4 Création d'une inspection
 
-        h4.display-1.mt-4 Détails de l'inspection
+      v-layout.row.wrap.grid-list-lg
+        v-flex.xs12.md7.pa-2
+          v-card
+            v-toolbar(flat)
+              v-toolbar-title
+                | Détails de l'inspection
+            v-card-text
+              v-form(ref="form" v-model="validForm" lazy-validation)
+                fh-detail-inspection(:inspection="inspection")
 
-        v-form(ref="form" v-model="validForm" lazy-validation)
-          fh-detail-inspection(:inspection="inspection")
+                v-layout.align-center
+                  v-flex.subheading.mr-2 Canevas
+                  v-flex.text-xs-right
+                    v-autocomplete(v-model="inspection.canevas_id" :items="canevas"
+                                  placeholder="Canevas..." item-value="id" item-text="nom" clearable
+                                  )
 
-          v-layout.align-center
-            v-flex.subheading.mr-2 Canevas
-            v-flex.text-xs-right
-              v-autocomplete(v-model="inspection.canevas_id" :items="canevas"
-                            placeholder="Canevas..." item-value="id" item-text="nom" clearable
-                            )
+                fh-btn(block :action="createInspection" :disableif="!validForm" color="primary") Créer l'inspection
 
-          fh-btn(block :action="createInspection" :disableif="!validForm" color="primary") Créer l'inspection
+        v-flex.xs12.md5.pa-2
+          v-card
+            v-toolbar(flat)
+              v-toolbar-title
+                | Détails de l'établissement
+            v-card-text
+              fh-detail-etablissement(:etablissement="inspection.etablissement")
 </template>
 
 <script>
@@ -62,6 +74,21 @@ export default {
       validForm: false
     }
   },
+  computed: {
+    breadcrumbs () {
+      return [
+        {
+          text: this.inspection.etablissement.raison,
+          'active-class': null,
+          to: `/etablissements/${this.inspection.etablissement.id}`
+        },
+        {
+          text: `Nouvelle inspection`,
+          disabled: true
+        }
+      ]
+    }
+  },
   async created () {
     if (this.$permissions.isExploitant) {
       this.wait = Promise.reject(new ForbiddenError('Il faut être inspecteur'))
@@ -87,8 +114,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus">
-.inspection-form
-  max-width 600px
-</style>

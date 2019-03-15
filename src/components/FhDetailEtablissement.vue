@@ -1,43 +1,34 @@
 <template lang="pug">
-  v-expansion-panel(expand v-model="panelExpansion")
-    v-expansion-panel-content
-      div(slot="header") {{ etablissement.raison }} n°{{ etablissement.s3ic }}
-      v-card
-        v-toolbar(flat)
-          v-toolbar-title Détails
-        v-card-text
-          v-container.pa-0.grid-list-sm
-            v-layout
-              v-flex S3IC
-              v-flex.text-xs-right {{ etablissement.s3ic }}
-            v-layout
-              v-flex Nom usuel
-              v-flex.text-xs-right {{ etablissement.nom }}
-            v-layout
-              v-flex Raison sociale
-              v-flex.text-xs-right {{ etablissement.raison }}
-            v-layout
-              v-flex Adresse
-              v-flex.text-xs-right {{ etablissement.adresse }}
-            v-layout
-              v-flex Activité principale
-              v-flex.text-xs-right {{ etablissement.activite }}
-            v-layout
-              v-flex Régime
-              v-flex.text-xs-right {{ regimeEtablissement }}
-            v-layout
-              v-flex IED-MTD
-              v-flex.text-xs-right {{ etablissement.iedmtd ? 'Oui' : 'Non' }}
-            v-layout
-              v-flex Régime Seveso
-              v-flex.text-xs-right {{ etablissement.seveso | capitalize }}
-            v-layout.align-center(v-if="etablissement.exploitants")
-              v-flex Responsables
-              v-flex.text-xs-right
-                v-chip(v-for="exploitant in etablissement.exploitants" :key="exploitant.id" small)
-                  //- v-avatar
-                    img(:src="exploitant.photoURL")
-                  | {{ exploitant.prenom }} {{ exploitant.nom }}
+v-container.pa-0.grid-list-sm
+  v-layout
+    v-flex S3IC
+    v-flex.text-xs-right {{ etablissement.s3ic }}
+  v-layout
+    v-flex Nom usuel
+    v-flex.text-xs-right {{ etablissement.nom }}
+  v-layout
+    v-flex Raison sociale
+    v-flex.text-xs-right {{ etablissement.raison }}
+  v-layout
+    v-flex Adresse
+    v-flex.text-xs-right {{ etablissement.adresse }}
+  v-layout
+    v-flex Activité principale
+    v-flex.text-xs-right {{ etablissement.activite }}
+  v-layout
+    v-flex Régime
+    v-flex.text-xs-right {{ regimeEtablissement }}
+  v-layout
+    v-flex IED-MTD
+    v-flex.text-xs-right {{ etablissement.iedmtd ? 'Oui' : 'Non' }}
+  v-layout
+    v-flex Régime Seveso
+    v-flex.text-xs-right {{ etablissement.seveso | capitalize }}
+  v-layout.align-center(v-if="etablissement.exploitants")
+    v-flex Responsables
+    v-flex.text-xs-right
+      v-chip(v-for="exploitant in etablissement.exploitants" :key="exploitant.id" small)
+        | {{ exploitant.prenom }} {{ exploitant.nom }}
 </template>
 
 <script>

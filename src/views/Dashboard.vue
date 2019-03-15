@@ -5,7 +5,12 @@ fh-page(:wait="wait")
       h1.display-1.font-weight-bold.mb-4 Tableau de bord
 
       v-layout.row.align-center
-        h2 Inspections
+        h2
+          | Inspections
+          v-btn.ml-4(to="/etablissements" round color="primary" small title="Démarrer une inspection" v-if="$permissions.isInspecteur")
+            v-icon(left) add
+            | Nouvelle inspection
+
         v-flex.text-xs-right
           v-text-field.d-inline-flex(v-model="$filter" label="Filtre établissement" clearable) Filtre
 

@@ -10,15 +10,21 @@ v-container
       v-card
         v-toolbar(flat)
           v-toolbar-title
-            | Détails
+            | Détails de l'inspection
           v-spacer
           v-toolbar-items
             v-btn(flat :to="`/inspections/${inspection.id}/details/edit`" title="Modifier l'inspection" v-if="peutEditer")
               v-icon(medium) edit
         v-card-text
           fh-detail-inspection(:inspection="inspection" readonly)
+
     v-flex.xs12.md6.pa-2
-      fh-detail-etablissement(:etablissement="inspection.etablissement" expand)
+      v-card
+        v-toolbar(flat)
+          v-toolbar-title
+            | Détails de l'établissement
+        v-card-text
+          fh-detail-etablissement(:etablissement="inspection.etablissement")
 </template>
 
 <script>
