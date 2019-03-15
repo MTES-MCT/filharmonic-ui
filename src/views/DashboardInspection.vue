@@ -4,6 +4,14 @@ v-container
     | La demande de validation a été rejetée.&nbsp;
     span.fh-multiline(v-if="inspection.motif_rejet_validation") Motif: {{ inspection.motif_rejet_validation }}
 
+  fh-btn.mb-4(:action="genererLettreAnnonce" v-if="peutGenererLettreAnnonce")
+    v-icon(left) library_books
+    | Générer la lettre d'annonce
+
+  fh-btn.mb-4(:action="genererLettreSuite" v-if="peutGenererLettreSuite")
+    v-icon(left) library_books
+    | Générer la lettre des suites
+
   p(v-if="showMessagePointsDeControleNonModifiables") Les points de contrôle ne sont pas modifiables tant qu'une suite est présente.
 
   fh-point-de-controle(v-for="pointDeControle in inspection.points_de_controle" :key="pointDeControle.id"
@@ -36,16 +44,22 @@ v-container
   section(v-if="peutVoirSuites")
     h4.display-1.my-4 Suites
     fh-suite(:inspection="inspection" :modifiable="peutModifierSuites")
+
+    .text-xs-center
+      fh-btn.mt-4(:action="genererRapport" v-if="peutGenererRapport")
+        v-icon(left) library_books
+        | Générer le rapport
 </template>
 
 <script>
-import { isAfterState } from '@/api/inspections'
+import { isAfterState, isBeforeState } from '@/api/inspections'
 import FhBtn from '@/components/FhBtn.vue'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
 import FhMessage from '@/components/FhMessage.vue'
 import FhPointDeControle from '@/components/FhPointDeControle.vue'
 import FhPointDeControleForm from '@/components/FhPointDeControleForm.vue'
 import FhSuite from '@/components/FhSuite.vue'
+import * as util from '@/util'
 
 export default {
   components: {
@@ -93,6 +107,15 @@ export default {
     },
     peutAjouterPointDeControle () {
       return this.peutModifierPointsDeControle && !this.showNewPointDeControleForm
+    },
+    peutGenererLettreAnnonce () {
+      return this.$permissions.isInspecteur && isBeforeState(this.inspection.etat, 'attente_validation') && this.inspection.points_de_controle.length > 0 && !this.inspection.suite
+    },
+    peutGenererLettreSuite () {
+      return this.$permissions.isInspecteur && isAfterState(this.inspection.etat, 'attente_validation')
+    },
+    peutGenererRapport () {
+      return this.$permissions.isInspecteur && this.inspection.etat === 'en_cours' && this.inspection.suite
     },
     peutModifierSuites () {
       return this.$permissions.isInspecteur && this.inspectionModifiable
@@ -146,6 +169,18 @@ export default {
         await this.$api.inspections.ajouterPointDeControle(this.inspection.id, this.newPointDeControle)
         this.resetNewPointDeControle()
       }
+    },
+    async genererLettreAnnonce () {
+      const url = await this.$api.inspections.genererLettreAnnonce(this.inspection.id)
+      util.downloadFile(url, `lettre-annonce-${this.inspection.etablissement.nom}-${this.inspection.date}.odt`)
+    },
+    async genererLettreSuite () {
+      const url = await this.$api.inspections.genererLettreSuite(this.inspection.id)
+      util.downloadFile(url, `lettre-suite-${this.inspection.etablissement.nom}-${this.inspection.date}.odt`)
+    },
+    async genererRapport () {
+      const url = await this.$api.inspections.genererRapport(this.inspection.id)
+      util.downloadFile(url, `rapport-${this.inspection.etablissement.nom}-${this.inspection.date}.odt`)
     }
   }
 }

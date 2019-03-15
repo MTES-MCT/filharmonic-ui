@@ -44,18 +44,6 @@ fh-page(:wait="wait")
                 v-list-tile-avatar
                   v-icon save
                 v-list-tile-title Enregistrer en canevas
-              v-list-tile(@click="genererLettreAnnonce" v-if="peutGenererLettreAnnonce")
-                v-list-tile-avatar
-                  v-icon local_printshop
-                v-list-tile-title Générer la lettre d'annonce
-              v-list-tile(@click="genererRapport" v-if="peutGenererRapport")
-                v-list-tile-avatar
-                  v-icon local_printshop
-                v-list-tile-title Générer le rapport
-              v-list-tile(@click="genererLettreSuite" v-if="peutGenererLettreSuite")
-                v-list-tile-avatar
-                  v-icon local_printshop
-                v-list-tile-title Générer la lettre des suites
           fh-popup-creation-canevas(v-if="peutEnregistrerEnCanevas" :show-dialog="showPopupCreationCanevas"
                                     @close="showPopupCreationCanevas = false" @submit="enregistrerEnCanevas")
 
@@ -82,24 +70,18 @@ fh-page(:wait="wait")
 
 <script>
 import { mapState } from 'vuex'
-import { isAfterState, isBeforeState } from '@/api/inspections'
 import FhBtn from '@/components/FhBtn.vue'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
-import FhLettreAnnonce from '@/components/FhLettreAnnonce.vue'
-import FhLettreSuites from '@/components/FhLettreSuites.vue'
 import FhPopupValidation from '@/components/FhPopupValidation.vue'
 import FhPopupRejetValidation from '@/components/FhPopupRejetValidation.vue'
 import FhPopupCreationCanevas from '@/components/FhPopupCreationCanevas.vue'
 import events from '@/events'
 import BasePage from '@/views/mixins/BasePage.js'
-import * as util from '@/util'
 
 export default {
   components: {
     FhBtn,
     FhEtatInspection,
-    FhLettreAnnonce,
-    FhLettreSuites,
     FhPopupValidation,
     FhPopupRejetValidation,
     FhPopupCreationCanevas
@@ -164,15 +146,6 @@ export default {
     },
     peutEnregistrerEnCanevas () {
       return this.$permissions.isInspecteur
-    },
-    peutGenererLettreAnnonce () {
-      return this.$permissions.isInspecteur && isBeforeState(this.inspection.etat, 'attente_validation') && this.inspection.points_de_controle.length > 0
-    },
-    peutGenererRapport () {
-      return this.$permissions.isInspecteur && isBeforeState(this.inspection.etat, 'attente_validation') && this.inspection.suite
-    },
-    peutGenererLettreSuite () {
-      return this.$permissions.isInspecteur && isAfterState(this.inspection.etat, 'attente_validation')
     }
   },
   watch: {
@@ -236,18 +209,6 @@ export default {
       } finally {
         done()
       }
-    },
-    async genererLettreAnnonce () {
-      const url = await this.$api.inspections.genererLettreAnnonce(this.inspection.id)
-      util.downloadFile(url, 'lettre-annonce.odt')
-    },
-    async genererLettreSuite () {
-      const url = await this.$api.inspections.genererLettreSuite(this.inspection.id)
-      util.downloadFile(url, 'lettre-suite.odt')
-    },
-    async genererRapport () {
-      const url = await this.$api.inspections.genererRapport(this.inspection.id)
-      util.downloadFile(url, `rapport-${this.inspection.etablissement.nom}-${this.inspection.date}.odt`)
     }
   }
 }
