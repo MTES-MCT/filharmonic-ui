@@ -141,6 +141,8 @@ export default {
     lienAideUtilisateur () {
       if (this.$permissions.isApprobateur) {
         return 'https://docs.google.com/presentation/d/1o9jyhNut7U9DUE2ZNaivpUr2dBl9AB3Gtyp9GrXuEzk'
+      } else if (this.$permissions.isExploitant) {
+        return 'https://docs.google.com/presentation/d/1xCLt4vbgFWr_E9SuWbNx1HNVjZXNyoH6o2TNZqhGhWQ'
       }
       return 'https://docs.google.com/presentation/d/1RdHWb16SVFx84g99TcEA16-eaMHvp3tBPxu1nTaBBsA'
     }
