@@ -32,7 +32,8 @@ describe("Fil'Harmonic", () => {
     cy.contains('.menuable__content__active div[role="listitem"]', 'Produits chimiques').click()
     cy.contains('.menuable__content__active div[role="listitem"]', 'Incendie').click()
     cy.document().then(document => document.querySelector('.v-select--is-menu-active').__vue__.blur())
-    cy.get('textarea').type('Contexte inspection', typeOptions)
+    cy.get('textarea').first().type('Gérard Bichon, Françoise Denivelle et Brigitte Lombard', typeOptions)
+    cy.get('textarea').last().type('Contexte inspection', typeOptions)
     cy.contains("Créer l'inspection").click()
 
     // Ajout d'un point de contrôle
