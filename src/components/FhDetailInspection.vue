@@ -73,6 +73,13 @@ v-container.pa-0(:class="containerClass")
                     )
 
   v-layout.align-center
+    v-flex.subheading.mr-2 Personnes rencontrées
+    v-spacer
+    .fh-multiline(v-if="readonly") {{ inspection.personnes_rencontrees }}
+    v-flex(v-else)
+      v-textarea(box v-model="inspection.personnes_rencontrees")
+
+  v-layout.align-center
     v-flex.subheading.mr-2 Thèmes
     v-flex.text-xs-right(v-if="readonly")
       v-chip(v-for="theme in inspection.themes" :key="theme" small)
@@ -85,7 +92,7 @@ v-container.pa-0(:class="containerClass")
                     required :rules="themesRules"
                     )
 
-  v-layout.align-center(v-if="!readonly || inspection.contexte")
+  v-layout.align-center
     v-flex.subheading.mr-2 Contexte
     v-spacer
     .fh-multiline(v-if="readonly") {{ inspection.contexte }}
