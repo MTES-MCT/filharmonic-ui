@@ -62,3 +62,18 @@ export function downloadFile (url, nom) {
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
 }
+
+export function flatten (array) {
+  if (!(array instanceof Array)) {
+    throw new Error(`expected Array, got: ${typeof array}`)
+  }
+  const flattenElements = []
+  array.forEach(e => {
+    if (e instanceof Array) {
+      flatten(e).forEach(el => flattenElements.push(el))
+    } else {
+      flattenElements.push(e)
+    }
+  })
+  return flattenElements
+}

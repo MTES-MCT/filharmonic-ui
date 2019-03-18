@@ -50,6 +50,9 @@
             v-icon(left) check_circle_outline
             | Résoudre
 
+      .mt-2
+        fh-attachment(v-for="pieceJointe in piecesJointes" :key="pieceJointe.id" :attachment="pieceJointe")
+
     .d-flex(v-if="editMode")
       v-btn(flat title="Annuler l'édition" @click="quitEditMode" :disabled="modificationPointDeControleEnCours")
         v-icon(medium) clear
@@ -156,6 +159,7 @@
 
 <script>
 import { isAfterState, isBeforeState, typesConstats, unitesDelaisConstat } from '@/api/inspections'
+import FhAttachment from '@/components/FhAttachment.vue'
 import FhBtn from '@/components/FhBtn.vue'
 import FhConstatForm from '@/components/FhConstatForm.vue'
 import FhIconeNouveauxMessages from '@/components/FhIconeNouveauxMessages.vue'
@@ -168,6 +172,7 @@ import * as _ from '@/util'
 export default {
   name: 'FhPointDeControle',
   components: {
+    FhAttachment,
     FhBtn,
     FhConstatForm,
     FhIconeNouveauxMessages,
@@ -217,6 +222,9 @@ export default {
     }
   },
   computed: {
+    piecesJointes () {
+      return _.flatten(this.pointDeControle.messages.map(m => m.pieces_jointes || []))
+    },
     editMode () {
       return this.pointDeControleEdite !== null
     },
