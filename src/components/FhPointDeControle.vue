@@ -30,7 +30,7 @@
           v-layout.align-center.my-2(v-if="pointDeControle.constat.remarques")
             span.subheading.mr-2 Remarques&nbsp;:
             v-flex
-              div {{ pointDeControle.constat.remarques }}
+              .fh-multiline {{ pointDeControle.constat.remarques }}
           v-layout.align-center(v-if="pointDeControle.constat.delai_unite")
             span.subheading.mr-2 Délai de mise en conformité :
             v-flex {{ pointDeControle.constat.delai_nombre }} {{ pointDeControle.constat.delai_unite }}
