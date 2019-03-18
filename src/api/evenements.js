@@ -74,6 +74,12 @@ export const evenements = {
       return `a ajouté un constat.`
     }
   },
+  modification_constat: {
+    notifications: () => ['inspecteurs'],
+    message (evenement) {
+      return `a modifié un constat.`
+    }
+  },
   suppression_constat: {
     notifications: () => ['inspecteurs'],
     message (evenement) {
