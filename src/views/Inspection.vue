@@ -21,9 +21,17 @@ fh-page(:wait="wait")
                             )
             v-icon(left) done
             | Demander une validation
-          fh-popup-rejet-validation(v-if="peutValider" @submit="rejeter")
 
-          fh-popup-validation(v-if="peutValider" @submit="valider")
+          template(v-if="peutValider")
+            v-btn(title="Rejeter la demande de validation" color="red" @click="showRejetValidationDialog = true")
+              v-icon(left) close
+              | Rejeter
+            fh-rejet-validation-dialog(:show-dialog="showRejetValidationDialog" @close="showRejetValidationDialog = false" :action="rejeter")
+
+            v-btn(title="Accepter la demande de validation" color="green" @click="showValidationDialog = true")
+              v-icon(left) done
+              | Valider
+            fh-validation-dialog(:show-dialog="showValidationDialog" @close="showValidationDialog = false" :action="valider")
 
           fh-btn.white--text(v-if="peutClore"
                             color="green"
@@ -40,12 +48,14 @@ fh-page(:wait="wait")
             v-btn(slot="activator" icon large title="Afficher le menu")
               v-icon more_vert
             v-list.py-0
-              v-list-tile(@click="showPopupCreationCanevas = true" v-if="peutEnregistrerEnCanevas")
+              v-list-tile(@click="showCreationCanevasDialog = true" v-if="peutEnregistrerEnCanevas")
                 v-list-tile-avatar
                   v-icon save
                 v-list-tile-title Enregistrer en canevas
-          fh-popup-creation-canevas(v-if="peutEnregistrerEnCanevas" :show-dialog="showPopupCreationCanevas"
+          //- fh-popup-creation-canevas(v-if="peutEnregistrerEnCanevas" :show-dialog="showPopupCreationCanevas"
                                     @close="showPopupCreationCanevas = false" @submit="enregistrerEnCanevas")
+
+          fh-creation-canevas-dialog(:show-dialog="showCreationCanevasDialog" @close="showCreationCanevasDialog = false" :action="enregistrerEnCanevas")
 
           v-toolbar-items(slot="extension")
             v-btn(flat :to="`/inspections/${inspection.id}`" exact)
@@ -72,9 +82,9 @@ fh-page(:wait="wait")
 import { mapState } from 'vuex'
 import FhBtn from '@/components/FhBtn.vue'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
-import FhPopupValidation from '@/components/FhPopupValidation.vue'
-import FhPopupRejetValidation from '@/components/FhPopupRejetValidation.vue'
-import FhPopupCreationCanevas from '@/components/FhPopupCreationCanevas.vue'
+import FhRejetValidationDialog from '@/components/FhRejetValidationDialog.vue'
+import FhCreationCanevasDialog from '@/components/FhCreationCanevasDialog.vue'
+import FhValidationDialog from '@/components/FhValidationDialog.vue'
 import events from '@/events'
 import BasePage from '@/views/mixins/BasePage.js'
 
@@ -82,9 +92,9 @@ export default {
   components: {
     FhBtn,
     FhEtatInspection,
-    FhPopupValidation,
-    FhPopupRejetValidation,
-    FhPopupCreationCanevas
+    FhCreationCanevasDialog,
+    FhRejetValidationDialog,
+    FhValidationDialog
   },
   mixins: [BasePage],
   props: {
@@ -95,7 +105,9 @@ export default {
   },
   data () {
     return {
-      showPopupCreationCanevas: false
+      showCreationCanevasDialog: false,
+      showRejetValidationDialog: false,
+      showValidationDialog: false
     }
   },
   computed: {
@@ -185,32 +197,17 @@ export default {
     async demanderValidation () {
       await this.$api.inspections.demanderValidation(this.inspection.id)
     },
-    async rejeter ({ data: motif, done }) {
-      try {
-        await this.$api.inspections.rejeter(this.inspection.id, motif)
-        done(true)
-      } finally {
-        done()
-      }
+    async rejeter (motifRejet) {
+      await this.$api.inspections.rejeter(this.inspection.id, motifRejet)
     },
-    async valider ({ data: rapport, done }) {
-      try {
-        await this.$api.inspections.valider(this.inspection.id, rapport)
-        done(true)
-      } finally {
-        done()
-      }
+    async valider (rapport) {
+      await this.$api.inspections.valider(this.inspection.id, rapport)
     },
     async clore () {
       await this.$api.inspections.clore(this.inspection.id)
     },
-    async enregistrerEnCanevas ({ data: canevas, done }) {
-      try {
-        await this.$api.inspections.enregistrerEnCanevas(this.inspection.id, canevas)
-        done(true)
-      } finally {
-        done()
-      }
+    async enregistrerEnCanevas (canevas) {
+      await this.$api.inspections.enregistrerEnCanevas(this.inspection.id, canevas)
     }
   }
 }
