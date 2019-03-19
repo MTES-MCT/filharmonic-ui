@@ -52,8 +52,6 @@ fh-page(:wait="wait")
                 v-list-tile-avatar
                   v-icon save
                 v-list-tile-title Enregistrer en canevas
-          //- fh-popup-creation-canevas(v-if="peutEnregistrerEnCanevas" :show-dialog="showPopupCreationCanevas"
-                                    @close="showPopupCreationCanevas = false" @submit="enregistrerEnCanevas")
 
           fh-creation-canevas-dialog(:show-dialog="showCreationCanevasDialog" @close="showCreationCanevasDialog = false" :action="enregistrerEnCanevas")
 

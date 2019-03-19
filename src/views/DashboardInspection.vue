@@ -4,19 +4,30 @@ v-container
     | La demande de validation a été rejetée.&nbsp;
     span.fh-multiline(v-if="inspection.motif_rejet_validation") Motif: {{ inspection.motif_rejet_validation }}
 
-  fh-btn.mb-4(:action="genererLettreAnnonce" v-if="peutGenererLettreAnnonce")
-    v-icon(left) library_books
-    | Générer la lettre d'annonce
+  v-layout.row
+    v-flex
+      fh-btn.mb-4(:action="genererLettreAnnonce" v-if="peutGenererLettreAnnonce")
+        v-icon(left) library_books
+        | Générer la lettre d'annonce
 
-  fh-btn.mb-4(:action="genererLettreSuite" v-if="peutGenererLettreSuite")
-    v-icon(left) library_books
-    | Générer la lettre des suites
+      fh-btn.mb-4(:action="genererLettreSuite" v-if="peutGenererLettreSuite")
+        v-icon(left) library_books
+        | Générer la lettre des suites
 
-  p(v-if="showMessagePointsDeControleNonModifiables") Les points de contrôle ne sont pas modifiables tant qu'une suite est présente.
+      p(v-if="showMessagePointsDeControleNonModifiables") Les points de contrôle ne sont pas modifiables tant qu'une suite est présente.
 
-  fh-point-de-controle(v-for="pointDeControle in inspection.points_de_controle" :key="pointDeControle.id"
-                      :pointDeControle="pointDeControle" :etatInspection="inspection.etat"
-                      :readonly="!peutModifierPointsDeControle" :deplier="pointDeControle.id === pointDeControleDeplieId")
+    v-btn(@click="enterReorderingMode" v-if="peutReordonner")
+      v-icon(left) shuffle
+      | Réordonner
+    fh-btn(:action="quitReorderingMode" color="primary" v-if="reorderingMode")
+      v-icon(left) done
+      | Sauvegarder l'ordre
+
+  draggable(v-model="pointsDeControle" v-bind="dragOptions")
+    fh-point-de-controle.my-2(v-for="pointDeControle in pointsDeControle" :key="pointDeControle.id"
+                              :pointDeControle="pointDeControle" :etatInspection="inspection.etat"
+                              :readonly="!peutModifierPointsDeControle" :deplier="pointDeControle.id === pointDeControleDeplieId"
+                              :draggable="reorderingMode")
 
   v-slide-y-transition(hide-on-leave)
     v-card.my-3.elevation-4(v-if="showNewPointDeControleForm")
@@ -37,7 +48,7 @@ v-container
           v-icon(left) done
           | Ajouter
 
-    v-btn.mt-4(v-if="peutAjouterPointDeControle" @click="showNewPointDeControleForm = true")
+    v-btn.mt-4(v-if="peutAjouterPointDeControle" @click="showNewPointDeControleForm = true" :disabled="reorderingMode")
       v-icon(left) add
       | Ajouter un point de contrôle
 
@@ -52,6 +63,7 @@ v-container
 </template>
 
 <script>
+import draggable from 'vuedraggable'
 import { isAfterState, isBeforeState } from '@/api/inspections'
 import FhBtn from '@/components/FhBtn.vue'
 import FhEtatInspection from '@/components/FhEtatInspection.vue'
@@ -68,7 +80,8 @@ export default {
     FhMessage,
     FhPointDeControle,
     FhPointDeControleForm,
-    FhSuite
+    FhSuite,
+    draggable
   },
   props: {
     inspection: {
@@ -78,6 +91,8 @@ export default {
   },
   data () {
     return {
+      reorderingMode: false,
+      sortablePointsDeControle: [],
       validNewPointDeControleForm: false,
       showNewPointDeControleForm: false,
       pointDeControleDeplieId: null,
@@ -96,11 +111,29 @@ export default {
     }
   },
   computed: {
+    dragOptions () {
+      return {
+        group: 'points_de_controle',
+        ghostClass: 'fh-point-de-controle--ghost',
+        disabled: !this.reorderingMode
+      }
+    },
+    pointsDeControle: {
+      get () {
+        return this.reorderingMode ? this.sortablePointsDeControle : this.inspection.points_de_controle
+      },
+      set (value) {
+        this.sortablePointsDeControle = value
+      }
+    },
     showMessagePointsDeControleNonModifiables () {
       return this.inspection.etat === 'en_cours' && this.$permissions.isInspecteur && !this.peutModifierPointsDeControle
     },
     inspectionModifiable () {
       return this.inspection.etat === 'preparation' || this.inspection.etat === 'en_cours'
+    },
+    peutReordonner () {
+      return this.inspectionModifiable && this.$permissions.isInspecteur && this.inspection.points_de_controle.length > 1 && !this.reorderingMode
     },
     peutModifierPointsDeControle () {
       return this.inspectionModifiable && !this.inspection.suite
@@ -154,6 +187,15 @@ export default {
     }
   },
   methods: {
+    enterReorderingMode () {
+      this.sortablePointsDeControle = util.cloneDeep(this.inspection.points_de_controle)
+      this.reorderingMode = true
+    },
+    async quitReorderingMode () {
+      await this.$api.inspections.ordonnerPointsDeControle(this.inspection.id, this.sortablePointsDeControle.map(p => p.id))
+      this.reorderingMode = false
+      this.sortablePointsDeControle = []
+    },
     resetNewPointDeControle () {
       this.newPointDeControle = {
         sujet: '',
@@ -187,4 +229,5 @@ export default {
 </script>
 
 <style lang="stylus">
+
 </style>

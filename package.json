@@ -17,6 +17,7 @@
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",
     "vue-timeago": "^5.0.0",
+    "vuedraggable": "^2.19.2",
     "vuetify": "^1.5.2",
     "vuex": "^3.0.1"
   },

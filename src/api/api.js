@@ -183,6 +183,10 @@ export default class API {
         await this.authRequestJson('post', `pointsdecontrole/${pointDeControleId}/publier`)
         await this.inspections.refreshInspectionOuverte()
       },
+      ordonnerPointsDeControle: async (inspectionId, pointsDeControleIds) => {
+        await this.authRequestJson('post', `inspections/${inspectionId}/pointsdecontrole/ordonner`, pointsDeControleIds)
+        await this.inspections.refreshInspectionOuverte()
+      },
       addFavori: async idInspection => {
         await this.authRequestJson('post', `inspections/${idInspection}/favori`)
         await this.inspections.refreshInspectionsFavorites()

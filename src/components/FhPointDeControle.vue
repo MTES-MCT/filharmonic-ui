@@ -1,8 +1,11 @@
 <template lang="pug">
-.fh-point-de-controle.elevation-1(:id="`pdc${pointDeControle.id}`")
+.fh-point-de-controle.elevation-1(:id="`pdc${pointDeControle.id}`" :class="{ 'fh-point-de-controle--draggable': draggable }")
+  .fh-point-de-controle__dropoverlay
+    .fh-point-de-controle__dropzone
   fh-toolbar(:class="{'fh-point-de-controle--brouillon': !pointDeControle.publie}")
-    v-btn(flat title="Déplier/replier" @click="toggleShowMessages()")
+    v-btn(flat title="Déplier/replier" @click="toggleShowMessages()" v-if="!draggable")
       v-icon.fh-toggle-icon(large :class="{'fh-toggle-icon--reverse': showMessages}") keyboard_arrow_down
+    v-icon.fh-point-de-controle__draghandle(v-else large) drag_handle
 
     .flex.pa-2
       v-form(v-if="editMode" ref="pointDeControleEditeForm" v-model="validPointDeControleEditeForm")
@@ -65,7 +68,7 @@
       fh-btn(depressed color="success" title="Mettre à jour" :action="modifierConstat" :disableif="!validConstatEditeForm")
         v-icon(medium) check
 
-    v-menu.d-flex(bottom left offset-y transition="slide-y-transition" v-if="peutEditer")
+    v-menu.d-flex(bottom left offset-y transition="slide-y-transition" v-if="peutEditer && !draggable")
       v-btn.fh-fill-height(slot="activator" flat title="Éditer/supprimer")
         v-icon settings
       v-layout.column
@@ -195,6 +198,10 @@ export default {
       default: false
     },
     deplier: {
+      type: Boolean,
+      default: false
+    },
+    draggable: {
       type: Boolean,
       default: false
     }
@@ -368,8 +375,42 @@ export default {
 
 <style lang="stylus">
 .fh-point-de-controle
+  position relative
+
   &--brouillon
     opacity 0.5
+
+  &--draggable
+    cursor grab
+
+    .fh-toolbar
+      pointer-events none
+
+  &--ghost
+    .fh-point-de-controle__dropoverlay
+      display flex
+    .fh-toolbar
+      visibility hidden
+
+  &__draghandle
+    display flex !important
+    padding 0 26px
+
+  &__dropoverlay
+    display none
+    background-color #ffffff
+    position absolute
+    top 0
+    left 0
+    right 0
+    bottom 0
+    z-index 5
+
+  &__dropzone
+    margin 20px
+    border 4px dashed #cacaca
+    border-radius 20px
+    flex 1
 
   &__sujet
     font-size 1.3em
