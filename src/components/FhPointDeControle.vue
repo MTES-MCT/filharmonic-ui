@@ -151,8 +151,8 @@
             | Ajouter un constat
 
         template(v-if="showTraitementNonConformites")
-          v-alert(:value="true" type="error" outline)
-            h3 Traitement des non-conformités
+          v-alert(value="true" :type="!constatResolu ? 'error': 'primary'" outline)
+            h3 {{ !constatResolu ? 'Traitement des non-conformités' : 'Non-conformités résolues' }}
           v-timeline
             fh-message(v-for="message in messagesTraitementNonConformites" :key="message.id" :message="message")
           .text-xs-center
@@ -259,8 +259,11 @@ export default {
     constatNonConforme () {
       return this.pointDeControle.constat && this.pointDeControle.constat.type !== 'conforme'
     },
+    constatResolu () {
+      return this.pointDeControle.constat && this.pointDeControle.constat.date_resolution
+    },
     peutAjouterMessageTraitementNonConformites () {
-      return this.etatInspection === 'traitement_non_conformites' && this.constatNonConforme && !this.$permissions.isApprobateur
+      return this.etatInspection === 'traitement_non_conformites' && this.constatNonConforme && !this.constatResolu && !this.$permissions.isApprobateur
     },
     peutAjouterConstat () {
       return this.$permissions.isInspecteur && this.etatInspection === 'en_cours' && !this.pointDeControle.constat && !this.showNewConstatForm
