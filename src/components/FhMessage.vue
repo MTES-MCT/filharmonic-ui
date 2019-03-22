@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-timeline-item(:id="`m${message.id}`" fill-dot :color="color" :icon="icon" :left="message.auteur.profile !== 'exploitant'" :right="message.auteur.profile === 'exploitant'")
+  v-timeline-item(v-observe-visibility="lireMessage" :id="`m${message.id}`" fill-dot :color="color" :icon="icon" :left="message.auteur.profile !== 'exploitant'" :right="message.auteur.profile === 'exploitant'")
     span(slot="opposite")
       | {{ message.auteur.prenom }} {{ message.auteur.nom }}&nbsp;
       timeago(:datetime="message.date" :title="message.date.toLocaleString()")
@@ -8,21 +8,18 @@
       v-container.fluid.grid-list.pa-0.ma-0.text-xs-left
         v-layout.row.wrap
           v-flex.xs-12
-            v-card-actions
-              v-spacer
-              v-btn(v-if="peutLireMessage" slot="activator"
-                    icon flat title="Marquer comme lu"
-                    @click="lireMessage"
-                    )
-                v-icon drafts
             v-card-text(:color="color")
               p.fh-multiline {{ message.message }}
             fh-attachment(v-for="pieceJointe in message.pieces_jointes" :key="pieceJointe.id" :attachment="pieceJointe")
 </template>
 
 <script>
+import Vue from 'vue'
+import { ObserveVisibility } from 'vue-observe-visibility'
 import FhAttachment from '@/components/FhAttachment.vue'
 import { mapGetters } from 'vuex'
+
+Vue.directive('observe-visibility', ObserveVisibility)
 
 export default {
   name: 'FhMessage',
@@ -53,8 +50,10 @@ export default {
     }
   },
   methods: {
-    async lireMessage () {
-      await this.$api.inspections.lireMessage(this.message.id)
+    async lireMessage (isVisible, entry) {
+      if (isVisible && this.peutLireMessage) {
+        await this.$api.inspections.lireMessage(this.message.id)
+      }
     }
   }
 }
