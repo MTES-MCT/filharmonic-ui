@@ -118,7 +118,7 @@ describe("Fil'Harmonic", () => {
     cy.get('.fh-point-de-controle button[title="Déplier/replier"]').first().click()
 
     // Lire un message
-    cy.get('button[title="Marquer comme lu"]').first().click()
+    cy.scrollTo('bottom')
 
     // Ajout d'un message
     cy.contains('button', 'Nouveau message').first().click()
