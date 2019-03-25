@@ -4,11 +4,11 @@
       | {{ message.auteur.prenom }} {{ message.auteur.nom }}&nbsp;
       timeago(:datetime="message.date" :title="message.date.toLocaleString()")
 
-    v-card.white--text(dark :color="color")
+    v-card(dark :color="color")
       v-container.fluid.grid-list.pa-0.ma-0.text-xs-left
         v-layout.row.wrap
           v-flex.xs-12
-            v-card-text(:color="color")
+            v-card-text
               p.fh-multiline {{ message.message }}
             fh-attachment(v-for="pieceJointe in message.pieces_jointes" :key="pieceJointe.id" :attachment="pieceJointe")
 </template>
@@ -40,7 +40,7 @@ export default {
       return typeof this.message.interne === 'undefined'
     },
     color () {
-      return this.commentaire || this.message.interne ? 'grey' : (this.message.lu ? 'primary' : 'red')
+      return this.commentaire || this.message.interne ? 'grey' : (this.message.lu ? 'fh-message-lu primary' : 'primary')
     },
     icon () {
       return this.commentaire || this.message.interne ? 'message' : (this.message.lu ? 'drafts' : 'markunread')
@@ -58,3 +58,7 @@ export default {
   }
 }
 </script>
+<style lang="stylus">
+.fh-message-lu
+  opacity 0.7
+</style>
