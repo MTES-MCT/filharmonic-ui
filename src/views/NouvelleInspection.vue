@@ -101,7 +101,6 @@ export default {
     }
   },
   async created () {
-    console.log('inspectionId = ', this.inspectionId)
     if (this.$permissions.isExploitant) {
       this.wait = Promise.reject(new ForbiddenError('Il faut être inspecteur'))
       return
