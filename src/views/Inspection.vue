@@ -40,6 +40,13 @@ fh-page(:wait="wait")
                             )
             v-icon(left) done
             | Clore
+          fh-btn.white--text(v-if="peutCloreEtDemarrerNouvelleInspection"
+                            color="orange"
+                            title="Clore l'inspection et démarrer une nouvelle inspection avec les points de contrôle non résolus"
+                            :action="cloreEtDemarrerNouvelleInspection"
+                            )
+            v-icon(left) done
+            | Clore et démarrer une nouvelle inspection
 
           fh-btn(icon large :action="toggleFavoris" :title="isFavorite ? 'Retirer des favoris' : 'Mettre en favoris'" v-if="!$permissions.isExploitant")
             v-icon {{ isFavorite ? 'star' : 'star_border' }}
@@ -148,8 +155,15 @@ export default {
     hasConstatsNonResolus () {
       return this.inspection.points_de_controle.some(p => p.constat.type !== 'conforme' && !p.constat.date_resolution)
     },
+    hasDelaisConstatsNonResolusAvecEcheanceDepassee () {
+      const now = new Date().toISOString()
+      return this.inspection.points_de_controle.some(p => p.constat.type !== 'conforme' && !p.constat.date_resolution && p.constat.echeance_resolution < now)
+    },
     peutClore () {
       return this.$permissions.isInspecteur && this.inspection.etat === 'traitement_non_conformites' && !this.hasConstatsNonResolus
+    },
+    peutCloreEtDemarrerNouvelleInspection () {
+      return this.$permissions.isInspecteur && this.inspection.etat === 'traitement_non_conformites' && this.hasConstatsNonResolus && this.hasDelaisConstatsNonResolusAvecEcheanceDepassee
     },
     peutGenererDocuments () {
       return this.$permissions.isInspecteur && (this.peutGenererLettreAnnonce || this.peutGenererLettreSuite)
@@ -203,6 +217,10 @@ export default {
     },
     async clore () {
       await this.$api.inspections.clore(this.inspection.id)
+    },
+    async cloreEtDemarrerNouvelleInspection () {
+      await this.clore()
+      this.$router.push(`/etablissements/${this.inspection.etablissement.id}/inspections/${this.inspection.id}/new`)
     },
     async enregistrerEnCanevas (canevas) {
       await this.$api.inspections.enregistrerEnCanevas(this.inspection.id, canevas)

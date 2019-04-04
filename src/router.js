@@ -72,7 +72,7 @@ export function createRouter (store) {
             props: true
           },
           {
-            path: '/etablissements/:etablissementId/inspections/new',
+            path: '/etablissements/:etablissementId/inspections/:inspectionId?/new',
             name: 'nouvelle-inspection',
             component: NouvelleInspection,
             props: true

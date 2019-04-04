@@ -5,6 +5,11 @@ fh-page(:wait="wait")
       v-breadcrumbs.pt-0(:items="breadcrumbs" divider=">" large)
       h1.display-1.font-weight-bold.mb-4 Création d'une inspection
 
+      p(v-if="precedenteInspection")
+        | Cette inspection va reprendre les points de contrôle de l'inspection du&nbsp;
+        router-link(:to="`/inspections/${precedenteInspection.id}`") {{ precedenteInspection.date }}
+        |  dont les constats non conformes n'ont pas été résolus dans les délais impartis.
+
       v-layout.row.wrap.grid-list-lg
         v-flex.xs12.md7.pa-2
           v-card
@@ -51,6 +56,10 @@ export default {
     etablissementId: {
       type: String,
       required: true
+    },
+    inspectionId: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -69,8 +78,10 @@ export default {
         themes: [],
         etablissement_id: parseInt(this.etablissementId, 10),
         etablissement: null, // fetched on init
-        canevas_id: 0
+        canevas_id: 0,
+        precedente_inspection_id: 0
       },
+      precedenteInspection: null, // fetched on init
       validForm: false
     }
   },
@@ -90,19 +101,28 @@ export default {
     }
   },
   async created () {
+    console.log('inspectionId = ', this.inspectionId)
     if (this.$permissions.isExploitant) {
       this.wait = Promise.reject(new ForbiddenError('Il faut être inspecteur'))
       return
     }
-    this.wait = Promise.all([
+    const dataToFetch = [
       this.$api.etablissements.get(this.etablissementId, {
         inspections: true
       }),
       this.$api.canevas.list()
-    ])
+    ]
+    if (this.inspectionId) {
+      dataToFetch.push(this.$api.inspections.get(this.inspectionId))
+    }
+    this.wait = Promise.all(dataToFetch)
     const result = await this.wait
     this.inspection.etablissement = result[0]
     this.canevas = result[1]
+    if (this.inspectionId) {
+      this.precedenteInspection = result[2]
+      this.inspection.precedente_inspection_id = parseInt(this.inspectionId, 10)
+    }
   },
   methods: {
     async createInspection () {
