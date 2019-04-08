@@ -316,7 +316,6 @@ export default {
     },
     supprimerPointDeControle () {
       this.$confirm('Êtes-vous sûr de vouloir supprimer ce point de contrôle ?', async () => {
-        await new Promise(resolve => setTimeout(resolve, 1000))
         await this.$api.inspections.supprimerPointDeControle(this.pointDeControle.id)
       })
     },
