@@ -80,7 +80,7 @@ export const typesSuite = {
     icon: 'error'
   },
   proposition_renforcement: {
-    label: 'Proposition de renforcement, modification ou mise à jour des prescription',
+    label: 'Proposition de renforcement, modification ou mise à jour des prescriptions',
     color: 'purple',
     icon: 'info'
   },
