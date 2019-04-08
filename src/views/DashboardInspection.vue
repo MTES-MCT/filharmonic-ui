@@ -23,11 +23,15 @@ v-container
       v-icon(left) done
       | Sauvegarder l'ordre
 
+    v-btn(@click="compactMode = !compactMode")
+      v-icon(left) {{ compactMode ? 'view_list' : 'list' }}
+      | {{ compactMode ? 'Agrandir' : 'Réduire' }}
+
   draggable(v-model="pointsDeControle" v-bind="dragOptions")
     fh-point-de-controle.my-2(v-for="pointDeControle in pointsDeControle" :key="pointDeControle.id"
                               :pointDeControle="pointDeControle" :etatInspection="inspection.etat"
                               :readonly="!peutModifierPointsDeControle" :deplier="pointDeControle.id === pointDeControleDeplieId"
-                              :draggable="reorderingMode")
+                              :draggable="reorderingMode" :compact="compactMode")
 
   v-slide-y-transition(hide-on-leave)
     v-card.my-3.elevation-4(v-if="showNewPointDeControleForm")
@@ -91,6 +95,7 @@ export default {
   },
   data () {
     return {
+      compactMode: false,
       reorderingMode: false,
       sortablePointsDeControle: [],
       validNewPointDeControleForm: false,

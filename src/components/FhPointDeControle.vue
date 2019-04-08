@@ -7,7 +7,20 @@
       v-icon.fh-toggle-icon(large :class="{'fh-toggle-icon--reverse': showMessages}") keyboard_arrow_down
     v-icon.fh-point-de-controle__draghandle(v-else large) drag_handle
 
-    .flex.pa-2
+    v-layout.row.pa-2(v-if="compact")
+      .fh-point-de-controle__sujet
+        | {{ pointDeControle.sujet }}
+        fh-icone-nouveaux-messages(v-if="pointDeControle.messagesNonLus" :messages="pointDeControle.messagesNonLus")
+        v-icon.ml-4(v-if="!pointDeControle.publie"
+                    title="Ce point de contrôle n'est pas publié"
+                    ) visibility_off
+      v-chip.ml-4(v-if="pointDeControle.constat"
+                  small :color="typeConstatPointDeControle.color" dark text-color="white")
+        v-avatar
+          v-icon(large) {{ typeConstatPointDeControle.icon }}
+        | {{ typeConstatPointDeControle.label }}
+
+    .flex.pa-2(v-else)
       v-form(v-if="editMode" ref="pointDeControleEditeForm" v-model="validPointDeControleEditeForm")
         fh-point-de-controle-form(:pointDeControle="pointDeControleEdite")
       v-layout.column(v-else)
@@ -202,6 +215,10 @@ export default {
       default: false
     },
     draggable: {
+      type: Boolean,
+      default: false
+    },
+    compact: {
       type: Boolean,
       default: false
     }
