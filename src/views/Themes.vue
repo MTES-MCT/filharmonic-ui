@@ -30,7 +30,7 @@ export default {
   },
   computed: {
     nomsThemes () {
-      return this.themes.map(theme => theme.nom)
+      return this.themes.map(theme => _.normalize(theme.nom))
     }
   },
   created () {

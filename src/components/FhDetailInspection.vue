@@ -89,7 +89,7 @@ v-container.pa-0(:class="containerClass")
                     chips small-chips deletable-chips dense multiple hide-selected
                     :search-input.sync="themeSearch"
                     placeholder="Thèmes..."
-                    required :rules="themesRules"
+                    required :rules="themesRules" :filter="filterFunc"
                     )
 
   v-layout.align-center
@@ -102,6 +102,8 @@ v-container.pa-0(:class="containerClass")
 </template>
 
 <script>
+import * as _ from '@/util'
+
 export default {
   name: 'FhDetailInspection',
   props: {
@@ -128,6 +130,9 @@ export default {
       themesRules: [
         v => v.length > 0 || 'Il faut choisir au moins un thème'
       ],
+      filterFunc (item, queryText, itemText) {
+        return _.normalize(itemText).indexOf(_.normalize(queryText)) > -1
+      },
 
       // fetched on init
       inspecteurs: [],
