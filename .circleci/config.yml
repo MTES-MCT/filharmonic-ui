@@ -142,23 +142,23 @@ jobs:
           fi
 
 workflows:
-  weekly-dependency-check:
-    triggers:
-      - schedule:
-          cron: "0 0 * * 0" # every sunday
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - install-dependencies:
-          requires: []
-      - check-outdated-dependencies:
-          requires:
-            - install-dependencies
-      - check-vulnerabilities:
-          requires:
-            - install-dependencies
+  # weekly-dependency-check:
+  #   triggers:
+  #     - schedule:
+  #         cron: "0 0 * * 0" # every sunday
+  #         filters:
+  #           branches:
+  #             only:
+  #               - master
+  #   jobs:
+  #     - install-dependencies:
+  #         requires: []
+  #     - check-outdated-dependencies:
+  #         requires:
+  #           - install-dependencies
+  #     - check-vulnerabilities:
+  #         requires:
+  #           - install-dependencies
   commit:
     jobs:
       - install-dependencies:
