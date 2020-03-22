@@ -23,6 +23,9 @@ Puis démarrer le serveur de développement.
 yarn run serve
 ```
 
+Note : Vous devrez démarrer l'[API Fil'Harmonic](https://github.com/MTES-MCT/filharmonic-api) pour obtenir un environnement de développement complet.
+
+
 ### Dev Mode
 
 Le dev mode permet d'afficher un bouton "Déconnexion SSO" dans le menu.
